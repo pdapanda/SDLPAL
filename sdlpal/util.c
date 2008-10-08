@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2005-2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -61,7 +61,8 @@ trim(
       *(dest--) = '\0';
 }
 
-char *va(
+char *
+va(
    const char *format,
    ...
 )
@@ -94,21 +95,21 @@ char *va(
 //
 // Our random number generator's seed.
 //
-static long glSeed = 0, glGen2 = 0, glGen1 = 0;
+static int glSeed = 0;
 
 static void
 lsrand(
-   unsigned long initial_seed
+   unsigned int iInitialSeed
 )
 /*++
   Purpose:
 
     This function initializes the random seed based on the initial seed value passed in the
-    initial_seed parameter.
+    iInitialSeed parameter.
 
   Parameters:
 
-    initial_seed - The initial random seed.
+    [IN]  iInitialSeed - The initial random seed.
 
   Return value:
 
@@ -117,18 +118,12 @@ lsrand(
 --*/
 {
    //
-   // Pick two large integers such that one is double the other
-   //
-   glGen2 = 3719;
-   glGen1 = glGen2 / 2;
-
-   //
    // fill in the initial seed of the random number generator
    //
-   glSeed = (glGen1 * initial_seed) + glGen2;
+   glSeed = 1664525L * iInitialSeed + 1013904223L;
 }
 
-static long
+static int
 lrand(
    void
 )
@@ -150,9 +145,9 @@ lrand(
 --*/
 {
    if (glSeed == 0) // if the random seed isn't initialized...
-      lsrand((unsigned long)time(NULL)); // initialize it first
-   glSeed = (glGen1 * glSeed) + glGen2; // do some twisted math
-   return (glSeed > 0) ? glSeed : -glSeed; // and return absolute value of the result
+      lsrand((unsigned int)time(NULL)); // initialize it first
+   glSeed = 1664525L * glSeed + 1013904223L; // do some twisted math (infinite suite)
+   return ((glSeed >> 1) + 1073741824L); // and return the result.
 }
 
 int
@@ -210,7 +205,7 @@ RandomFloat(
    if (to <= from)
       return from;
 
-   return from + (float)lrand() / (LONG_MAX / (to - from));
+   return from + (float)lrand() / (INT_MAX / (to - from));
 }
 
 void
@@ -220,6 +215,7 @@ UTIL_Delay(
 {
    unsigned int t = SDL_GetTicks() + ms;
 
+   SDL_PollEvent(NULL);
    while (SDL_GetTicks() < t)
    {
       SDL_Delay(1);
@@ -238,6 +234,7 @@ TerminateOnError(
 {
    va_list argptr;
    char string[256];
+   extern VOID PAL_Shutdown(VOID);
 
    // concatenate all the arguments in one string
    va_start(argptr, fmt);
@@ -254,5 +251,55 @@ TerminateOnError(
    assert(!"TerminateOnError()"); // allows jumping to debugger
 #endif
 
-   exit(1);
+   PAL_Shutdown();
+#ifdef NDS
+   while (1);
+#else
+   exit(255);
+#endif
+}
+
+void *
+UTIL_malloc(
+   size_t               buffer_size
+)
+{
+   // handy wrapper for operations we always forget, like checking malloc's returned pointer.
+
+   void *buffer;
+
+   // first off, check if buffer size is valid
+   if (buffer_size == 0)
+      TerminateOnError ("UTIL_malloc() called with invalid buffer size: %d\n", buffer_size);
+
+   buffer = malloc(buffer_size); // allocate real memory space
+
+   // last check, check if malloc call succeeded
+   if (buffer == NULL)
+      TerminateOnError ("UTIL_malloc() failure for %d bytes (out of memory?)\n", buffer_size);
+
+   return buffer; // nothing went wrong, so return buffer pointer
+}
+
+void *
+UTIL_calloc(
+   size_t               n,
+   size_t               size
+)
+{
+   // handy wrapper for operations we always forget, like checking calloc's returned pointer.
+
+   void *buffer;
+
+   // first off, check if buffer size is valid
+   if (n == 0 || size == 0)
+      TerminateOnError ("UTIL_calloc() called with invalid parameters\n");
+
+   buffer = calloc(n, size); // allocate real memory space
+
+   // last check, check if malloc call succeeded
+   if (buffer == NULL)
+      TerminateOnError("UTIL_calloc() failure for %d bytes (out of memory?)\n", size * n);
+
+   return buffer; // nothing went wrong, so return buffer pointer
 }

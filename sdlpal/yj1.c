@@ -1,26 +1,26 @@
-/*
- * PAL DOS compress format (YJ_1) library
- *
- * Author: Lou Yihua <louyihua@21cn.com>
- *
- * Copyright 2006 - 2007 Lou Yihua
- *
- * This file is part of PAL library.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+//
+// PAL DOS compress format (YJ_1) library
+//
+// Author: Lou Yihua <louyihua@21cn.com>
+//
+// Copyright 2006 - 2007 Lou Yihua
+//
+// This file is part of PAL library.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 // Changed to C from C++ by Wei Mingzhi <whistler@openoffice.org>.
 
@@ -46,18 +46,18 @@ typedef struct _TreeNodeList
 
 typedef struct _YJ_1_FILEHEADER
 {
-   unsigned int	Signature;		// 'YJ_1'
-   unsigned int	UncompressedLength;	// size before compression
-   unsigned int	CompressedLength;	// size after compression
-   unsigned short BlockCount;		// number of blocks
+   unsigned int	Signature;          // 'YJ_1'
+   unsigned int	UncompressedLength; // size before compression
+   unsigned int	CompressedLength;   // size after compression
+   unsigned short BlockCount;       // number of blocks
    unsigned char Unknown;
-   unsigned char HuffmanTreeLength;	// length of huffman tree
+   unsigned char HuffmanTreeLength; // length of huffman tree
 } YJ_1_FILEHEADER, *PYJ_1_FILEHEADER;
 
 typedef struct _YJ_1_BLOCKHEADER
 {
-   unsigned short UncompressedLength;		// maximum 0x4000
-   unsigned short CompressedLength;		// including the header
+   unsigned short UncompressedLength; // maximum 0x4000
+   unsigned short CompressedLength;   // including the header
    unsigned short LZSSRepeatTable[4];
    unsigned char LZSSOffsetCodeLengthTable[4];
    unsigned char LZSSRepeatCodeLengthTable[3];
@@ -80,10 +80,10 @@ get_bits(
    {
       count = count + bptr - 16;
       mask = 0xffff >> bptr;
-      return ((*temp & mask) << count) | (temp[1] >> (16 - count));
+      return ((SWAP16(*temp) & mask) << count) | (SWAP16(temp[1]) >> (16 - count));
    }
    else
-      return ((unsigned short)(*temp << bptr)) >> (16 - count);
+      return (((unsigned short)(SWAP16(*temp) << bptr)) >> (16 - count));
 }
 
 static unsigned short
@@ -229,5 +229,6 @@ DecodeYJ1(
       src = ((unsigned char *)header) + SWAP16(header->CompressedLength);
    }
    free(root);
+
    return SWAP32(hdr->UncompressedLength);
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -17,15 +17,20 @@
 //
 
 #include "main.h"
+#include "getopt.h"
 
-#define BITMAPNUM_SPLASH_UP     0x26
-#define BITMAPNUM_SPLASH_DOWN   0x27
-#define SPRITENUM_SPLASH_TITLE  0x47
-#define SPRITENUM_SPLASH_CRANE  0x49
-#define NUM_RIX_TITLE           0x5
+#ifdef NDS
+#include "fat.h"
+#endif
+
+#define BITMAPNUM_SPLASH_UP         0x26
+#define BITMAPNUM_SPLASH_DOWN       0x27
+#define SPRITENUM_SPLASH_TITLE      0x47
+#define SPRITENUM_SPLASH_CRANE      0x49
+#define NUM_RIX_TITLE               0x5
 
 static VOID
-PAL_InitGame(
+PAL_Init(
    WORD             wScreenWidth,
    WORD             wScreenHeight,
    BOOL             fFullScreen
@@ -51,12 +56,27 @@ PAL_InitGame(
 {
    int e;
 
+#ifdef NDS
+   fatInitDefault();
+#endif
+
    //
    // Initialize defaults, video and audio
    //
-   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) == -1)
+   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
    {
+#ifdef _WIN32
+      //
+      // Try the WINDIB driver if DirectX failed.
+      //
+      putenv("SDL_VIDEODRIVER=windib");
+      if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
+      {
+         TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
+      }
+#else
       TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
+#endif
    }
 
    //
@@ -95,9 +115,14 @@ PAL_InitGame(
    }
 
    PAL_InitInput();
+   PAL_InitResources();
    SOUND_OpenAudio();
 
-   SDL_WM_SetCaption("PAL", NULL);
+#ifdef _DEBUG
+   SDL_WM_SetCaption("Pal (Debug Build)", NULL);
+#else
+   SDL_WM_SetCaption("Pal", NULL);
+#endif
 }
 
 VOID
@@ -121,9 +146,11 @@ PAL_Shutdown(
 {
    SOUND_CloseAudio();
    PAL_FreeFont();
+   PAL_FreeResources();
    PAL_FreeGlobals();
    PAL_FreeUI();
    PAL_FreeText();
+   PAL_ShutdownInput();
    VIDEO_Shutdown();
 
    SDL_Quit();
@@ -174,14 +201,14 @@ PAL_SplashScreen(
 --*/
 {
    SDL_Color     *palette = PAL_GetPalette(1, FALSE);
-   SDL_Color      current_palette[256];
+   SDL_Color      rgCurrentPalette[256];
    SDL_Surface   *lpBitmapDown, *lpBitmapUp;
    SDL_Rect       srcrect, dstrect;
    LPSPRITE       lpSpriteCrane;
    LPCBITMAPRLE   lpBitmapTitle;
    LPBYTE         buf, buf2;
-   int            cranepos[9][3], i, imgpos = 200, crane_frame = 0;
-   DWORD          time, begin_time;
+   int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0;
+   DWORD          dwTime, dwBeginTime;
 
    if (palette == NULL)
    {
@@ -215,16 +242,16 @@ PAL_SplashScreen(
    //
    // Read the bitmaps
    //
-   PAL_MKFReadChunk(buf, 320 * 200, BITMAPNUM_SPLASH_UP, gpGlobals->fpFBP);
+   PAL_MKFReadChunk(buf, 320 * 200, BITMAPNUM_SPLASH_UP, gpGlobals->f.fpFBP);
    DecodeYJ1(buf, buf2, 320 * 200);
    PAL_FBPBlitToSurface(buf2, lpBitmapUp);
-   PAL_MKFReadChunk(buf, 320 * 200, BITMAPNUM_SPLASH_DOWN, gpGlobals->fpFBP);
+   PAL_MKFReadChunk(buf, 320 * 200, BITMAPNUM_SPLASH_DOWN, gpGlobals->f.fpFBP);
    DecodeYJ1(buf, buf2, 320 * 200);
    PAL_FBPBlitToSurface(buf2, lpBitmapDown);
-   PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_TITLE, gpGlobals->fpMGO);
+   PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_TITLE, gpGlobals->f.fpMGO);
    DecodeYJ1(buf, buf2, 32000);
    lpBitmapTitle = PAL_SpriteGetFrame(buf2, 0);
-   PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_CRANE, gpGlobals->fpMGO);
+   PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_CRANE, gpGlobals->f.fpMGO);
    DecodeYJ1(buf, lpSpriteCrane, 32000);
 
    //
@@ -232,7 +259,7 @@ PAL_SplashScreen(
    //
    for (i = 0; i < 9; i++)
    {
-      cranepos[i][0] = RandomLong(260, 420);
+      cranepos[i][0] = RandomLong(300, 600);
       cranepos[i][1] = RandomLong(0, 80);
       cranepos[i][2] = RandomLong(0, 8);
    }
@@ -240,7 +267,7 @@ PAL_SplashScreen(
    //
    // Play the title music
    //
-   RIX_Play(NUM_RIX_TITLE, TRUE, 1);
+   RIX_Play(NUM_RIX_TITLE, TRUE, 2);
 
    //
    // Clear all of the events and key states
@@ -248,45 +275,46 @@ PAL_SplashScreen(
    PAL_ProcessEvent();
    PAL_ClearKeyState();
 
-   begin_time = SDL_GetTicks();
+   dwBeginTime = SDL_GetTicks();
 
    srcrect.x = 0;
    srcrect.w = 320;
    dstrect.x = 0;
    dstrect.w = 320;
 
-   while (1)
+   while (TRUE)
    {
       PAL_ProcessEvent();
-      time = SDL_GetTicks() - begin_time;
+      dwTime = SDL_GetTicks() - dwBeginTime;
 
       //
       // Set the palette
       //
-      if (time < 15000)
+      if (dwTime < 15000)
       {
          for (i = 0; i < 256; i++)
          {
-            current_palette[i].r = (BYTE)(palette[i].r * ((float)time / 15000));
-            current_palette[i].g = (BYTE)(palette[i].g * ((float)time / 15000));
-            current_palette[i].b = (BYTE)(palette[i].b * ((float)time / 15000));
+            rgCurrentPalette[i].r = (BYTE)(palette[i].r * ((float)dwTime / 15000));
+            rgCurrentPalette[i].g = (BYTE)(palette[i].g * ((float)dwTime / 15000));
+            rgCurrentPalette[i].b = (BYTE)(palette[i].b * ((float)dwTime / 15000));
          }
       }
-      VIDEO_SetPalette(current_palette);
+
+      VIDEO_SetPalette(rgCurrentPalette);
 
       //
       // Draw the screen
       //
-      if (imgpos > 1)
+      if (iImgPos > 1)
       {
-         imgpos--;
+         iImgPos--;
       }
 
       //
       // The upper part...
       //
-      srcrect.y = imgpos;
-      srcrect.h = 200 - imgpos;
+      srcrect.y = iImgPos;
+      srcrect.h = 200 - iImgPos;
 
       dstrect.y = 0;
       dstrect.h = srcrect.h;
@@ -297,9 +325,9 @@ PAL_SplashScreen(
       // The lower part...
       //
       srcrect.y = 0;
-      srcrect.h = imgpos;
+      srcrect.h = iImgPos;
 
-      dstrect.y = 200 - imgpos;
+      dstrect.y = 200 - iImgPos;
       dstrect.h = srcrect.h;
 
       SDL_BlitSurface(lpBitmapDown, &srcrect, gpScreen, &dstrect);
@@ -310,43 +338,45 @@ PAL_SplashScreen(
       for (i = 0; i < 9; i++)
       {
          LPCBITMAPRLE lpFrame = PAL_SpriteGetFrame(lpSpriteCrane,
-            cranepos[i][2] = (cranepos[i][2] + (crane_frame & 1)) % 8);
+            cranepos[i][2] = (cranepos[i][2] + (iCraneFrame & 1)) % 8);
+         cranepos[i][1] += ((iImgPos > 1) && (iImgPos & 1)) ? 1 : 0;
          PAL_RLEBlitToSurface(lpFrame, gpScreen,
-            PAL_XY(cranepos[i][0]--, cranepos[i][1] += ((imgpos > 1) && (imgpos & 1)) ? 1 : 0));
+            PAL_XY(cranepos[i][0], cranepos[i][1]));
+         cranepos[i][0]--;
       }
-      crane_frame++;
+      iCraneFrame++;
 
       //
       // Draw the title...
       //
       PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
 
-      VIDEO_UpdateScreen(NULL, 0, 0);
+      VIDEO_UpdateScreen(NULL);
 
       //
       // Check for keypress...
       //
-      if (g_InputState.dwKeyPress & (kKeyMenu | kKeyExplore))
+      if (g_InputState.dwKeyPress & (kKeyMenu | kKeySearch))
       {
          //
          // User has pressed a key...
          //
-         if (time < 15000)
+         if (dwTime < 15000)
          {
             //
             // If the picture has not completed fading in, complete the rest
             //
-            while (time < 15000)
+            while (dwTime < 15000)
             {
                for (i = 0; i < 256; i++)
                {
-                  current_palette[i].r = (BYTE)(palette[i].r * ((float)time / 15000));
-                  current_palette[i].g = (BYTE)(palette[i].g * ((float)time / 15000));
-                  current_palette[i].b = (BYTE)(palette[i].b * ((float)time / 15000));
+                  rgCurrentPalette[i].r = (BYTE)(palette[i].r * ((float)dwTime / 15000));
+                  rgCurrentPalette[i].g = (BYTE)(palette[i].g * ((float)dwTime / 15000));
+                  rgCurrentPalette[i].b = (BYTE)(palette[i].b * ((float)dwTime / 15000));
                }
-               VIDEO_SetPalette(current_palette);
+               VIDEO_SetPalette(rgCurrentPalette);
                UTIL_Delay(8);
-               time += 250;
+               dwTime += 250;
             }
             UTIL_Delay(500);
          }
@@ -357,9 +387,13 @@ PAL_SplashScreen(
          break;
       }
 
-      while (SDL_GetTicks() - begin_time < time + 85)
+      //
+      // Delay a while...
+      //
+      while (SDL_GetTicks() - dwBeginTime < dwTime + 85)
       {
-         UTIL_Delay(1);
+         SDL_Delay(1);
+         while (SDL_PollEvent(NULL));
       }
    }
 
@@ -394,8 +428,12 @@ main(
 --*/
 {
    WORD wScreenWidth = 0, wScreenHeight = 0;
-   BOOL fFullScreen = FALSE;
    int c;
+   BOOL fFullScreen = FALSE;
+
+#ifdef _WIN32
+   putenv("SDL_VIDEODRIVER=directx");
+#endif
 
    //
    // Parse parameters.
@@ -411,7 +449,7 @@ main(
          wScreenWidth = atoi(optarg);
          if (wScreenHeight == 0)
          {
-            wScreenHeight = wScreenWidth * 3 / 4;
+            wScreenHeight = wScreenWidth * 200 / 320;
          }
          break;
 
@@ -422,7 +460,7 @@ main(
          wScreenHeight = atoi(optarg);
          if (wScreenWidth == 0)
          {
-            wScreenWidth = wScreenWidth * 4 / 3;
+            wScreenWidth = wScreenHeight * 320 / 200;
          }
          break;
 
@@ -445,9 +483,9 @@ main(
    }
 
    //
-   // Initialize game
+   // Initialize everything
    //
-   PAL_InitGame(wScreenWidth, wScreenHeight, fFullScreen);
+   PAL_Init(wScreenWidth, wScreenHeight, fFullScreen);
 
    //
    // Show the trademark screen and splash screen
@@ -461,9 +499,8 @@ main(
    PAL_GameMain();
 
    //
-   // Free everything
+   // Should not really reach here...
    //
-   PAL_Shutdown();
-
-   return 0;
+   assert(FALSE);
+   return 255;
 }

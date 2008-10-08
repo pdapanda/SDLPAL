@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ extern "C"
 #include "common.h"
 
 extern SDL_Surface *gpScreen;
+extern SDL_Surface *gpScreenBak;
 
 INT
 VIDEO_Init(
@@ -42,9 +43,7 @@ VIDEO_Shutdown(
 
 VOID
 VIDEO_UpdateScreen(
-   SDL_Rect        *lpRect,
-   WORD             wEffect,
-   FLOAT            flEffectTime
+   const SDL_Rect  *lpRect
 );
 
 VOID
@@ -71,6 +70,32 @@ VIDEO_ToggleFullscreen(
 VOID
 VIDEO_SaveScreenshot(
    VOID
+);
+
+VOID
+VIDEO_BackupScreen(
+   VOID
+);
+
+VOID
+VIDEO_RestoreScreen(
+   VOID
+);
+
+VOID
+VIDEO_ShakeScreen(
+   WORD           wShakeTime,
+   WORD           wShakeLevel
+);
+
+VOID
+VIDEO_SwitchScreen(
+   WORD           wSpeed
+);
+
+VOID
+VIDEO_FadeScreen(
+   WORD           wSpeed
 );
 
 #ifdef __cplusplus

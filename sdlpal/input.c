@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -18,18 +18,17 @@
 
 #include "main.h"
 
-PALINPUTSTATE g_InputState;
+PALINPUTSTATE            g_InputState;
+static SDL_Joystick     *g_pJoy = NULL;
 
-VOID PAL_Shutdown(VOID);
-
-static int
-PAL_EventFilter(
+static VOID
+PAL_KeyboardEventFilter(
    const SDL_Event       *lpEvent
 )
 /*++
   Purpose:
 
-    SDL event filter function. A filter to process all events.
+    Handle keyboard events.
 
   Parameters:
 
@@ -37,27 +36,12 @@ PAL_EventFilter(
 
   Return value:
 
-    1 = the event will be added to the internal queue.
-    0 = the event will be dropped from the queue.
+    None.
 
 --*/
 {
    switch (lpEvent->type)
    {
-   case SDL_VIDEORESIZE:
-      //
-      // resized the window
-      //
-      VIDEO_Resize(lpEvent->resize.w, lpEvent->resize.h);
-      break;
-
-   case SDL_QUIT:
-      //
-      // clicked on the close button of the window. Quit immediately.
-      //
-      PAL_Shutdown();
-      exit(0);
-
    case SDL_KEYDOWN:
       //
       // Pressed a key
@@ -70,7 +54,7 @@ PAL_EventFilter(
             // Pressed Alt+Enter (toggle fullscreen)...
             //
             VIDEO_ToggleFullscreen();
-            return 0;
+            return;
          }
          else if (lpEvent->key.keysym.sym == SDLK_F4)
          {
@@ -123,7 +107,7 @@ PAL_EventFilter(
       case SDLK_RETURN:
       case SDLK_SPACE:
       case SDLK_KP_ENTER:
-         g_InputState.dwKeyPress |= kKeyExplore;
+         g_InputState.dwKeyPress |= kKeySearch;
          break;
 
       case SDLK_PAGEUP:
@@ -157,7 +141,7 @@ PAL_EventFilter(
          break;
 
       case SDLK_q:
-         g_InputState.dwKeyPress |= kKeyEscape;
+         g_InputState.dwKeyPress |= kKeyFlee;
          break;
 
       case SDLK_s:
@@ -181,22 +165,197 @@ PAL_EventFilter(
       switch (lpEvent->key.keysym.sym)
       {
       case SDLK_UP:
-      case SDLK_DOWN:
-      case SDLK_LEFT:
-      case SDLK_RIGHT:
-      case SDLK_KP2:
-      case SDLK_KP4:
-      case SDLK_KP6:
       case SDLK_KP8:
-         //
-         // Released an arrow key
-         //
-         g_InputState.dir = g_InputState.prevdir;
+         if (g_InputState.dir == kDirNorth)
+         {
+            g_InputState.dir = g_InputState.prevdir;
+         }
+         g_InputState.prevdir = kDirUnknown;
+         break;
+
+      case SDLK_DOWN:
+      case SDLK_KP2:
+         if (g_InputState.dir == kDirSouth)
+         {
+            g_InputState.dir = g_InputState.prevdir;
+         }
+         g_InputState.prevdir = kDirUnknown;
+         break;
+
+      case SDLK_LEFT:
+      case SDLK_KP4:
+         if (g_InputState.dir == kDirWest)
+         {
+            g_InputState.dir = g_InputState.prevdir;
+         }
+         g_InputState.prevdir = kDirUnknown;
+         break;
+
+      case SDLK_RIGHT:
+      case SDLK_KP6:
+         if (g_InputState.dir == kDirEast)
+         {
+            g_InputState.dir = g_InputState.prevdir;
+         }
          g_InputState.prevdir = kDirUnknown;
          break;
       }
       break;
    }
+}
+
+static VOID
+PAL_JoystickEventFilter(
+   const SDL_Event       *lpEvent
+)
+/*++
+  Purpose:
+
+    Handle joystick events.
+
+  Parameters:
+
+    [IN]  lpEvent - pointer to the event.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   switch (lpEvent->type)
+   {
+   case SDL_JOYAXISMOTION:
+      //
+      // Moved an axis on joystick
+      //
+      switch (lpEvent->jaxis.axis)
+      {
+      case 0:
+         //
+         // X axis
+         //
+         if (lpEvent->jaxis.value > 20000)
+         {
+            if (g_InputState.dir != kDirEast)
+            {
+               g_InputState.dwKeyPress |= kKeyRight;
+            }
+            g_InputState.prevdir = g_InputState.dir;
+            g_InputState.dir = kDirEast;
+         }
+         else if (lpEvent->jaxis.value < -20000)
+         {
+            if (g_InputState.dir != kDirWest)
+            {
+               g_InputState.dwKeyPress |= kKeyLeft;
+            }
+            g_InputState.prevdir = g_InputState.dir;
+            g_InputState.dir = kDirWest;
+         }
+         else
+         {
+            if (g_InputState.prevdir != kDirEast &&
+               g_InputState.prevdir != kDirWest)
+            {
+               g_InputState.dir = g_InputState.prevdir;
+            }
+            g_InputState.prevdir = kDirUnknown;
+         }
+         break;
+
+      case 1:
+         //
+         // Y axis
+         //
+         if (lpEvent->jaxis.value > 20000)
+         {
+            if (g_InputState.dir != kDirSouth)
+            {
+               g_InputState.dwKeyPress |= kKeyDown;
+            }
+            g_InputState.prevdir = g_InputState.dir;
+            g_InputState.dir = kDirSouth;
+         }
+         else if (lpEvent->jaxis.value < -20000)
+         {
+            if (g_InputState.dir != kDirNorth)
+            {
+               g_InputState.dwKeyPress |= kKeyUp;
+            }
+            g_InputState.prevdir = g_InputState.dir;
+            g_InputState.dir = kDirNorth;
+         }
+         else
+         {
+            if (g_InputState.prevdir != kDirNorth &&
+               g_InputState.prevdir != kDirSouth)
+            {
+               g_InputState.dir = g_InputState.prevdir;
+            }
+            g_InputState.prevdir = kDirUnknown;
+         }
+         break;
+      }
+      break;
+
+   case SDL_JOYBUTTONDOWN:
+      //
+      // Pressed the joystick button
+      //
+      switch (lpEvent->jbutton.button & 1)
+      {
+      case 0:
+         g_InputState.dwKeyPress |= kKeySearch;
+         break;
+
+      case 1:
+         g_InputState.dwKeyPress |= kKeyMenu;
+         break;
+      }
+      break;
+   }
+}
+
+static int SDLCALL
+PAL_EventFilter(
+   const SDL_Event       *lpEvent
+)
+/*++
+  Purpose:
+
+    SDL event filter function. A filter to process all events.
+
+  Parameters:
+
+    [IN]  lpEvent - pointer to the event.
+
+  Return value:
+
+    1 = the event will be added to the internal queue.
+    0 = the event will be dropped from the queue.
+
+--*/
+{
+   switch (lpEvent->type)
+   {
+   case SDL_VIDEORESIZE:
+      //
+      // resized the window
+      //
+      VIDEO_Resize(lpEvent->resize.w, lpEvent->resize.h);
+      break;
+
+   case SDL_QUIT:
+      //
+      // clicked on the close button of the window. Quit immediately.
+      //
+      PAL_Shutdown();
+      exit(0);
+   }
+
+   PAL_KeyboardEventFilter(lpEvent);
+   PAL_JoystickEventFilter(lpEvent);
 
    //
    // All events are handled here; don't put anything to the internal queue
@@ -249,6 +408,45 @@ PAL_InitInput(
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
    SDL_SetEventFilter(PAL_EventFilter);
+
+   //
+   // Check for joystick
+   //
+   if (SDL_NumJoysticks() > 0)
+   {
+      g_pJoy = SDL_JoystickOpen(0);
+      if (g_pJoy != NULL)
+      {
+         SDL_JoystickEventState(SDL_ENABLE);
+      }
+   }
+}
+
+VOID
+PAL_ShutdownInput(
+   VOID
+)
+/*++
+  Purpose:
+
+    Shutdown the input subsystem.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   if (SDL_JoystickOpened(0))
+   {
+      assert(g_pJoy != NULL);
+      SDL_JoystickClose(g_pJoy);
+      g_pJoy = NULL;
+   }
 }
 
 VOID

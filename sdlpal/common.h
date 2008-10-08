@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,14 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
-#include <malloc.h>
 #include <time.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -40,6 +43,14 @@
 #define SWAP32(X)    SDL_Swap32(X)
 #endif
 
+#ifndef max
+#define max(a, b)    (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a, b)    (((a) < (b)) ? (a) : (b))
+#endif
+
 #ifdef _WIN32
 
 #include <windows.h>
@@ -48,6 +59,7 @@
 
 #ifdef _MSC_VER
 #pragma warning (disable:4996)
+#pragma warning (disable:4761)
 #endif
 
 #ifndef _LPCBYTE_DEFINED
@@ -78,7 +90,7 @@ typedef unsigned char       UCHAR, *PUCHAR;
 typedef unsigned short      WORD, *LPWORD;
 typedef unsigned long       DWORD, *LPDWORD;
 typedef int                 INT, *LPINT, BOOL, *LPBOOL;
-typedef unsigned int        UINT, *PUINT;
+typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;
 typedef unsigned char       BYTE, *LPBYTE;
 typedef CONST BYTE         *LPCBYTE;
 typedef float               FLOAT, *LPFLOAT;
@@ -87,6 +99,10 @@ typedef const void         *LPCVOID;
 typedef CHAR               *LPSTR;
 typedef const CHAR         *LPCSTR;
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif

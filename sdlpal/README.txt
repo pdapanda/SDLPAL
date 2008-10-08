@@ -1,6 +1,11 @@
-The latest source code is available at the File Releases section.
-The code here will not be updated until normal Subversion client
-without installing a Windows-only "bridge" program is supported.
+The sources are buildable with:
 
-Thanks,
-Wei Mingzhi
+(for Windows)
+* Microsoft Visual Studio 6.0 or higher
+* Open Watcom 1.7 or higher
+
+(for GNU/Linux)
+* NetBeans 6.0
+
+(for Mac OS X)
+* Apple Xcode

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ extern PALINPUTSTATE g_InputState;
 enum PALKEY
 {
    kKeyMenu        = (1 << 0),
-   kKeyExplore     = (1 << 1),
+   kKeySearch      = (1 << 1),
    kKeyDown        = (1 << 2),
    kKeyLeft        = (1 << 3),
    kKeyUp          = (1 << 4),
@@ -49,7 +49,7 @@ enum PALKEY
    kKeyDefend      = (1 << 10),
    kKeyUseItem     = (1 << 11),
    kKeyThrowItem   = (1 << 12),
-   kKeyEscape      = (1 << 13),
+   kKeyFlee        = (1 << 13),
    kKeyStatus      = (1 << 14),
    kKeyForce       = (1 << 15),
 };
@@ -68,6 +68,13 @@ VOID
 PAL_ProcessEvent(
    VOID
 );
+
+VOID
+PAL_ShutdownInput(
+   VOID
+);
+
+extern BOOL g_fEnableJoystick;
 
 #ifdef __cplusplus
 }

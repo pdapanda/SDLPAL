@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -20,19 +20,35 @@
 #define MAIN_H
 
 #include "common.h"
+#include "util.h"
 #include "palcommon.h"
 #include "font.h"
 #include "global.h"
 #include "map.h"
+#include "res.h"
+#include "scene.h"
 #include "rixplay.h"
 #include "sound.h"
 #include "video.h"
 #include "input.h"
-#include "util.h"
 #include "text.h"
 #include "ui.h"
+#include "uigame.h"
+#include "uibattle.h"
+#include "magicmenu.h"
+#include "itemmenu.h"
 #include "palette.h"
 #include "rngplay.h"
+#include "ending.h"
+#include "script.h"
+#include "battle.h"
+#include "fight.h"
+#include "play.h"
 #include "game.h"
+
+VOID
+PAL_Shutdown(
+   VOID
+);
 
 #endif

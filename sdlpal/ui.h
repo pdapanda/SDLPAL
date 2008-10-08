@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,83 @@ extern "C"
 
 #include "common.h"
 
+#define CHUNKNUM_SPRITEUI                  9
+
+#define MENUITEM_COLOR                     0x4F
+#define MENUITEM_COLOR_INACTIVE            0x1C
+#define MENUITEM_COLOR_CONFIRMED           0x2C
+#define MENUITEM_COLOR_SELECTED_INACTIVE   0x1F
+#define MENUITEM_COLOR_SELECTED_FIRST      0xF9
+#define MENUITEM_COLOR_SELECTED_TOTALNUM   6
+
+#define MENUITEM_COLOR_SELECTED                                    \
+   (MENUITEM_COLOR_SELECTED_FIRST +                                \
+      SDL_GetTicks() / (600 / MENUITEM_COLOR_SELECTED_TOTALNUM)    \
+      % MENUITEM_COLOR_SELECTED_TOTALNUM)
+
+#define MAINMENU_BACKGROUND_FBPNUM         60
+#define RIX_NUM_OPENINGMENU                4
+#define MAINMENU_LABEL_NEWGAME             7
+#define MAINMENU_LABEL_LOADGAME            8
+
+#define LOADMENU_LABEL_SLOT_FIRST          43
+
+#define CONFIRMMENU_LABEL_NO               19
+#define CONFIRMMENU_LABEL_YES              20
+
+#define CASH_LABEL                         21
+
+#define SWITCHMENU_LABEL_DISABLE           17
+#define SWITCHMENU_LABEL_ENABLE            18
+
+#define GAMEMENU_LABEL_STATUS              3
+#define GAMEMENU_LABEL_MAGIC               4
+#define GAMEMENU_LABEL_INVENTORY           5
+#define GAMEMENU_LABEL_SYSTEM              6
+
+#define SYSMENU_LABEL_SAVE                 11
+#define SYSMENU_LABEL_LOAD                 12
+#define SYSMENU_LABEL_MUSIC                13
+#define SYSMENU_LABEL_SOUND                14
+#define SYSMENU_LABEL_QUIT                 15
+
+#define INVMENU_LABEL_USE                  23
+#define INVMENU_LABEL_EQUIP                22
+
+#define STATUS_BACKGROUND_FBPNUM           0
+#define STATUS_LABEL_EXP                   2
+#define STATUS_LABEL_LEVEL                 48
+#define STATUS_LABEL_HP                    49
+#define STATUS_LABEL_MP                    50
+#define STATUS_LABEL_ATTACKPOWER           51
+#define STATUS_LABEL_MAGICPOWER            52
+#define STATUS_LABEL_RESISTANCE            53
+#define STATUS_LABEL_DEXTERITY             54
+#define STATUS_LABEL_FLEERATE              55
+#define STATUS_COLOR_EQUIPMENT             0xBE
+
+#define BUYMENU_LABEL_CURRENT              35
+#define SELLMENU_LABEL_PRICE               25
+
+#define SPRITENUM_SLASH                    39
+#define SPRITENUM_ITEMBOX                  70
+#define SPRITENUM_CURSOR_YELLOW            68
+#define SPRITENUM_CURSOR                   69
+#define SPRITENUM_PLAYERINFOBOX            18
+#define SPRITENUM_PLAYERFACE_FIRST         48
+
+#define EQUIPMENU_BACKGROUND_FBPNUM        1
+
+#define ITEMUSEMENU_COLOR_STATLABEL        0xBB
+
+#define BATTLEWIN_GETEXP_LABEL             30
+#define BATTLEWIN_BEATENEMY_LABEL          9
+#define BATTLEWIN_DOLLAR_LABEL             10
+#define BATTLEWIN_LEVELUP_LABEL            32
+#define BATTLEWIN_ADDMAGIC_LABEL           33
+#define BATTLEWIN_LEVELUP_LABEL_COLOR      0x39
+#define SPRITENUM_ARROW                    47
+
 typedef struct tagBOX
 {
    PAL_POS        pos;
@@ -36,7 +113,7 @@ typedef struct tagBOX
 typedef struct tagMENUITEM
 {
    WORD          wValue;
-   BYTE          szLabel[64];
+   WORD          wNumWord;
    BOOL          fEnabled;
    PAL_POS       pos;
 } MENUITEM, *LPMENUITEM;
@@ -44,7 +121,6 @@ typedef struct tagMENUITEM
 typedef VOID (*LPITEMCHANGED_CALLBACK)(WORD);
 
 #define MENUITEM_VALUE_CANCELLED      0xFFFF
-#define MENUITEM_COLOR                0x4F
 
 typedef enum tagNUMCOLOR
 {
@@ -96,6 +172,7 @@ PAL_ReadMenu(
    LPITEMCHANGED_CALLBACK    lpfnMenuItemChanged,
    LPMENUITEM                rgMenuItem,
    INT                       nMenuItem,
+   WORD                      wDefaultItem,
    BYTE                      bLabelColor
 );
 
@@ -107,6 +184,8 @@ PAL_DrawNumber(
    NUMCOLOR        color,
    NUMALIGN        align
 );
+
+extern LPSPRITE gpSpriteUI;
 
 #ifdef __cplusplus
 }

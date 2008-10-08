@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -48,6 +48,32 @@ PAL_FadeIn(
    INT         iPaletteNum,
    BOOL        fNight,
    INT         iDelay
+);
+
+VOID
+PAL_SceneFade(
+   INT         iPaletteNum,
+   BOOL        fNight,
+   INT         iStep
+);
+
+VOID
+PAL_PaletteFade(
+   INT         iPaletteNum,
+   BOOL        fNight,
+   INT         iDelay
+);
+
+VOID
+PAL_ColorFade(
+   INT        iDelay,
+   BYTE       bColor,
+   BOOL       fFrom
+);
+
+VOID
+PAL_FadeToRed(
+   VOID
 );
 
 #ifdef __cplusplus

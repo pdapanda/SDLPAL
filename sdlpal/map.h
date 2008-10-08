@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -95,6 +95,39 @@ PAL_MapTileIsBlocked(
    BYTE       h,
    LPCPALMAP  lpMap
 );
+
+BYTE
+PAL_MapGetTileHeight(
+   BYTE       x,
+   BYTE       y,
+   BYTE       h,
+   BYTE       ucLayer,
+   LPCPALMAP  lpMap
+);
+
+VOID
+PAL_MapBlitToSurface(
+   LPCPALMAP             lpMap,
+   SDL_Surface          *lpSurface,
+   const SDL_Rect       *lpSrcRect,
+   BYTE                  ucLayer
+);
+
+//
+// Convert map location to the real location
+//
+#define PAL_XYH_TO_POS(x, y, h)                       \
+   PAL_POS((x) * 32 + (h) * 16, (y) * 16 + (h) * 8)
+
+//
+// Convert real location to map location
+//
+#define PAL_POS_TO_XYH(pos, x, y, h)                  \
+{                                                     \
+   (h) = (BYTE)(((PAL_X(pos) % 32) != 0) ? 1 : 0);    \
+   (x) = (BYTE)(PAL_X(pos) / 32);                     \
+   (y) = (BYTE)(PAL_Y(pos) / 16);                     \
+}
 
 #ifdef __cplusplus
 }

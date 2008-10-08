@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "getopt.h"
 
 int     opterr = 1;      // if error message should be printed
 int     optind = 1;      // index into parent argv vector
@@ -63,14 +64,14 @@ getopt(
       if (optind >= nargc || *(place = nargv[optind]) != '-')
       {
          place = EMSG;
-         return (-1);
+         return -1;
       }
       if (place[1] && *++place == '-')
       {
          // found "--"
          ++optind;
          place = EMSG;
-         return (-1);
+         return -1;
       }
    }
 
@@ -78,18 +79,19 @@ getopt(
    if ((optopt = (int)*place++) == (int)':' ||
       !(oli = strchr(ostr, optopt)))
    {
-         //
-         // if the user didn't specify '-' as an option,
-         // assume it means -1.
-         //
-         if (optopt == (int)'-')
-            return (-1);
-         if (!*place)
-            ++optind;
-         if (opterr && *ostr != ':')
-            fprintf(stderr, "%s: illegal option -- %c\n", nargv[0], optopt);
-         return BADCH;
+      //
+      // if the user didn't specify '-' as an option,
+      // assume it means -1.
+      //
+      if (optopt == (int)'-')
+         return -1;
+      if (!*place)
+         ++optind;
+      if (opterr && *ostr != ':')
+         fprintf(stderr, "%s: illegal option -- %c\n", nargv[0], optopt);
+      return BADCH;
    }
+
    if (*++oli != ':')
    {
       // don't need argument
@@ -107,7 +109,7 @@ getopt(
          // no arg
          place = EMSG;
          if (*ostr == ':')
-            return (BADARG);
+            return BADARG;
          if (opterr)
          {
             fprintf(stderr, "%s: option requires an argument -- %c\n",

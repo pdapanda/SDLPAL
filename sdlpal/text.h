@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,14 @@
 
 #ifndef _TEXT_H
 #define _TEXT_H
+
+typedef enum tagDIALOGPOSITION
+{
+   kDialogUpper       = 0,
+   kDialogCenter,
+   kDialogLower,
+   kDialogCenterWindow
+} DIALOGLOCATION;
 
 INT
 PAL_InitText(
@@ -44,7 +52,41 @@ PAL_DrawText(
    LPCSTR     lpszText,
    PAL_POS    pos,
    BYTE       bColor,
-   BOOL       fShadow
+   BOOL       fShadow,
+   BOOL       fUpdate
+);
+
+VOID
+PAL_StartDialog(
+   BYTE         bDialogLocation,
+   BYTE         bFontColor,
+   INT          iNumCharFace,
+   BOOL         fPlayingRNG
+);
+
+VOID
+PAL_ShowDialogText(
+   LPCSTR       szText
+);
+
+VOID
+PAL_ClearDialog(
+   VOID
+);
+
+VOID
+PAL_EndDialog(
+   VOID
+);
+
+BOOL
+PAL_IsInDialog(
+   VOID
+);
+
+BOOL
+PAL_DialogIsPlayingRNG(
+   VOID
 );
 
 #endif

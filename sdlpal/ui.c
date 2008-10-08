@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -17,17 +17,6 @@
 //
 
 #include "main.h"
-
-//
-// The UI sprite is in data.mkf #9
-//
-#define CHUNKNUM_SPRITEUI        9
-
-#define MENUITEM_COLOR_INACTIVE            0x1C
-#define MENUITEM_COLOR_CONFIRMED           0x2C
-#define MENUITEM_COLOR_SELECTED_INACTIVE   0x1F
-#define MENUITEM_COLOR_SELECTED_FIRST      0xF9
-#define MENUITEM_COLOR_SELECTED_TOTALNUM   6
 
 LPSPRITE      gpSpriteUI = NULL;
 
@@ -55,7 +44,7 @@ PAL_InitUI(
    //
    // Load the UI sprite.
    //
-   iSize = PAL_MKFGetChunkSize(CHUNKNUM_SPRITEUI, gpGlobals->fpDATA);
+   iSize = PAL_MKFGetChunkSize(CHUNKNUM_SPRITEUI, gpGlobals->f.fpDATA);
    if (iSize < 0)
    {
       return -1;
@@ -67,7 +56,7 @@ PAL_InitUI(
       return -1;
    }
 
-   PAL_MKFReadChunk(gpSpriteUI, iSize, CHUNKNUM_SPRITEUI, gpGlobals->fpDATA);
+   PAL_MKFReadChunk(gpSpriteUI, iSize, CHUNKNUM_SPRITEUI, gpGlobals->f.fpDATA);
 
    return 0;
 }
@@ -378,6 +367,7 @@ PAL_ReadMenu(
    LPITEMCHANGED_CALLBACK    lpfnMenuItemChanged,
    LPMENUITEM                rgMenuItem,
    INT                       nMenuItem,
+   WORD                      wDefaultItem,
    BYTE                      bLabelColor
 )
 /*++
@@ -394,6 +384,8 @@ PAL_ReadMenu(
 
     [IN]  nMenuItem - Number of menu items.
 
+    [IN]  wDefaultItem - default item index.
+
     [IN]  bLabelColor - color of the labels.
 
   Return value:
@@ -403,60 +395,47 @@ PAL_ReadMenu(
 --*/
 {
    int               i;
-   DWORD             dwColorChangeTime;
-   BYTE              bSelectedColor  = MENUITEM_COLOR_SELECTED_FIRST;
-   WORD              wCurrentItem    = 0;
-   BOOL              fShadow         = (bLabelColor < 0x8) ? FALSE : TRUE;
+   WORD              wCurrentItem    = (wDefaultItem < nMenuItem) ? wDefaultItem : 0;
 
    //
    // Draw all the menu texts.
    //
    for (i = 0; i < nMenuItem; i++)
    {
-      PAL_DrawText(rgMenuItem[i].szLabel, rgMenuItem[i].pos,
-         rgMenuItem[i].fEnabled ? bLabelColor : MENUITEM_COLOR_INACTIVE, fShadow);
-   }
+      BYTE bColor = bLabelColor;
 
-   dwColorChangeTime = SDL_GetTicks() + (800 / MENUITEM_COLOR_SELECTED_TOTALNUM);
+      if (!rgMenuItem[i].fEnabled)
+      {
+         if (i == wCurrentItem)
+         {
+            bColor = MENUITEM_COLOR_SELECTED_INACTIVE;
+         }
+         else
+         {
+            bColor = MENUITEM_COLOR_INACTIVE;
+         }
+      }
+
+      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos,
+         bColor, TRUE, TRUE);
+   }
 
    if (lpfnMenuItemChanged != NULL)
    {
-      (*lpfnMenuItemChanged)(rgMenuItem[0].wValue);
+      (*lpfnMenuItemChanged)(rgMenuItem[wDefaultItem].wValue);
    }
 
-   while (1)
+   while (TRUE)
    {
       PAL_ClearKeyState();
 
       //
-      // See if we should change the highlight color
-      //
-      if (SDL_GetTicks() > dwColorChangeTime)
-      {
-         if ((WORD)bSelectedColor + 1 >=
-            (WORD)MENUITEM_COLOR_SELECTED_FIRST + MENUITEM_COLOR_SELECTED_TOTALNUM)
-         {
-            bSelectedColor = MENUITEM_COLOR_SELECTED_FIRST;
-         }
-         else
-         {
-            bSelectedColor++;
-         }
-         dwColorChangeTime = SDL_GetTicks() + (800 / MENUITEM_COLOR_SELECTED_TOTALNUM);
-      }
-
-      //
-      // Highlight the selected item.
+      // Redraw the selected item if needed.
       //
       if (rgMenuItem[wCurrentItem].fEnabled)
       {
-         PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-            bSelectedColor, fShadow);
-      }
-      else
-      {
-         PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-            MENUITEM_COLOR_SELECTED_INACTIVE, fShadow);
+         PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+            rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
       }
 
       PAL_ProcessEvent();
@@ -473,16 +452,30 @@ PAL_ReadMenu(
             //
             if (rgMenuItem[wCurrentItem].fEnabled)
             {
-               PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-                  bLabelColor, fShadow);
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
             }
             else
             {
-               PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-                  MENUITEM_COLOR_INACTIVE, fShadow);
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
             }
 
             wCurrentItem++;
+
+            //
+            // Highlight the selected item.
+            //
+            if (rgMenuItem[wCurrentItem].fEnabled)
+            {
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+            }
+            else
+            {
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE);
+            }
 
             if (lpfnMenuItemChanged != NULL)
             {
@@ -502,16 +495,30 @@ PAL_ReadMenu(
             //
             if (rgMenuItem[wCurrentItem].fEnabled)
             {
-               PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-                  bLabelColor, fShadow);
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
             }
             else
             {
-               PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-                  MENUITEM_COLOR_INACTIVE, fShadow);
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
             }
 
             wCurrentItem--;
+
+            //
+            // Highlight the selected item.
+            //
+            if (rgMenuItem[wCurrentItem].fEnabled)
+            {
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+            }
+            else
+            {
+               PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+                  rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE);
+            }
 
             if (lpfnMenuItemChanged != NULL)
             {
@@ -526,26 +533,26 @@ PAL_ReadMenu(
          //
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
-            PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-               bLabelColor, fShadow);
+            PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
          }
          else
          {
-            PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-               MENUITEM_COLOR_INACTIVE, fShadow);
+            PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
          }
 
          break;
       }
-      else if (g_InputState.dwKeyPress & kKeyExplore)
+      else if (g_InputState.dwKeyPress & kKeySearch)
       {
          //
          // User pressed Enter
          //
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
-            PAL_DrawText(rgMenuItem[wCurrentItem].szLabel, rgMenuItem[wCurrentItem].pos,
-               MENUITEM_COLOR_CONFIRMED, fShadow);
+            PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_CONFIRMED, FALSE, TRUE);
 
             return rgMenuItem[wCurrentItem].wValue;
          }
@@ -554,7 +561,7 @@ PAL_ReadMenu(
       //
       // Use delay function to avoid high CPU usage.
       //
-      SDL_Delay(1);
+      SDL_Delay(50);
    }
 
    return MENUITEM_VALUE_CANCELLED;

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // Based on PAL MapEditor by Baldur.
@@ -34,33 +34,43 @@ extern "C"
 typedef LPBYTE      LPSPRITE, LPBITMAPRLE;
 typedef LPCBYTE     LPCSPRITE, LPCBITMAPRLE;
 
-typedef INT             PAL_POS;
+typedef DWORD           PAL_POS;
 
-#define PAL_XY(x, y)    (PAL_POS)((((WORD)y) << 16) | ((WORD)x))
+#define PAL_XY(x, y)    (PAL_POS)(((((WORD)(y)) << 16) & 0xFFFF0000) | (((WORD)(x)) & 0xFFFF))
 #define PAL_X(xy)       (SHORT)((xy) & 0xFFFF)
-#define PAL_Y(xy)       (SHORT)((xy) >> 16)
+#define PAL_Y(xy)       (SHORT)(((xy) >> 16) & 0xFFFF)
 
 typedef enum tagPALDIRECTION
 {
-   kDirWest = 0,
+   kDirSouth = 0,
+   kDirWest,
    kDirNorth,
    kDirEast,
-   kDirSouth,
    kDirUnknown
 } PALDIRECTION, *LPPALDIRECTION;
-
-INT
-PAL_RLEDecode(
-   LPCBITMAPRLE    lpBitmapRLE,
-   LPBYTE          lpBuffer,
-   UINT            uiBufferSize
-);
 
 INT
 PAL_RLEBlitToSurface(
    LPCBITMAPRLE      lpBitmapRLE,
    SDL_Surface      *lpDstSurface,
    PAL_POS           pos
+);
+
+INT
+PAL_RLEBlitWithColorShift(
+   LPCBITMAPRLE      lpBitmapRLE,
+   SDL_Surface      *lpDstSurface,
+   PAL_POS           pos,
+   INT               iColorShift
+);
+
+INT
+PAL_RLEBlitMonoColor(
+   LPCBITMAPRLE      lpBitmapRLE,
+   SDL_Surface      *lpDstSurface,
+   PAL_POS           pos,
+   BYTE              bColor,
+   INT               iColorShift
 );
 
 INT
@@ -77,6 +87,11 @@ PAL_RLEGetWidth(
 UINT
 PAL_RLEGetHeight(
    LPCBITMAPRLE      lpBitmapRLE
+);
+
+WORD
+PAL_SpriteGetNumFrames(
+   LPCSPRITE       lpSprite
 );
 
 LPCBITMAPRLE
@@ -105,11 +120,17 @@ PAL_MKFReadChunk(
 );
 
 INT
-PAL_RNGBlitToSurface(
-   INT                      iNumRNG,
-   INT                      iNumFrame,
-   SDL_Surface             *lpDstSurface,
-   FILE                    *fpRngMKF
+PAL_MKFGetDecompressedSize(
+   UINT    uiChunkNum,
+   FILE   *fp
+);
+
+INT
+PAL_MKFDecompressChunk(
+   LPBYTE          lpBuffer,
+   UINT            uiBufferSize,
+   UINT            uiChunkNum,
+   FILE           *fp
 );
 
 // From yj1.c:

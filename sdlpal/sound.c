@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2005-2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,18 @@
 
 static BOOL gSndOpened = FALSE;
 
-typedef struct tagSndPlayer
+BOOL       g_fNoSound = FALSE;
+BOOL       g_fNoMusic = FALSE;
+
+typedef struct tagSNDPLAYER
 {
    FILE                     *mkf;
    SDL_AudioSpec             spec;
    LPBYTE                    buf, pos;
    INT                       audio_len;
-} sndplayer_t;
+} SNDPLAYER;
 
-static sndplayer_t gSndPlayer;
+static SNDPLAYER gSndPlayer;
 
 static SDL_AudioSpec *
 SOUND_LoadVOCFromBuffer(
@@ -133,7 +136,7 @@ SOUND_LoadVOCFromBuffer(
    return lpSpec;
 }
 
-static VOID
+static VOID SDLCALL
 SOUND_FillAudio(
    LPVOID          udata,
    LPBYTE          stream,
@@ -161,12 +164,15 @@ SOUND_FillAudio(
    //
    // Play music
    //
-   RIX_FillBuffer(stream, len);
+   if (!g_fNoMusic)
+   {
+      RIX_FillBuffer(stream, len);
+   }
 
    //
    // No current playing sound
    //
-   if (gSndPlayer.buf == NULL)
+   if (g_fNoSound || gSndPlayer.buf == NULL)
    {
       return;
    }
@@ -237,7 +243,7 @@ SOUND_OpenAudio(
    // Open the sound subsystem.
    //
    gSndPlayer.spec.freq = 22050;
-   gSndPlayer.spec.format = AUDIO_U16;
+   gSndPlayer.spec.format = AUDIO_S16;
    gSndPlayer.spec.channels = 1;
    gSndPlayer.spec.samples = 1024;
    gSndPlayer.spec.callback = SOUND_FillAudio;
@@ -263,7 +269,7 @@ SOUND_OpenAudio(
    RIX_Init("mus.mkf");
 
    //
-   // Let the callback function run so that musics will be proceed.
+   // Let the callback function run so that musics will be played.
    //
    SDL_PauseAudio(0);
 
@@ -290,16 +296,19 @@ SOUND_CloseAudio(
 --*/
 {
    SDL_CloseAudio();
+
    if (gSndPlayer.buf != NULL)
    {
       free(gSndPlayer.buf);
       gSndPlayer.buf = NULL;
    }
+
    if (gSndPlayer.mkf != NULL)
    {
       fclose(gSndPlayer.mkf);
       gSndPlayer.mkf = NULL;
    }
+
    RIX_Shutdown();
 }
 
@@ -325,9 +334,10 @@ SOUND_Play(
    SDL_AudioCVT    wavecvt;
    SDL_AudioSpec   wavespec;
    LPBYTE          buf, bufdec;
-   UINT            len, samplesize;
+   UINT            samplesize;
+   int             len;
 
-   if (!gSndOpened)
+   if (!gSndOpened || g_fNoSound)
    {
       return;
    }

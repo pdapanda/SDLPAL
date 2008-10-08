@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 
 typedef struct tagFont
 {
-   LPWORD           buf_chars;
-   LPBYTE           buf_fonts;
-   INT              num_char;
-} font_t;
+   LPWORD           lpBufChar;
+   LPBYTE           lpBufGlyph;
+   INT              nChar;
+} FONT, *LPFONT;
 
-static font_t *gpFont = NULL;
+static LPFONT gpFont = NULL;
 
 INT
 PAL_InitFont(
@@ -57,7 +57,7 @@ PAL_InitFont(
       return 0;
    }
 
-   gpFont = (font_t *)calloc(1, sizeof(font_t));
+   gpFont = (LPFONT)calloc(1, sizeof(FONT));
    if (gpFont == NULL)
    {
       return -1;
@@ -77,14 +77,14 @@ PAL_InitFont(
    // Get the size of wor16.asc file.
    //
    fseek(fp, 0, SEEK_END);
-   gpFont->num_char = ftell(fp);
-   gpFont->num_char /= 2;
+   gpFont->nChar = ftell(fp);
+   gpFont->nChar /= 2;
 
    //
    // Read all the character codes.
    //
-   gpFont->buf_chars = (LPWORD)calloc(gpFont->num_char, sizeof(WORD));
-   if (gpFont->buf_chars == NULL)
+   gpFont->lpBufChar = (LPWORD)calloc(gpFont->nChar, sizeof(WORD));
+   if (gpFont->lpBufChar == NULL)
    {
       free(gpFont);
       gpFont = NULL;
@@ -92,7 +92,7 @@ PAL_InitFont(
    }
 
    fseek(fp, 0, SEEK_SET);
-   fread(gpFont->buf_chars, sizeof(WORD), gpFont->num_char, fp);
+   fread(gpFont->lpBufChar, sizeof(WORD), gpFont->nChar, fp);
 
    //
    // Close wor16.asc file.
@@ -105,16 +105,16 @@ PAL_InitFont(
    fp = fopen("wor16.fon", "rb");
    if (fp == NULL)
    {
-      free(gpFont->buf_chars);
+      free(gpFont->lpBufChar);
       free(gpFont);
       gpFont = NULL;
       return -3;
    }
 
-   gpFont->buf_fonts = (LPBYTE)calloc(gpFont->num_char, 30);
-   if (gpFont->buf_fonts == NULL)
+   gpFont->lpBufGlyph = (LPBYTE)calloc(gpFont->nChar, 30);
+   if (gpFont->lpBufGlyph == NULL)
    {
-      free(gpFont->buf_chars);
+      free(gpFont->lpBufChar);
       free(gpFont);
       gpFont = NULL;
       return -1;
@@ -124,7 +124,7 @@ PAL_InitFont(
    // The font glyph data begins at offset 0x682 in wor16.fon.
    //
    fseek(fp, 0x682, SEEK_SET);
-   fread(gpFont->buf_fonts, 30, gpFont->num_char, fp);
+   fread(gpFont->lpBufGlyph, 30, gpFont->nChar, fp);
    fclose(fp);
 
    return 0;
@@ -151,10 +151,11 @@ PAL_FreeFont(
 {
    if (gpFont != NULL)
    {
-      free(gpFont->buf_chars);
-      free(gpFont->buf_fonts);
+      free(gpFont->lpBufChar);
+      free(gpFont->lpBufGlyph);
       free(gpFont);
    }
+
    gpFont = NULL;
 }
 
@@ -186,7 +187,7 @@ PAL_DrawCharOnSurface(
 
 --*/
 {
-   int i, j, dx, dy;
+   int i, j, dx;
    int x = PAL_X(pos), y = PAL_Y(pos);
    LPBYTE pChar;
 
@@ -201,15 +202,15 @@ PAL_DrawCharOnSurface(
    //
    // Locate for this character in the font lib.
    //
-   for (i = 0; i < gpFont->num_char; i++)
+   for (i = 0; i < gpFont->nChar; i++)
    {
-      if (gpFont->buf_chars[i] == wChar)
+      if (gpFont->lpBufChar[i] == wChar)
       {
          break;
       }
    }
 
-   if (i >= gpFont->num_char)
+   if (i >= gpFont->nChar)
    {
       //
       // This character does not exist in the font lib.
@@ -217,22 +218,24 @@ PAL_DrawCharOnSurface(
       return;
    }
 
-   pChar = gpFont->buf_fonts + i * 30;
+   pChar = gpFont->lpBufGlyph + i * 30;
 
    //
    // Draw the character to the surface.
    //
+   y *= lpSurface->pitch;
    for (i = 0; i < 30; i++)
    {
+      dx = x + ((i & 1) << 3);
       for (j = 0; j < 8; j++)
       {
          if (pChar[i] & (1 << (7 - j)))
          {
-            dx = x + j + 8 * (i & 1);
-            dy = y + i / 2;
-            ((LPBYTE)(lpSurface->pixels))[dy * lpSurface->pitch + dx] = bColor;
+            ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
          }
+         dx++;
       }
+      y += (i & 1) * lpSurface->pitch;
    }
 }
 
@@ -279,6 +282,7 @@ PAL_DrawASCIICharOnSurface(
    //
    // Draw the character to the surface.
    //
+   y *= lpSurface->pitch;
    for (i = 0; i < 15; i++)
    {
       dx = x;
@@ -286,10 +290,10 @@ PAL_DrawASCIICharOnSurface(
       {
          if (pChar[i] & (1 << j))
          {
-            ((LPBYTE)(lpSurface->pixels))[y * lpSurface->pitch + dx] = bColor;
+            ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
          }
          dx++;
       }
-      y++;
+      y += lpSurface->pitch;
    }
 }

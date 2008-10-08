@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <SDL.h>
 
 #include "palcommon.h"
@@ -175,6 +174,14 @@ PAL_FreeMap(
 --*/
 {
    //
+   // Check for NULL pointer.
+   //
+   if (lpMap == NULL)
+   {
+      return;
+   }
+
+   //
    // Free the tile bitmaps.
    //
    if (lpMap->pTileSprite != NULL)
@@ -290,4 +297,123 @@ PAL_MapTileIsBlocked(
    }
 
    return (lpMap->Tiles[y][x][h] & 0x2000) >> 13;
+}
+
+BYTE
+PAL_MapGetTileHeight(
+   BYTE       x,
+   BYTE       y,
+   BYTE       h,
+   BYTE       ucLayer,
+   LPCPALMAP  lpMap
+)
+/*++
+  Purpose:
+
+    Get the logical height value of the specified tile. This value is used
+    to judge whether the tile bitmap should cover the sprites or not.
+
+  Parameters:
+
+    [IN]  x - Column number of the tile.
+
+    [IN]  y - Line number in the map.
+
+    [IN]  h - Each line in the map has two lines of tiles, 0 and 1.
+              (See map.h for details.)
+
+    [IN]  ucLayer - The layer. 0 for bottom, 1 for top.
+
+    [IN]  lpMap - Pointer to the loaded map.
+
+  Return value:
+
+    The logical height value of the specified tile.
+
+--*/
+{
+   DWORD      d;
+
+   //
+   // Check for invalid parameters.
+   //
+   if (y >= 128 || x >= 64 || h > 1 || lpMap == NULL)
+   {
+      return 0;
+   }
+
+   d = lpMap->Tiles[y][x][h];
+
+   if (ucLayer)
+   {
+      d >>= 16;
+   }
+
+   d >>= 8;
+   return (BYTE)(d & 0xf);
+}
+
+VOID
+PAL_MapBlitToSurface(
+   LPCPALMAP             lpMap,
+   SDL_Surface          *lpSurface,
+   const SDL_Rect       *lpSrcRect,
+   BYTE                  ucLayer
+)
+/*++
+  Purpose:
+
+    Blit the specified map area to a SDL Surface.
+
+  Parameters:
+
+    [IN]  lpMap - Pointer to the map.
+
+    [OUT] lpSurface - Pointer to the destination surface.
+
+    [IN]  lpSrcRect - Pointer to the source area.
+
+    [IN]  ucLayer - The layer. 0 for bottom, 1 for top.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int              sx, sy, dx, dy, x, y, h, xPos, yPos;
+   LPCBITMAPRLE     lpBitmap = NULL;
+
+   //
+   // Convert the coordinate
+   //
+   sy = lpSrcRect->y / 16 - 1;
+   dy = (lpSrcRect->y + lpSrcRect->h) / 16 + 2;
+   sx = lpSrcRect->x / 32 - 1;
+   dx = (lpSrcRect->x + lpSrcRect->w) / 32 + 2;
+
+   //
+   // Do the drawing.
+   //
+   yPos = sy * 16 - 8 - lpSrcRect->y;
+   for (y = sy; y < dy; y++)
+   {
+      for (h = 0; h < 2; h++, yPos += 8)
+      {
+         xPos = sx * 32 + h * 16 - 16 - lpSrcRect->x;
+         for (x = sx; x < dx; x++, xPos += 32)
+         {
+            lpBitmap = PAL_MapGetTileBitmap((BYTE)x, (BYTE)y, (BYTE)h, ucLayer, lpMap);
+            if (lpBitmap == NULL)
+            {
+               if (ucLayer)
+               {
+                  continue;
+               }
+               lpBitmap = PAL_MapGetTileBitmap(0, 0, 0, ucLayer, lpMap);
+            }
+            PAL_RLEBlitToSurface(lpBitmap, lpSurface, PAL_XY(xPos, yPos));
+         }
+      }
+   }
 }

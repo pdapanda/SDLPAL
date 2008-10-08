@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2005-2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -59,21 +59,15 @@ TerminateOnError(
    ...
 );
 
-//
-// from getopt.c:
-//
+void *
+UTIL_malloc(
+   size_t               buffer_size
+);
 
-extern int     opterr;
-extern int     optind;
-extern int     optopt;
-extern int     optreset;
-extern char   *optarg;
-
-int
-getopt(
-   int             nargc,
-   char * const   *nargv,
-   const char     *ostr
+void *
+UTIL_calloc(
+   size_t               n,
+   size_t               size
 );
 
 #ifdef __cplusplus

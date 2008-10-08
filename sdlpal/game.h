@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-INT
-PAL_MainMenu(
-   VOID
-);
+#include "common.h"
+
+#define    FPS             10
+#define    FRAME_TIME      (1000 / FPS)
 
 VOID
 PAL_GameMain(

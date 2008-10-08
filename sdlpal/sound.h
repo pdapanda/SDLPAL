@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2005-2007, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -40,6 +40,9 @@ VOID
 SOUND_Play(
    INT    iSoundNum
 );
+
+extern BOOL       g_fNoSound;
+extern BOOL       g_fNoMusic;
 
 #ifdef __cplusplus
 }
