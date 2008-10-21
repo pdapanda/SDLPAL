@@ -245,8 +245,11 @@ PAL_LoadResources(
       gpResources->nEventObject = gpGlobals->g.rgScene[i + 1].wEventObjectIndex;
       gpResources->nEventObject -= index;
 
-      gpResources->lppEventObjectSprites =
-         (LPSPRITE *)UTIL_calloc(gpResources->nEventObject, sizeof(LPSPRITE));
+      if (gpResources->nEventObject > 0)
+      {
+         gpResources->lppEventObjectSprites =
+            (LPSPRITE *)UTIL_calloc(gpResources->nEventObject, sizeof(LPSPRITE));
+      }
 
       for (i = 0; i < gpResources->nEventObject; i++, index++)
       {

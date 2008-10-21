@@ -240,27 +240,13 @@ PAL_GetEnemyDexterity(
 
    if (g_Battle.rgEnemy[wEnemyIndex].rgStatus[kStatusHaste] != 0)
    {
-      if (s > 300)
-      {
-         s += 100;
-      }
-      else
-      {
-         s *= 4;
-         s /= 3;
-      }
+      s *= 6;
+      s /= 5;
    }
    else if (g_Battle.rgEnemy[wEnemyIndex].rgStatus[kStatusSlow] != 0)
    {
-      if (s > 300)
-      {
-         s -= 100;
-      }
-      else
-      {
-         s *= 2;
-         s /= 3;
-      }
+      s *= 2;
+      s /= 3;
    }
 
    return s;
@@ -342,27 +328,13 @@ PAL_GetPlayerActualDexterity(
 
    if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] != 0)
    {
-      if (wDexterity > 300)
-      {
-         wDexterity += 100;
-      }
-      else
-      {
-         wDexterity *= 4;
-         wDexterity /= 3;
-      }
+      wDexterity *= 6;
+      wDexterity /= 5;
    }
    else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] != 0)
    {
-      if (wDexterity > 300)
-      {
-         wDexterity -= 100;
-      }
-      else
-      {
-         wDexterity *= 2;
-         wDexterity /= 3;
-      }
+      wDexterity *= 2;
+      wDexterity /= 3;
    }
 
    if (PAL_IsPlayerDying(wPlayerRole))
@@ -771,8 +743,8 @@ g_Battle.rgEnemy[i].state = kFighterWait;
    }
 
 ////TEST/////////////////////////////////////////////////////////-START
-g_Battle.iExpGained=0;
-g_Battle.iCashGained=0;
+if (g_Battle.iExpGained==0)
+{
 for(i=g_Battle.wMaxEnemyIndex;i>=0;i--)
 {
    if(g_Battle.rgEnemy[i].wObjectID)
@@ -780,7 +752,7 @@ for(i=g_Battle.wMaxEnemyIndex;i>=0;i--)
       g_Battle.iExpGained += g_Battle.rgEnemy[i].e.wExp;
       g_Battle.iCashGained += g_Battle.rgEnemy[i].e.wCash;
    }
-}
+}}
 if (g_InputState.dwKeyPress & kKeyRepeat){
    for (i = g_Battle.wMaxEnemyIndex; i>=0;i--)
    {
