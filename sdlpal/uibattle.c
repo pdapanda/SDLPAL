@@ -1,3 +1,6 @@
+
+#include "input.h"
+
 //
 // Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
@@ -1011,6 +1014,12 @@ PAL_BattleUIUpdate(
             }
             else if (g_InputState.dwKeyPress & kKeyRepeat)
             {
+            }
+            else if (g_InputState.dwKeyPress & kKeyMenu)
+            {
+               g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].flTimeMeter = 100;
+               g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
+               g_Battle.UI.state = kBattleUIWait;
             }
             break;
 

@@ -809,7 +809,7 @@ PAL_BattleCommitAction(
    {
    case kBattleActionMagic:
       w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber].wCostMP;
-      if (gpGlobals->g.PlayerRoles.rgwMP[g_Battle.UI.wCurPlayerIndex] < w)
+      if (gpGlobals->g.PlayerRoles.rgwMP[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole] < w)
       {
          w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber].wType;
          if (w == kMagicTypeApplyToPlayer || w == kMagicTypeApplyToParty ||
@@ -853,7 +853,7 @@ PAL_BattleCommitAction(
          WORD         wCostMP;
 
          //
-         // The base time of magic is set to the MP costed
+         // The base casting time of magic is set to the MP costed
          //
          p = &(gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber]);
          wCostMP = p->wCostMP;

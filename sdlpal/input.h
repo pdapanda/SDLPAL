@@ -20,6 +20,7 @@
 #define INPUT_H
 
 #include "common.h"
+#include "palcommon.h"
 
 #ifdef __cplusplus
 extern "C"
