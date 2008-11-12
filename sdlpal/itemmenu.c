@@ -63,8 +63,11 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the texts in the current page
    //
-   i = gpGlobals->iCurInvMenuItem / (3 * 7);
-   i *= (3 * 7);
+   i = gpGlobals->iCurInvMenuItem / 3 * 3 - 3 * 3;
+   if (i < 0)
+   {
+      i = 0;
+   }
 
    for (j = 0; j < 7; j++)
    {
@@ -127,8 +130,11 @@ PAL_ItemSelectMenuUpdate(
          //
          // Draw the amount of this item
          //
-         PAL_DrawNumber(gpGlobals->rgInventory[i].nAmount - gpGlobals->rgInventory[i].nAmountInUse,
-            2, PAL_XY(96 + k * 100, 17 + j * 18), kNumColorCyan, kNumAlignRight);
+		 if (gpGlobals->rgInventory[i].nAmount - gpGlobals->rgInventory[i].nAmountInUse > 1)
+		 {
+            PAL_DrawNumber(gpGlobals->rgInventory[i].nAmount - gpGlobals->rgInventory[i].nAmountInUse,
+               2, PAL_XY(96 + k * 100, 17 + j * 18), kNumColorCyan, kNumAlignRight);
+		 }
 
          i++;
       }
@@ -197,7 +203,7 @@ PAL_ItemSelectMenuUpdate(
          gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount >
          gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse)
       {
-         j = (gpGlobals->iCurInvMenuItem / 3) % 7;
+         j = (gpGlobals->iCurInvMenuItem < 3 * 3) ? (gpGlobals->iCurInvMenuItem / 3) : 3;
          k = gpGlobals->iCurInvMenuItem % 3;
 
          PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * 100, 12 + j * 18),

@@ -1,6 +1,3 @@
-
-#include "input.h"
-
 //
 // Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
