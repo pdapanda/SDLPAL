@@ -771,17 +771,14 @@ PAL_StartBattle(
    gpGlobals->wScreenWave = gpGlobals->g.lprgBattleField[gpGlobals->wNumBattleField].wScreenWave;
 
    //
-   // Make sure everyone in the party are alive in boss fight
+   // Make sure everyone in the party is alive
    //
-   if (fIsBoss)
+   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
-      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      w = gpGlobals->rgParty[i].wPlayerRole;
+      if (gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
       {
-         w = gpGlobals->rgParty[i].wPlayerRole;
-         if (gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
-         {
-            gpGlobals->g.PlayerRoles.rgwHP[w] = 1;
-         }
+         gpGlobals->g.PlayerRoles.rgwHP[w] = 1;
       }
    }
 

@@ -205,7 +205,7 @@ PAL_MagicSelectionMenuInit(
 
   Parameters:
 
-    [IN]  wPlayerRole - the player role ID.
+    [IN]  wPlayerRole - the player ID.
 
     [IN]  fInBattle - TRUE if in battle, FALSE if not.
 

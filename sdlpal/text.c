@@ -458,6 +458,16 @@ PAL_StartDialog(
             rect.x = 48 - rect.w / 2;
             rect.y = 55 - rect.h / 2;
 
+            if (rect.x < 0)
+            {
+               rect.x = 0;
+            }
+
+            if (rect.y < 0)
+            {
+               rect.y = 0;
+            }
+
             PAL_RLEBlitToSurface((LPCBITMAPRLE)buf, gpScreen, PAL_XY(rect.x, rect.y));
 
             if (rect.x < 0)
@@ -492,6 +502,16 @@ PAL_StartDialog(
             rect.h = PAL_RLEGetHeight((LPCBITMAPRLE)buf);
             rect.x = 270 - rect.w / 2;
             rect.y = 144 - rect.h / 2;
+
+            if (rect.x + rect.w > 320)
+            {
+               rect.w = 320 - rect.x;
+            }
+
+            if (rect.y + rect.h > 200)
+            {
+               rect.h = 200 - rect.y;
+            }
 
             PAL_RLEBlitToSurface((LPCBITMAPRLE)buf, gpScreen, PAL_XY(rect.x, rect.y));
 
