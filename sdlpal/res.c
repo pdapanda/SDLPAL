@@ -216,8 +216,11 @@ PAL_LoadResources(
    //
    if (gpResources->bLoadFlags & kLoadScene)
    {
-      gpGlobals->wScreenWave = 0;
-      gpGlobals->sWaveProgression = 0;
+      if (gpGlobals->fEnteringScene)
+      {
+         gpGlobals->wScreenWave = 0;
+         gpGlobals->sWaveProgression = 0;
+      }
 
       //
       // Free previous loaded scene (sprites and map)

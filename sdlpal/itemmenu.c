@@ -63,7 +63,7 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the texts in the current page
    //
-   i = gpGlobals->iCurInvMenuItem / 3 * 3 - 3 * 3;
+   i = gpGlobals->iCurInvMenuItem / 3 * 3 - 3 * 4;
    if (i < 0)
    {
       i = 0;
@@ -203,7 +203,7 @@ PAL_ItemSelectMenuUpdate(
          gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount >
          gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse)
       {
-         j = (gpGlobals->iCurInvMenuItem < 3 * 3) ? (gpGlobals->iCurInvMenuItem / 3) : 3;
+         j = (gpGlobals->iCurInvMenuItem < 3 * 4) ? (gpGlobals->iCurInvMenuItem / 3) : 4;
          k = gpGlobals->iCurInvMenuItem % 3;
 
          PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * 100, 12 + j * 18),
