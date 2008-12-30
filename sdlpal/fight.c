@@ -596,6 +596,8 @@ PAL_BattleUIShowText(va("enemy %d attack (2nd)",i), 500);
 else PAL_BattleUIShowText(va("enemy %d attack",i), 500);
 g_Battle.rgEnemy[i].flTimeMeter =0;
 g_Battle.rgEnemy[i].state = kFighterWait;
+
+PAL_BattleUIShowNum(RandomLong(0, 29999), PAL_XY(RandomLong(5, 100), RandomLong(5, 100)), kNumColorCyan);
 ////////////////////////////////////////////////////////////////////
          if (!g_Battle.rgEnemy[i].fFirstMoveDone)
          {

@@ -894,6 +894,8 @@ PAL_StartBattle(
    g_Battle.UI.wSelectedIndex = 0;
    g_Battle.UI.wPrevEnemyTarget = 0;
 
+   memset(g_Battle.UI.rgShowNum, 0, sizeof(g_Battle.UI.rgShowNum));
+
    gpGlobals->fInBattle = TRUE;
    g_Battle.BattleResult = kBattleResultPreBattle;
 

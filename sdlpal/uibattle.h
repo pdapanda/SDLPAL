@@ -79,6 +79,16 @@ typedef enum tagBATTLEUIACTION
 #define TIMEMETER_COLOR_SLOW             0x5B
 #define TIMEMETER_COLOR_HASTE            0x2B
 
+#define BATTLEUI_MAX_SHOWNUM             16
+
+typedef struct tagSHOWNUM
+{
+   WORD             wNum;
+   PAL_POS          pos;
+   WORD             wTime;
+   NUMCOLOR         color;
+} SHOWNUM;
+
 typedef struct tagBATTLEUI
 {
    BATTLEUISTATE    state;
@@ -96,6 +106,8 @@ typedef struct tagBATTLEUI
    WORD             wObjectID;            // object ID of the item or magic to use
 
    BOOL             fAutoAttack;          // TRUE if auto attack
+
+   SHOWNUM          rgShowNum[BATTLEUI_MAX_SHOWNUM];
 } BATTLEUI;
 
 VOID
@@ -121,6 +133,13 @@ PAL_BattleUIPlayerReady(
 VOID
 PAL_BattleUIUpdate(
    VOID
+);
+
+VOID
+PAL_BattleUIShowNum(
+   WORD           wNum,
+   PAL_POS        pos,
+   NUMCOLOR       color
 );
 
 #ifdef __cplusplus

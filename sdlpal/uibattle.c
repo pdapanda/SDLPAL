@@ -880,7 +880,7 @@ PAL_BattleUIUpdate(
       // Draw the icons
       //
       {
-         struct tagBATTLEUIITEMS {
+         struct {
             int               iSpriteNum;
             PAL_POS           pos;
             BATTLEUIACTION    action;
@@ -1321,6 +1321,14 @@ PAL_BattleUIUpdate(
       }
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
+         w = gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber;
+
+         if (gpGlobals->g.lprgMagic[w].wType == kMagicTypeTransform)
+         {
+            if (i != g_Battle.UI.wCurPlayerIndex)
+               continue;
+         }
+
          //
          // Draw arrows on all players, despite of dead or not
          //
@@ -1340,5 +1348,62 @@ PAL_BattleUIUpdate(
          PAL_BattleCommitAction();
       }
       break;
+   }
+
+   //
+   // Draw the numbers
+   //
+   for (i = 0; i < BATTLEUI_MAX_SHOWNUM; i++)
+   {
+      if (g_Battle.UI.rgShowNum[i].wTime > 0)
+      {
+         PAL_DrawNumber(g_Battle.UI.rgShowNum[i].wNum, 5, g_Battle.UI.rgShowNum[i].pos,
+            g_Battle.UI.rgShowNum[i].color, kNumAlignMid);
+
+         g_Battle.UI.rgShowNum[i].wTime--;
+         g_Battle.UI.rgShowNum[i].pos =
+            PAL_XY(PAL_X(g_Battle.UI.rgShowNum[i].pos), PAL_Y(g_Battle.UI.rgShowNum[i].pos) - 1);
+      }
+   }
+}
+
+VOID
+PAL_BattleUIShowNum(
+   WORD           wNum,
+   PAL_POS        pos,
+   NUMCOLOR       color
+)
+/*++
+  Purpose:
+
+    Show a number on battle screen (indicates HP/MP change).
+
+  Parameters:
+
+    [IN]  wNum - number to be shown.
+
+    [IN]  pos - position of the number on the screen.
+
+    [IN]  color - color of the number.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int i;
+
+   for (i = 0; i < BATTLEUI_MAX_SHOWNUM; i++)
+   {
+      if (g_Battle.UI.rgShowNum[i].wTime == 0)
+      {
+         g_Battle.UI.rgShowNum[i].wNum = wNum;
+         g_Battle.UI.rgShowNum[i].pos = pos;
+         g_Battle.UI.rgShowNum[i].color = color;
+         g_Battle.UI.rgShowNum[i].wTime = 10;
+
+         break;
+      }
    }
 }
