@@ -1,13 +1,10 @@
 //
-// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
-// Based on PAL MapEditor by Baldur.
+// This file is part of SDLPAL.
 //
-// Based on PalLibrary by Lou Yihua <louyihua@21cn.com>.
-// Copyright (c) 2006-2007, Lou Yihua.
-//
-// This program is free software: you can redistribute it and/or modify
+// SDLPAL is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.

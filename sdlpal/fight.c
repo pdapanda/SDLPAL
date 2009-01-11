@@ -1,8 +1,10 @@
 //
-// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
-// This program is free software: you can redistribute it and/or modify
+// This file is part of SDLPAL.
+//
+// SDLPAL is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
@@ -104,11 +106,11 @@ PAL_CalcBaseDamage(
    //
    if (wAttackStrength > wDefense)
    {
-      sDamage = (SHORT)(wAttackStrength * 2 - wDefense * 1.6);
+      sDamage = (SHORT)(wAttackStrength * 2 - wDefense * 1.6 + 0.5);
    }
    else if (wAttackStrength > wDefense * 0.6)
    {
-      sDamage = (SHORT)(wAttackStrength - wDefense * 0.6);
+      sDamage = (SHORT)(wAttackStrength - wDefense * 0.6 + 0.5);
    }
    else
    {
@@ -122,7 +124,7 @@ SHORT
 PAL_CalcMagicDamage(
    WORD             wMagicStrength,
    WORD             wDefense,
-   const WORD       rgwAttribResistance[NUM_MAGIC_ATTRIB],
+   const WORD       rgwElementalResistance[NUM_MAGIC_ELEMENTAL],
    WORD             wMagicID
 )
 /*++
@@ -160,14 +162,14 @@ PAL_CalcMagicDamage(
    sDamage = PAL_CalcBaseDamage(wMagicStrength, wDefense) / 2;
    sDamage += gpGlobals->g.lprgMagic[wMagicID].wBaseDamage;
 
-   if (gpGlobals->g.lprgMagic[wMagicID].wAttrib != 0)
+   if (gpGlobals->g.lprgMagic[wMagicID].wElemental != 0)
    {
-      wAttrib = gpGlobals->g.lprgMagic[wMagicID].wAttrib - 1;
+      wAttrib = gpGlobals->g.lprgMagic[wMagicID].wElemental - 1;
 
-      sDamage *= 10 - rgwAttribResistance[wAttrib];
+      sDamage *= 10 - rgwElementalResistance[wAttrib];
       sDamage /= 5;
 
-      if (wAttrib < NUM_MAGIC_ATTRIB)
+      if (wAttrib < NUM_MAGIC_ELEMENTAL)
       {
          sDamage *= 10 + gpGlobals->g.lprgBattleField[gpGlobals->wNumBattleField].rgsMagicEffect[wAttrib];
          sDamage /= 10;
@@ -921,8 +923,29 @@ PAL_BattlePlayerPerformAction(
    // TODO
    switch (g_Battle.rgPlayer[wPlayerIndex].action.ActionType)
    {
+   case kBattleActionAttack:
+      break;
+
+   case kBattleActionAttackMate:
+      break;
+
+   case kBattleActionCoopMagic:
+      break;
+
    case kBattleActionDefend:
       g_Battle.rgPlayer[wPlayerIndex].fDefending = TRUE;
+      break;
+
+   case kBattleActionFlee:
+      break;
+
+   case kBattleActionMagic:
+      break;
+
+   case kBattleActionThrowItem:
+      break;
+
+   case kBattleActionUseItem:
       break;
    }
 }

@@ -1,8 +1,10 @@
 //
-// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
-// This program is free software: you can redistribute it and/or modify
+// This file is part of SDLPAL.
+//
+// SDLPAL is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
@@ -52,7 +54,7 @@ extern "C"
 #define     MAX_STORE_ITEM               9
 
 // total number of magic attributes
-#define     NUM_MAGIC_ATTRIB             5
+#define     NUM_MAGIC_ELEMENTAL          5
 
 // maximum number of enemies in a team
 #define     MAX_ENEMIES_IN_TEAM          5
@@ -284,7 +286,7 @@ typedef struct tagENEMY
    WORD        wDexterity;          // dexterity
    WORD        wFleeRate;           // chance for successful fleeing
    WORD        wPoisonResistance;   // resistance to poison
-   WORD        wAttribResistance[NUM_MAGIC_ATTRIB]; // resistance to attributed magics
+   WORD        wAttribResistance[NUM_MAGIC_ELEMENTAL]; // resistance to attributed magics
    WORD        wAttackResistance;   // resistance to normal attacking
    WORD        wDualMove;           // whether this enemy can do dual move or not
    WORD        wCollectValue;       // value for collecting this enemy for items
@@ -317,7 +319,7 @@ typedef struct tagPLAYERROLES
    PLAYERS            rgwDexterity;          // dexterity
    PLAYERS            rgwFleeRate;           // chance of successful fleeing
    PLAYERS            rgwPoisonResistance;   // resistance to poison
-   WORD               rgwAttribResistance[NUM_MAGIC_ATTRIB][MAX_PLAYER_ROLES]; // resistance to attributed magics
+   WORD               rgwAttribResistance[NUM_MAGIC_ELEMENTAL][MAX_PLAYER_ROLES]; // resistance to attributed magics
    PLAYERS            rgwUnknown2;           // FIXME: ???
    PLAYERS            rgwUnknown3;           // FIXME: ???
    PLAYERS            rgwUnknown4;           // FIXME: ???
@@ -364,14 +366,14 @@ typedef struct tagMAGIC
    WORD               wUnknown;              // FIXME: ???
    WORD               wCostMP;               // MP cost
    WORD               wBaseDamage;           // base damage
-   WORD               wAttrib;               // attribute (0 = No Attrib, last = poison)
+   WORD               wElemental;            // elemental (0 = No Elemental, last = poison)
    WORD               wSound;                // sound played when using this magic
 } MAGIC, *LPMAGIC;
 
 typedef struct tagBATTLEFIELD
 {
    WORD               wScreenWave;                      // level of screen waving
-   SHORT              rgsMagicEffect[NUM_MAGIC_ATTRIB]; // effect of attributed magics
+   SHORT              rgsMagicEffect[NUM_MAGIC_ELEMENTAL]; // effect of attributed magics
 } BATTLEFIELD, *LPBATTLEFIELD;
 
 // magics learned when level up

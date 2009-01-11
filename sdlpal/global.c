@@ -1,8 +1,10 @@
 //
-// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
 // All rights reserved.
 //
-// This program is free software: you can redistribute it and/or modify
+// This file is part of SDLPAL.
+//
+// SDLPAL is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
@@ -1397,7 +1399,8 @@ PAL_GetPlayerDexterity(
 
    w = gpGlobals->g.PlayerRoles.rgwDexterity[wPlayerRole];
 
-   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS; i++)
+//   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS; i++)
+   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS - 1; i++)
    {
       w += gpGlobals->rgEquipmentEffect[i].rgwDexterity[wPlayerRole];
    }
