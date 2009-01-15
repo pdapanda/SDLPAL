@@ -22,7 +22,6 @@
 
 extern WORD g_rgPlayerPos[3][3][2];
 
-static int g_iCurCoopMagicItem = 0;
 static int g_iCurMiscMenuItem = 0;
 static int g_iCurSubMenuItem = 0;
 
@@ -241,7 +240,8 @@ PAL_BattleUIIsActionValid(
          if (gpGlobals->g.PlayerRoles.rgwHP[w] < gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5 ||
             gpGlobals->rgPlayerStatus[w][kStatusSleep] != 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusConfused] != 0 ||
-            g_Battle.rgPlayer[i].flTimeMeter < 40 || g_Battle.rgPlayer[i].state == kFighterAct)
+            g_Battle.rgPlayer[i].flTimeMeter < 100 ||
+            g_Battle.rgPlayer[i].state == kFighterAct)
          {
             return FALSE;
          }
@@ -250,117 +250,6 @@ PAL_BattleUIIsActionValid(
    }
 
    return TRUE;
-}
-
-static WORD
-PAL_CoopMagicSelectionMenuUpdate(
-   VOID
-)
-/*++
-  Purpose:
-
-    Update the menu to the cooperative magic to use.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    The selected player index. 0 if cancelled, 0xFFFF if not confirmed.
-
---*/
-{
-   int            i;
-   WORD           w;
-   BYTE           bColor;
-
-   if (!PAL_BattleUIIsActionValid(kBattleUIActionCoopMagic))
-   {
-      return 0; // cannot use coopmagic
-   }
-
-   //
-   // Draw the box.
-   //
-   PAL_CreateBox(PAL_XY(10, 42), 4, 16, 1, FALSE);
-
-   if (g_iCurCoopMagicItem < 0)
-   {
-      g_iCurCoopMagicItem = 0;
-   }
-   else if (g_iCurCoopMagicItem > gpGlobals->wMaxPartyMemberIndex)
-   {
-      g_iCurCoopMagicItem = gpGlobals->wMaxPartyMemberIndex;
-   }
-
-   //
-   // Draw the menu items.
-   //
-   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
-   {
-      w = PAL_GetPlayerCooperativeMagic(gpGlobals->rgParty[i].wPlayerRole);
-
-      if (i == g_iCurCoopMagicItem)
-      {
-         if (g_Battle.rgPlayer[i].flTimeMeter > 100)
-         {
-            bColor = MENUITEM_COLOR_SELECTED;
-         }
-         else
-         {
-            bColor = MENUITEM_COLOR_SELECTED_INACTIVE;
-         }
-      }
-      else
-      {
-         if (g_Battle.rgPlayer[i].flTimeMeter > 100)
-         {
-            bColor = MENUITEM_COLOR;
-         }
-         else
-         {
-            bColor = MENUITEM_COLOR_INACTIVE;
-         }
-      }
-
-      PAL_DrawText(PAL_GetWord(w), PAL_XY(35 + 87 * i, 54), bColor, TRUE, FALSE);
-
-      //
-      // Draw the cursor when needed
-      //
-      if (i == g_iCurCoopMagicItem)
-      {
-         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR),
-            gpScreen, PAL_XY(60 + 87 * i, 64));
-      }
-   }
-
-   //
-   // Check for inputs
-   //
-   if (g_InputState.dwKeyPress & kKeyLeft)
-   {
-      g_iCurCoopMagicItem--;
-   }
-   else if (g_InputState.dwKeyPress & kKeyRight)
-   {
-      g_iCurCoopMagicItem++;
-   }
-   else if (g_InputState.dwKeyPress & kKeySearch)
-   {
-      if (g_Battle.rgPlayer[g_iCurCoopMagicItem].flTimeMeter > 100)
-      {
-         w = PAL_GetPlayerCooperativeMagic(gpGlobals->rgParty[g_iCurCoopMagicItem].wPlayerRole);
-         return g_iCurCoopMagicItem + 1;
-      }
-   }
-   else if (g_InputState.dwKeyPress & kKeyMenu)
-   {
-      return 0;
-   }
-
-   return 0xFFFF;
 }
 
 static VOID
@@ -975,8 +864,36 @@ PAL_BattleUIUpdate(
                   //
                   // Cooperative magic
                   //
-                  g_Battle.UI.MenuState = kBattleMenuCoopMagicSelect;
-                  g_iCurCoopMagicItem = 0;
+                  w = gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole;
+                  w = PAL_GetPlayerCooperativeMagic(w);
+
+                  g_Battle.UI.wActionType = kBattleActionCoopMagic;
+                  g_Battle.UI.wObjectID = w;
+
+                  if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagUsableToEnemy)
+                  {
+                     if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
+                     {
+                        g_Battle.UI.state = kBattleUISelectTargetEnemyAll;
+                     }
+                     else
+                     {
+                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wPrevEnemyTarget;
+                        g_Battle.UI.state = kBattleUISelectTargetEnemy;
+                     }
+                  }
+                  else
+                  {
+                     if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
+                     {
+                        g_Battle.UI.state = kBattleUISelectTargetPlayerAll;
+                     }
+                     else
+                     {
+                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
+                        g_Battle.UI.state = kBattleUISelectTargetPlayer;
+                     }
+                  }
                   break;
 
                case 3:
@@ -1126,49 +1043,6 @@ PAL_BattleUIUpdate(
                }
             }
             break;
-
-         case kBattleMenuCoopMagicSelect:
-            w = PAL_CoopMagicSelectionMenuUpdate();
-
-            if (w != 0xFFFF)
-            {
-               g_Battle.UI.MenuState = kBattleMenuMain;
-
-               if (w != 0)
-               {
-                  w--;
-
-                  g_Battle.UI.wActionType = kBattleActionCoopMagic;
-                  g_Battle.UI.wObjectID = w;
-                  w = PAL_GetPlayerCooperativeMagic(gpGlobals->rgParty[w].wPlayerRole);
-
-                  if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagUsableToEnemy)
-                  {
-                     if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
-                     {
-                        g_Battle.UI.state = kBattleUISelectTargetEnemyAll;
-                     }
-                     else
-                     {
-                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wPrevEnemyTarget;
-                        g_Battle.UI.state = kBattleUISelectTargetEnemy;
-                     }
-                  }
-                  else
-                  {
-                     if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
-                     {
-                        g_Battle.UI.state = kBattleUISelectTargetPlayerAll;
-                     }
-                     else
-                     {
-                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
-                        g_Battle.UI.state = kBattleUISelectTargetPlayer;
-                     }
-                  }
-               }
-            }
-            break;
          }
       }
       break;
@@ -1188,6 +1062,15 @@ PAL_BattleUIUpdate(
       {
          g_Battle.UI.state = kBattleUISelectMove;
          break;
+      }
+
+      if (g_Battle.UI.wActionType == kBattleActionCoopMagic)
+      {
+         if (!PAL_BattleUIIsActionValid(kBattleActionCoopMagic))
+         {
+            g_Battle.UI.state = kBattleUISelectMove;
+            break;
+         }
       }
 
       if (g_Battle.UI.wSelectedIndex > x)
@@ -1289,6 +1172,15 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetEnemyAll:
+      if (g_Battle.UI.wActionType == kBattleActionCoopMagic)
+      {
+         if (!PAL_BattleUIIsActionValid(kBattleActionCoopMagic))
+         {
+            g_Battle.UI.state = kBattleUISelectMove;
+            break;
+         }
+      }
+
       if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
       {
          //

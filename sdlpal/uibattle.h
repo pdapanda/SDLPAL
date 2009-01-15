@@ -46,7 +46,6 @@ typedef enum tagBATTLEMENUSTATE
    kBattleMenuThrowItemSelect,
    kBattleMenuMisc,
    kBattleMenuMiscItemSubMenu,
-   kBattleMenuCoopMagicSelect,
 } BATTLEMENUSTATE;
 
 typedef enum tagBATTLEUIACTION

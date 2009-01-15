@@ -344,7 +344,8 @@ PAL_GetPlayerActualDexterity(
       //
       // player who is low of HP should be slower
       //
-      wDexterity /= 2;
+      wDexterity *= 2;
+      wDexterity /= 3;
    }
 
    return wDexterity;
@@ -687,18 +688,8 @@ PAL_BattleUIShowNum(RandomLong(0, 29999), PAL_XY(RandomLong(5, 100), RandomLong(
             {
                for (iMax = 0; iMax <= gpGlobals->wMaxPartyMemberIndex; iMax++)
                {
-                  if (iMax == g_Battle.rgPlayer[i].action.wActionID)
-                  {
-                     g_Battle.rgPlayer[iMax].flTimeMeter = 0;
-                     continue;
-                  }
-
-                  if (g_Battle.rgPlayer[iMax].flTimeMeter > 100)
-                  {
-                     g_Battle.rgPlayer[iMax].flTimeMeter = 100;
-                  }
-
-                  g_Battle.rgPlayer[iMax].flTimeMeter -= 40;
+                  g_Battle.rgPlayer[iMax].flTimeMeter = 0;
+                  g_Battle.rgPlayer[iMax].flTimeSpeedModifier = 2.0f;
                }
             }
             else
@@ -747,16 +738,6 @@ PAL_BattleUIShowNum(RandomLong(0, 29999), PAL_XY(RandomLong(5, 100), RandomLong(
    }
 
 ////TEST/////////////////////////////////////////////////////////-START
-if (g_Battle.iExpGained==0)
-{
-for(i=g_Battle.wMaxEnemyIndex;i>=0;i--)
-{
-   if(g_Battle.rgEnemy[i].wObjectID)
-   {
-      g_Battle.iExpGained += g_Battle.rgEnemy[i].e.wExp;
-      g_Battle.iCashGained += g_Battle.rgEnemy[i].e.wCash;
-   }
-}}
 if (g_InputState.dwKeyPress & kKeyRepeat){
    for (i = g_Battle.wMaxEnemyIndex; i>=0;i--)
    {

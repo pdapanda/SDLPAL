@@ -761,7 +761,6 @@ PAL_StartBattle(
    int            i;
    WORD           w, wPrevWaveLevel;
    SHORT          sPrevWaveProgression;
-   WORD           wAvgDexterity;
 
    //
    // Set the screen waving effects
@@ -793,17 +792,6 @@ PAL_StartBattle(
    }
 
    //
-   // Calculate the average player dexterity
-   //
-   wAvgDexterity = 0;
-   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
-   {
-       w = gpGlobals->rgParty[i].wPlayerRole;
-       wAvgDexterity += PAL_GetPlayerDexterity(w);
-   }
-   wAvgDexterity /= gpGlobals->wMaxPartyMemberIndex + 1;
-
-   //
    // Store all enemies
    //
    for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
@@ -825,23 +813,6 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].wScriptOnBattleEnd = gpGlobals->g.rgObject[w].enemy.wScriptOnBattleEnd;
          g_Battle.rgEnemy[i].wScriptOnReady = gpGlobals->g.rgObject[w].enemy.wScriptOnReady;
          g_Battle.rgEnemy[i].flTimeMeter = 50;
-/*
-         //
-         // Modify the dexterity value so that it won't be too easy or too hard
-         //
-         if (g_Battle.rgEnemy[i].e.wDexterity + (g_Battle.rgEnemy[i].e.wLevel + 6) * 3 >
-            wAvgDexterity * 3 / 2)
-         {
-             g_Battle.rgEnemy[i].e.wDexterity =
-                wAvgDexterity * 3 / 2 - (g_Battle.rgEnemy[i].e.wLevel + 6) * 3;
-         }
-         else if (g_Battle.rgEnemy[i].e.wDexterity + (g_Battle.rgEnemy[i].e.wLevel + 6) * 3 <
-            wAvgDexterity * 2 / 3)
-         {
-             g_Battle.rgEnemy[i].e.wDexterity =
-                wAvgDexterity * 2 / 3 - (g_Battle.rgEnemy[i].e.wLevel + 6) * 3;
-         }
-*/
       }
    }
 
@@ -887,6 +858,16 @@ PAL_StartBattle(
 
    g_Battle.iExpGained = 0;
    g_Battle.iCashGained = 0;
+
+   for (i = g_Battle.wMaxEnemyIndex; i >= 0; i--)
+   {
+      if (g_Battle.rgEnemy[i].wObjectID)
+      {
+         g_Battle.iExpGained += g_Battle.rgEnemy[i].e.wExp;
+         g_Battle.iCashGained += g_Battle.rgEnemy[i].e.wCash;
+      }
+   }
+
    g_Battle.fIsBoss = fIsBoss;
 
    g_Battle.UI.szMsg[0] = '\0';
