@@ -597,25 +597,25 @@ PAL_FadeToRed(
 
          if (newpalette[j].r > color)
          {
-            newpalette[j].r -= 4;
+            newpalette[j].r -= (newpalette[j].r - color > 8 ? 8 : newpalette[j].r - color);
          }
          else if (newpalette[j].r < color)
          {
-            newpalette[j].r += 4;
+            newpalette[j].r += (color - newpalette[j].r > 8 ? 8 : color - newpalette[j].r);
          }
 
          if (newpalette[j].g > 0)
          {
-            newpalette[j].g -= 4;
+            newpalette[j].g -= (newpalette[j].g > 8 ? 8 : newpalette[j].g);
          }
 
          if (newpalette[j].b > 0)
          {
-            newpalette[j].b -= 4;
+            newpalette[j].b -= (newpalette[j].b > 8 ? 8 : newpalette[j].b);
          }
       }
 
       VIDEO_SetPalette(newpalette);
-      UTIL_Delay(40);
+      UTIL_Delay(80);
    }
 }

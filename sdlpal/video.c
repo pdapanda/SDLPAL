@@ -697,3 +697,4 @@ VIDEO_FadeScreen(
    //
    VIDEO_UpdateScreen(NULL);
 }
+

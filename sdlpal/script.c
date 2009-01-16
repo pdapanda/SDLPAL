@@ -737,6 +737,29 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0021:
+      //
+      // Inflict damage to the enemy
+      //
+      if (pScript->rgwOperand[0])
+      {
+         //
+         // Inflict damage to all enemies
+         //
+         for (i = 0;i <= g_Battle.wMaxEnemyIndex; i++)
+         {
+            if (g_Battle.rgEnemy[i].wObjectID != 0)
+            {
+               g_Battle.rgEnemy[i].e.wHealth -= pScript->rgwOperand[1];
+            }
+         }
+      }
+      else
+      {
+         //
+         // Inflict damage to one enemy
+         //
+         g_Battle.rgEnemy[wEventObjectID].e.wHealth -= pScript->rgwOperand[1];
+      }
       break;
 
    case 0x0022:
@@ -2120,6 +2143,7 @@ PAL_InterpretInstruction(
    case 0x009B:
       //
       // Fade to the current scene
+      // FIXME: This is obviously wrong
       //
       VIDEO_BackupScreen();
       PAL_MakeScene();
@@ -2389,7 +2413,7 @@ PAL_RunTriggerScript(
          //
          // Jump to the specified address by the specified rate
          //
-         if (RandomLong(1, 100) >= pScript->rgwOperand[0] && pScript->rgwOperand[1] != 0)
+         if (RandomLong(1, 100) >= pScript->rgwOperand[0])
          {
             wScriptEntry = pScript->rgwOperand[1];
             continue;
