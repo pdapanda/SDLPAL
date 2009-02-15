@@ -90,7 +90,7 @@ typedef unsigned short      USHORT, *PUSHORT;
 typedef unsigned char       UCHAR, *PUCHAR;
 
 typedef unsigned short      WORD, *LPWORD;
-typedef unsigned long       DWORD, *LPDWORD;
+typedef unsigned int        DWORD, *LPDWORD;
 typedef int                 INT, *LPINT, BOOL, *LPBOOL;
 typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;
 typedef unsigned char       BYTE, *LPBYTE;
