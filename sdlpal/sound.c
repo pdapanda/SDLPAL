@@ -354,6 +354,11 @@ SOUND_Play(
       free(p);
    }
 
+   if (iSoundNum < 0)
+   {
+      return;
+   }
+
    //
    // Get the length of the sound file.
    //

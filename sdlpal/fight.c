@@ -351,6 +351,112 @@ PAL_GetPlayerActualDexterity(
    return wDexterity;
 }
 
+static VOID
+PAL_BattleDelay(
+   WORD       wDuration
+)
+/*++
+  Purpose:
+
+    Delay a while during battle.
+
+  Parameters:
+
+    [IN]  wDuration - Number of frames of the delay.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int    i;
+   DWORD  dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
+
+   PAL_BattleMakeScene();
+
+   for (i = 0; i < wDuration; i++)
+   {
+      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      PAL_BattleUIUpdate();
+
+      //
+      // Clear the input state of previous frame.
+      //
+      PAL_ClearKeyState();
+
+      //
+      // Wait for the time of one frame. Accept input here.
+      //
+      PAL_ProcessEvent();
+      while (SDL_GetTicks() <= dwTime)
+      {
+         PAL_ProcessEvent();
+         SDL_Delay(1);
+      }
+
+      //
+      // Set the time of the next frame.
+      //
+      dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
+
+      VIDEO_UpdateScreen(NULL);
+   }
+}
+
+static VOID
+PAL_BattlePostActionCheck(
+   VOID
+)
+/*++
+  Purpose:
+
+    Essential checks after an action is executed.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int      i;
+   BOOL     fFade = FALSE, fPaused = FALSE;
+
+   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+   {
+      if (g_Battle.rgEnemy[i].wObjectID == 0)
+      {
+         continue;
+      }
+
+      if (g_Battle.rgEnemy[i].e.wHealth == 0)
+      {
+         //
+         // This enemy is KO'ed
+         //
+         if (!fPaused)
+         {
+            PAL_BattleDelay(10);
+            fPaused = TRUE;
+         }
+         SOUND_Play(g_Battle.rgEnemy[i].e.wDeathSound);
+         g_Battle.rgEnemy[i].wObjectID = 0;
+         fFade = TRUE;
+      }
+   }
+
+   if (fFade)
+   {
+      PAL_BattleBackupScene();
+      PAL_BattleMakeScene();
+      PAL_BattleFadeScene();
+   }
+}
+
 VOID
 PAL_BattleUpdateFighters(
    VOID
@@ -516,6 +622,7 @@ PAL_BattleStartFrame(
       // All enemies are cleared. Won the battle.
       //
       g_Battle.BattleResult = kBattleResultWon;
+      SOUND_Play(-1);
       return;
    }
    else
@@ -599,13 +706,11 @@ PAL_BattleUIShowText(va("enemy %d attack (2nd)",i), 500);
 else PAL_BattleUIShowText(va("enemy %d attack",i), 500);
 g_Battle.rgEnemy[i].flTimeMeter =0;
 g_Battle.rgEnemy[i].state = kFighterWait;
-
-PAL_BattleUIShowNum(RandomLong(0, 29999), PAL_XY(RandomLong(5, 100), RandomLong(5, 100)), kNumColorCyan);
 ////////////////////////////////////////////////////////////////////
          if (!g_Battle.rgEnemy[i].fFirstMoveDone)
          {
             if (g_Battle.rgEnemy[i].e.wDualMove >= 2 ||
-               g_Battle.rgEnemy[i].e.wDualMove != 0 && RandomLong(0, 1))
+               (g_Battle.rgEnemy[i].e.wDualMove != 0 && RandomLong(0, 1)))
             {
                g_Battle.rgEnemy[i].flTimeMeter = 100;
                g_Battle.rgEnemy[i].state = kFighterWait;
@@ -743,13 +848,10 @@ if (g_InputState.dwKeyPress & kKeyRepeat){
    {
       if(g_Battle.rgEnemy[i].wObjectID)
       {
-         g_Battle.rgEnemy[i].wObjectID=0;
+         g_Battle.rgEnemy[i].e.wHealth=0;
          break;
       }
    }
-   PAL_BattleBackupScene();
-   PAL_BattleMakeScene();
-   PAL_BattleFadeScene();
 }else if (g_InputState.dwKeyPress & kKeyFlee){
     for (i = 0; i < 5; i++){
         gpGlobals->g.PlayerRoles.rgwHP[i] = 0;
@@ -823,15 +925,6 @@ PAL_BattleCommitAction(
    //
    switch (g_Battle.UI.wActionType)
    {
-   case kBattleActionAttack:
-   case kBattleActionThrowItem:
-   case kBattleActionUseItem:
-      //
-      // Attacking and item-using should take very short
-      //
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = RandomFloat(0, 5);
-      break;
-
    case kBattleActionMagic:
       {
          LPMAGIC      p;
@@ -882,6 +975,28 @@ PAL_BattleCommitAction(
    g_Battle.UI.state = kBattleUIWait;
 }
 
+static VOID
+PAL_BattleShowPlayerAttackAnim(
+   WORD        wPlayerIndex
+)
+/*++
+  Purpose:
+
+    Show the physical attack effect for player
+
+  Parameters:
+
+    [IN]  wPlayerIndex - the index of the player.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   // TODO
+}
+
 VOID
 PAL_BattlePlayerPerformAction(
    WORD         wPlayerIndex
@@ -902,9 +1017,154 @@ PAL_BattlePlayerPerformAction(
 --*/
 {
    // TODO
+   SHORT    sDamage;
+   WORD     wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+   SHORT    sTarget = g_Battle.rgPlayer[wPlayerIndex].action.sTarget;
+   int      x, y;
+   int      i;
+
    switch (g_Battle.rgPlayer[wPlayerIndex].action.ActionType)
    {
    case kBattleActionAttack:
+      if (sTarget != -1)
+      {
+         //
+         // Attack one enemy
+         //
+         WORD str = PAL_GetPlayerAttackStrength(wPlayerRole);
+         WORD def = g_Battle.rgEnemy[sTarget].e.wDefense;
+         def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
+         WORD res = g_Battle.rgEnemy[sTarget].e.wAttackResistance;
+         WORD sfx = gpGlobals->g.PlayerRoles.rgwAttackSound[wPlayerRole];
+
+         sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
+
+         if (RandomLong(0, 5) == 0)
+         {
+            //
+            // Critical Hit
+            //
+            sDamage *= 3;
+            sfx = gpGlobals->g.PlayerRoles.rgwCriticalSound[wPlayerRole];
+         }
+
+         if (wPlayerRole == 0 && RandomLong(0, 11) == 0)
+         {
+            //
+            // Bonus hit for Li Xiaoyao
+            //
+            sDamage *= 2;
+            sfx = gpGlobals->g.PlayerRoles.rgwCriticalSound[wPlayerIndex];
+         }
+
+         if (g_Battle.rgEnemy[sTarget].e.wHealth > (WORD)sDamage)
+         {
+            g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
+         }
+         else
+         {
+            g_Battle.rgEnemy[sTarget].e.wHealth = 0;
+         }
+
+         SOUND_Play(sfx);
+         PAL_BattleShowPlayerAttackAnim(wPlayerIndex);
+
+         if (sDamage > 0)
+         {
+            x = PAL_X(g_Battle.rgEnemy[sTarget].pos);
+            y = PAL_Y(g_Battle.rgEnemy[sTarget].pos) - 70;
+
+            x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[sTarget].lpSprite, g_Battle.rgEnemy[sTarget].wCurrentFrame)) / 2;
+            y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[sTarget].lpSprite, g_Battle.rgEnemy[sTarget].wCurrentFrame)) / 2;
+
+            if (y < 10)
+            {
+                y = 10;
+            }
+
+            PAL_BattleUIShowNum((WORD)sDamage, PAL_XY(x, y), kNumColorBlue);
+         }
+      }
+      else
+      {
+         //
+         // Attack all enemies
+         //
+         int critical = (RandomLong(0, 5) == 0);
+         int division = 1;
+         const int index[MAX_ENEMIES_IN_TEAM] = {2, 1, 0, 4, 3};
+
+         WORD str, def, res;
+         WORD sfx;
+
+         if (critical)
+         {
+            sfx = gpGlobals->g.PlayerRoles.rgwCriticalSound[wPlayerRole];
+         }
+         else
+         {
+            sfx = gpGlobals->g.PlayerRoles.rgwAttackSound[wPlayerRole];
+         }
+
+         for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
+         {
+            if (g_Battle.rgEnemy[index[i]].wObjectID == 0 ||
+               index[i] > g_Battle.wMaxEnemyIndex)
+            {
+               continue;
+            }
+
+            str = PAL_GetPlayerAttackStrength(wPlayerRole);
+            def = g_Battle.rgEnemy[index[i]].e.wDefense;
+            def += (g_Battle.rgEnemy[index[i]].e.wLevel + 6) * 4;
+            res = g_Battle.rgEnemy[index[i]].e.wAttackResistance;
+
+            sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
+            if (critical)
+            {
+               //
+               // Critical Hit
+               //
+               sDamage *= 3;
+            }
+
+            sDamage /= division;
+
+            if (g_Battle.rgEnemy[index[i]].e.wHealth > (WORD)sDamage)
+            {
+               g_Battle.rgEnemy[index[i]].e.wHealth -= sDamage;
+            }
+            else
+            {
+               g_Battle.rgEnemy[index[i]].e.wHealth = 0;
+            }
+
+            if (sDamage > 0)
+            {
+               x = PAL_X(g_Battle.rgEnemy[index[i]].pos);
+               y = PAL_Y(g_Battle.rgEnemy[index[i]].pos) - 70;
+
+               x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[index[i]].lpSprite, g_Battle.rgEnemy[index[i]].wCurrentFrame)) / 2;
+               y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[index[i]].lpSprite, g_Battle.rgEnemy[index[i]].wCurrentFrame)) / 2;
+
+               if (y < 10)
+               {
+                  y = 10;
+               }
+
+               PAL_BattleUIShowNum((WORD)sDamage, PAL_XY(x, y), kNumColorBlue);
+            }
+
+            division++;
+            if (division > 3)
+            {
+               division = 3;
+            }
+         }
+
+         SOUND_Play(sfx);
+         PAL_BattleShowPlayerAttackAnim(wPlayerIndex);
+      }
       break;
 
    case kBattleActionAttackMate:
@@ -929,4 +1189,6 @@ PAL_BattlePlayerPerformAction(
    case kBattleActionUseItem:
       break;
    }
+
+   PAL_BattlePostActionCheck();
 }

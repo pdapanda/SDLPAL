@@ -18,8 +18,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef RIX_H
-#define RIX_H
+#ifndef RIX_PLAY_H
+#define RIX_PLAY_H
 
 #include "common.h"
 

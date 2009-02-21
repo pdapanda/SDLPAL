@@ -702,20 +702,16 @@ PAL_BattleUIUpdate(
    if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
    {
       //
-      // Draw a box.
-      //
-      PAL_CreateBorderBox(PAL_XY(1, 0), 318, 18, 0x52);
-
-      //
       // Draw the text message.
       //
-      PAL_DrawText(g_Battle.UI.szMsg, PAL_XY(160 - 4 * strlen(g_Battle.UI.szMsg), 2),
-         MENUITEM_COLOR_CONFIRMED, TRUE, FALSE);
+      PAL_DrawText(g_Battle.UI.szMsg, PAL_XY(160 - 4 * strlen(g_Battle.UI.szMsg), 65),
+         MENUITEM_COLOR, TRUE, FALSE);
    }
 
    if (g_InputState.dwKeyPress & kKeyAuto)
    {
       g_Battle.UI.fAutoAttack = !g_Battle.UI.fAutoAttack;
+      g_Battle.UI.MenuState = kBattleMenuMain;
    }
    else if (g_InputState.dwKeyPress & kKeyStatus)
    {
@@ -728,8 +724,15 @@ PAL_BattleUIUpdate(
    //
    if (g_Battle.UI.fAutoAttack)
    {
-      PAL_DrawText(PAL_GetWord(BATTLEUI_LABEL_AUTO), PAL_XY(280, 10),
-         MENUITEM_COLOR, TRUE, FALSE);
+      if (g_InputState.dwKeyPress & kKeyMenu)
+      {
+         g_Battle.UI.fAutoAttack = FALSE;
+      }
+      else
+      {
+         PAL_DrawText(PAL_GetWord(BATTLEUI_LABEL_AUTO), PAL_XY(280, 10),
+            MENUITEM_COLOR, TRUE, FALSE);
+      }
    }
 
    if (g_Battle.UI.state != kBattleUIWait)
@@ -746,6 +749,29 @@ PAL_BattleUIUpdate(
          g_Battle.UI.state = kBattleUIWait;
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].flTimeMeter = 0;
 
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0 &&
+            gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] != 0 &&
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] == 0)
+         {
+         }
+
+         return; // don't go further
+      }
+
+      if (g_Battle.UI.fAutoAttack)
+      {
+         g_Battle.UI.wActionType = kBattleActionAttack;
+
+         if (PAL_PlayerCanAttackAll(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole))
+         {
+            g_Battle.UI.wSelectedIndex = -1;
+         }
+         else
+         {
+            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+         }
+
+         PAL_BattleCommitAction();
          return; // don't go further
       }
 
@@ -1293,7 +1319,7 @@ PAL_BattleUIShowNum(
       if (g_Battle.UI.rgShowNum[i].wTime == 0)
       {
          g_Battle.UI.rgShowNum[i].wNum = wNum;
-         g_Battle.UI.rgShowNum[i].pos = pos;
+         g_Battle.UI.rgShowNum[i].pos = PAL_XY(PAL_X(pos) - 15, PAL_Y(pos));
          g_Battle.UI.rgShowNum[i].color = color;
          g_Battle.UI.rgShowNum[i].wTime = 10;
 

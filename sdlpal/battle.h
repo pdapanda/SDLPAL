@@ -89,6 +89,9 @@ typedef struct tagBATTLEENEMY
    WORD               wScriptOnTurnStart;
    WORD               wScriptOnBattleEnd;
    WORD               wScriptOnReady;
+
+   WORD               wPrevHP;              // HP value prior to action
+   WORD               wPrevMP;              // MP value prior to action
 } BATTLEENEMY;
 
 // We only put some data used in battle here; other data can be accessed in the global data.
@@ -105,6 +108,8 @@ typedef struct tagBATTLEPLAYER
    FIGHTERSTATE       state;                // state of this player
    BATTLEACTION       action;               // action to perform
    BOOL               fDefending;           // TRUE if player is defending
+   WORD               wPrevHP;              // HP value prior to action
+   WORD               wPrevMP;              // MP value prior to action
 } BATTLEPLAYER;
 
 typedef struct tagSUMMON

@@ -236,6 +236,8 @@ PAL_ReadGlobalGameData(
       5, gpGlobals->f.fpDATA);
    LOAD_DATA(p->lprgLevelUpMagic, p->nLevelUpMagic * sizeof(LEVELUPMAGIC_ALL),
       6, gpGlobals->f.fpDATA);
+   LOAD_DATA(p->rgwBattleEffectIndex, sizeof(p->rgwBattleEffectIndex),
+      11, gpGlobals->f.fpDATA);
    PAL_MKFReadChunk((LPBYTE)&(p->EnemyPos), sizeof(p->EnemyPos),
       13, gpGlobals->f.fpDATA);
    DO_BYTESWAP(&(p->EnemyPos), sizeof(p->EnemyPos));
@@ -1498,11 +1500,11 @@ PAL_GetPlayerAttribResistance(
    WORD       w;
    int        i;
 
-   w = gpGlobals->g.PlayerRoles.rgwAttribResistance[iAttrib][wPlayerRole];
+   w = gpGlobals->g.PlayerRoles.rgwElementalResistance[iAttrib][wPlayerRole];
 
    for (i = 0; i <= MAX_PLAYER_EQUIPMENTS; i++)
    {
-      w += gpGlobals->rgEquipmentEffect[i].rgwAttribResistance[iAttrib][wPlayerRole];
+      w += gpGlobals->rgEquipmentEffect[i].rgwElementalResistance[iAttrib][wPlayerRole];
    }
 
    return w;

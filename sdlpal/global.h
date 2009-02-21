@@ -319,7 +319,7 @@ typedef struct tagPLAYERROLES
    PLAYERS            rgwDexterity;          // dexterity
    PLAYERS            rgwFleeRate;           // chance of successful fleeing
    PLAYERS            rgwPoisonResistance;   // resistance to poison
-   WORD               rgwAttribResistance[NUM_MAGIC_ELEMENTAL][MAX_PLAYER_ROLES]; // resistance to attributed magics
+   WORD               rgwElementalResistance[NUM_MAGIC_ELEMENTAL][MAX_PLAYER_ROLES]; // resistance to elemental magics
    PLAYERS            rgwUnknown2;           // FIXME: ???
    PLAYERS            rgwUnknown3;           // FIXME: ???
    PLAYERS            rgwUnknown4;           // FIXME: ???
@@ -433,6 +433,8 @@ typedef struct tagGAMEDATA
 
    ENEMYPOS                EnemyPos;
    LEVELUPEXP              rgLevelUpExp[MAX_LEVELS + 1];
+
+   WORD                    rgwBattleEffectIndex[10][2];
 } GAMEDATA, *LPGAMEDATA;
 
 typedef struct tagFILES

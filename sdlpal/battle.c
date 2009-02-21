@@ -154,7 +154,7 @@ PAL_BattleFadeScene(
             SDL_PollEvent(NULL);
             SDL_Delay(1);
          }
-         time = SDL_GetTicks() + 20;
+         time = SDL_GetTicks() + 35;
 
          //
          // Blend the pixels in the 2 buffers, and put the result into the
@@ -826,7 +826,7 @@ PAL_StartBattle(
       w = gpGlobals->rgParty[i].wPlayerRole;
 
       g_Battle.rgPlayer[i].wBattleSprite = PAL_GetPlayerBattleSprite(w);
-      g_Battle.rgPlayer[i].flTimeMeter = 0;
+      g_Battle.rgPlayer[i].flTimeMeter = 15.0f;
       g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
       g_Battle.rgPlayer[i].wHidingTime = 0;
       g_Battle.rgPlayer[i].state = kFighterWait;
