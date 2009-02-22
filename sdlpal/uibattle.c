@@ -495,9 +495,10 @@ PAL_BattleUIPlayerReady(
    g_Battle.UI.MenuState = kBattleMenuMain;
 
    //
-   // Play a voice which indicates the player is ready
+   // Play a sound which indicates the player is ready
    //
-   SOUND_Play(gpGlobals->g.PlayerRoles.rgwReadySound[gpGlobals->rgParty[wPlayerIndex].wPlayerRole]);
+//   SOUND_Play(gpGlobals->g.PlayerRoles.rgwReadySound[gpGlobals->rgParty[wPlayerIndex].wPlayerRole]);
+   SOUND_Play(78);
 }
 
 static VOID
