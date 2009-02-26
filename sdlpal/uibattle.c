@@ -755,7 +755,7 @@ PAL_BattleUIUpdate(
          {
          }
 
-         return; // don't go further
+         goto end; // don't go further
       }
 
       if (g_Battle.UI.fAutoAttack)
@@ -772,7 +772,7 @@ PAL_BattleUIUpdate(
          }
 
          PAL_BattleCommitAction();
-         return; // don't go further
+         goto end; // don't go further
       }
 
       //
@@ -1270,6 +1270,7 @@ PAL_BattleUIUpdate(
       break;
    }
 
+end:
    //
    // Draw the numbers
    //

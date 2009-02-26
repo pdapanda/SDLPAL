@@ -975,6 +975,13 @@ PAL_BattleCommitAction(
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = RandomFloat(25, 75);
       break;
 
+   case kBattleActionDefend:
+      //
+      // Defend takes no time
+      //
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 0;
+      break;
+
    default:
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 5;
       break;
@@ -1211,6 +1218,31 @@ PAL_BattleShowPlayerAttackAnim(
    }
 }
 
+static VOID
+PAL_BattlePlayerValidateAction(
+   WORD         wPlayerIndex
+)
+/*++
+  Purpose:
+
+    Validate player's action, fallback to other action when needed.
+
+  Parameters:
+
+    [IN]  wPlayerIndex - the index of the player.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   // TODO
+   switch (g_Battle.rgPlayer[wPlayerIndex].action.ActionType)
+   {
+   }
+}
+
 VOID
 PAL_BattlePlayerPerformAction(
    WORD         wPlayerIndex
@@ -1237,6 +1269,8 @@ PAL_BattlePlayerPerformAction(
    int      x, y;
    int      i, t;
 
+   PAL_BattlePlayerValidateAction(wPlayerIndex);
+
    switch (g_Battle.rgPlayer[wPlayerIndex].action.ActionType)
    {
    case kBattleActionAttack:
@@ -1248,6 +1282,7 @@ PAL_BattlePlayerPerformAction(
          if (g_Battle.rgEnemy[sTarget].wObjectID == 0)
          {
             sTarget = PAL_BattleSelectAutoTarget();
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = sTarget;
          }
 
          for (t = 0; t < (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusDualAttack] ? 2 : 1); t++)
