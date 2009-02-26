@@ -1022,7 +1022,7 @@ PAL_BattleShowPlayerAttackAnim(
 
       enemy_x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[sTarget].lpSprite, g_Battle.rgEnemy[sTarget].wCurrentFrame)) / 2;
       enemy_h = PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[sTarget].lpSprite, g_Battle.rgEnemy[sTarget].wCurrentFrame));
-      enemy_y += enemy_h / 2;
+      enemy_y += enemy_h;
 
       if (sTarget >= 3)
       {
@@ -1032,7 +1032,7 @@ PAL_BattleShowPlayerAttackAnim(
    else
    {
       enemy_x = 150;
-      enemy_y = 60;
+      enemy_y = 100;
    }
 
    index = gpGlobals->g.rgwBattleEffectIndex[gpGlobals->g.PlayerRoles.rgwSpriteNumInBattle[wPlayerRole]][1];
@@ -1059,13 +1059,13 @@ PAL_BattleShowPlayerAttackAnim(
    g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 8;
    w = PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, 8));
    h = PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, 8));
-   g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x - w / 2, y - h / 2);
+   g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x - w / 2, y - h);
 
    PAL_BattleDelay(2);
 
    x -= 10;
    y -= 2;
-   g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x - w / 2, y - h / 2);
+   g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x - w / 2, y - h);
 
    PAL_BattleDelay(1);
 
@@ -1130,7 +1130,7 @@ PAL_BattleShowPlayerAttackAnim(
       PAL_BattleMakeScene();
       SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
 
-      PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b) / 2));
+      PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
       x -= 16;
       y += 16;
 

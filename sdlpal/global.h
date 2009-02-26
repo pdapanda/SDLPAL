@@ -286,7 +286,7 @@ typedef struct tagENEMY
    WORD        wDexterity;          // dexterity
    WORD        wFleeRate;           // chance for successful fleeing
    WORD        wPoisonResistance;   // resistance to poison
-   WORD        wAttribResistance[NUM_MAGIC_ELEMENTAL]; // resistance to attributed magics
+   WORD        wElemResistance[NUM_MAGIC_ELEMENTAL]; // resistance to elemental magics
    WORD        wAttackResistance;   // resistance to normal attacking
    WORD        wDualMove;           // whether this enemy can do dual move or not
    WORD        wCollectValue;       // value for collecting this enemy for items
@@ -333,7 +333,7 @@ typedef struct tagPLAYERROLES
    PLAYERS            rgwAttackSound;        // sound played when player attacks
    PLAYERS            rgwWeaponSound;        // weapon sound (???)
    PLAYERS            rgwCriticalSound;      // sound played when player make critical hits
-   PLAYERS            rgwReadySound;         // sound played when player is ready
+   PLAYERS            rgwMagicSound;         // sound played when player is casting a magic
    PLAYERS            rgwCoverSound;         // sound played when player cover others
    PLAYERS            rgwDamageSound;        // sound played when player is being attacked
 } PLAYERROLES, *LPPLAYERROLES;
