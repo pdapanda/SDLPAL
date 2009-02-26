@@ -92,12 +92,15 @@ typedef struct tagBATTLEENEMY
 
    WORD               wPrevHP;              // HP value prior to action
    WORD               wPrevMP;              // MP value prior to action
+
+   BOOL               fDamaged;
 } BATTLEENEMY;
 
 // We only put some data used in battle here; other data can be accessed in the global data.
 typedef struct tagBATTLEPLAYER
 {
    WORD               wBattleSprite;
+   BOOL               fDamaged;
    FLOAT              flTimeMeter;          // time-charging meter (0 = empty, 100 = full).
    FLOAT              flTimeSpeedModifier;
    WORD               wHidingTime;          // remaining hiding time
@@ -140,6 +143,8 @@ typedef struct tagBATTLE
    FLOAT            flTimeChargingUnit;   // the base waiting time unit
 
    BATTLEUI         UI;
+
+   LPBYTE           lpEffectSprite;
 } BATTLE;
 
 extern BATTLE g_Battle;

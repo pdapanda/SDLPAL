@@ -1016,7 +1016,7 @@ PAL_PlayerStatus(
          PAL_XY(58, 6), kNumColorYellow, kNumAlignRight);
       PAL_DrawNumber(gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[iPlayerRole].wLevel],
          5, PAL_XY(58, 15), kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->Exp.rgPrimaryExp[iPlayerRole].wLevel, 2,
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole], 2,
          PAL_XY(54, 35), kNumColorYellow, kNumAlignRight);
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
          PAL_XY(65, 58));

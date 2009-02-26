@@ -68,8 +68,16 @@ PAL_BattleMakeScene(
    {
       if (g_Battle.rgEnemy[i].wObjectID != 0)
       {
-         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
-            g_Battle.lpSceneBuf, g_Battle.rgEnemy[i].pos);
+         if (g_Battle.rgEnemy[i].fDamaged)
+         {
+            PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
+               g_Battle.lpSceneBuf, g_Battle.rgEnemy[i].pos, 6);
+         }
+         else
+         {
+            PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
+               g_Battle.lpSceneBuf, g_Battle.rgEnemy[i].pos);
+         }
       }
    }
 
@@ -83,8 +91,16 @@ PAL_BattleMakeScene(
    {
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
-         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
-            g_Battle.lpSceneBuf, g_Battle.rgPlayer[i].pos);
+         if (g_Battle.rgPlayer[i].fDamaged)
+         {
+            PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
+               g_Battle.lpSceneBuf, g_Battle.rgPlayer[i].pos, 6);
+         }
+         else
+         {
+            PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
+               g_Battle.lpSceneBuf, g_Battle.rgPlayer[i].pos);
+         }
       }
    }
 
@@ -813,6 +829,7 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].wScriptOnBattleEnd = gpGlobals->g.rgObject[w].enemy.wScriptOnBattleEnd;
          g_Battle.rgEnemy[i].wScriptOnReady = gpGlobals->g.rgObject[w].enemy.wScriptOnReady;
          g_Battle.rgEnemy[i].flTimeMeter = 50;
+         g_Battle.rgEnemy[i].fDamaged = FALSE;
       }
    }
 
@@ -833,6 +850,7 @@ PAL_StartBattle(
       g_Battle.rgPlayer[i].action.sTarget = 0;
       g_Battle.rgPlayer[i].fDefending = FALSE;
       g_Battle.rgPlayer[i].wCurrentFrame = 0;
+      g_Battle.rgPlayer[i].fDamaged = FALSE;
    }
 
    //
@@ -885,6 +903,14 @@ PAL_StartBattle(
    PAL_BattleUpdateFighters();
 
    //
+   // Load the battle effect sprite.
+   //
+   i = PAL_MKFGetChunkSize(10, gpGlobals->f.fpDATA);
+   g_Battle.lpEffectSprite = UTIL_malloc(i);
+
+   PAL_MKFReadChunk(g_Battle.lpEffectSprite, i, 10, gpGlobals->f.fpDATA);
+
+   //
    // Run the main battle routine.
    //
    i = PAL_BattleMain();
@@ -911,6 +937,7 @@ PAL_StartBattle(
    // Free all the battle sprites
    //
    PAL_FreeBattleSprites();
+   free(g_Battle.lpEffectSprite);
 
    //
    // Free the surfaces for the background picture and scene buffer
