@@ -1967,6 +1967,13 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0088:
+      //
+      // Set the base damage of magic according to amount of money
+      //
+      i = ((gpGlobals->dwCash > 5000) ? 5000 : gpGlobals->dwCash);
+      gpGlobals->dwCash -= i;
+      j = gpGlobals->g.rgObject[pScript->rgwOperand[0]].magic.wMagicNumber;
+      gpGlobals->g.lprgMagic[j].wBaseDamage = i * 2 / 5;
       break;
 
    case 0x0089:

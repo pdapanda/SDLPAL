@@ -91,16 +91,15 @@ typedef struct tagBATTLEENEMY
    WORD               wScriptOnReady;
 
    WORD               wPrevHP;              // HP value prior to action
-   WORD               wPrevMP;              // MP value prior to action
 
-   BOOL               fDamaged;
+   INT                iColorShift;
 } BATTLEENEMY;
 
 // We only put some data used in battle here; other data can be accessed in the global data.
 typedef struct tagBATTLEPLAYER
 {
    WORD               wBattleSprite;
-   BOOL               fDamaged;
+   INT                iColorShift;
    FLOAT              flTimeMeter;          // time-charging meter (0 = empty, 100 = full).
    FLOAT              flTimeSpeedModifier;
    WORD               wHidingTime;          // remaining hiding time

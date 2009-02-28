@@ -489,6 +489,8 @@ PAL_BattleUIPlayerReady(
 
 --*/
 {
+   WORD w = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+
    g_Battle.UI.wCurPlayerIndex = wPlayerIndex;
    g_Battle.UI.state = kBattleUISelectMove;
    g_Battle.UI.wSelectedAction = 0;
@@ -497,66 +499,12 @@ PAL_BattleUIPlayerReady(
    //
    // Play a sound which indicates the player is ready
    //
-   SOUND_Play(78);
-}
-
-static VOID
-PAL_CreateBorderBox(
-   PAL_POS           pos,
-   INT               w,
-   INT               h,
-   BYTE              bFillColor
-)
-/*++
-  Purpose:
-
-    Draw a bordered box on the screen.
-
-  Parameters:
-
-    [IN]  pos - the position of the box.
-
-    [IN]  w - the width of the box.
-
-    [IN]  h - the height of the box.
-
-    [IN]  bFillColor - the color which fills the box.
-
-  Return value:
-
-    None.
-
---*/
-{
-   SDL_Rect       rect;
-
-   rect.x = PAL_X(pos);
-   rect.y = PAL_Y(pos);
-   rect.w = w;
-   rect.h = 1;
-
-   SDL_FillRect(gpScreen, &rect, MENUITEM_COLOR_CONFIRMED);
-
-   rect.y += h - 1;
-
-   SDL_FillRect(gpScreen, &rect, MENUITEM_COLOR_CONFIRMED);
-
-   rect.y = PAL_Y(pos);
-   rect.w = 1;
-   rect.h = h;
-
-   SDL_FillRect(gpScreen, &rect, MENUITEM_COLOR_CONFIRMED);
-
-   rect.x += w - 1;
-
-   SDL_FillRect(gpScreen, &rect, MENUITEM_COLOR_CONFIRMED);
-
-   rect.x = PAL_X(pos) + 1;
-   rect.y = PAL_Y(pos) + 1;
-   rect.w = w - 2;
-   rect.h = h - 2;
-
-   SDL_FillRect(gpScreen, &rect, bFillColor);
+   if (gpGlobals->rgPlayerStatus[w][kStatusPuppet] == 0 &&
+      gpGlobals->rgPlayerStatus[w][kStatusSleep] == 0 &&
+      gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0)
+   {
+      SOUND_Play(78);
+   }
 }
 
 static VOID
@@ -679,6 +627,7 @@ PAL_BattleUIUpdate(
    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
       wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+      w = (WORD)(g_Battle.rgPlayer[i].flTimeMeter);
 
       j = TIMEMETER_COLOR_DEFAULT;
       if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] > 0)
@@ -690,8 +639,15 @@ PAL_BattleUIUpdate(
          j = TIMEMETER_COLOR_SLOW;
       }
 
+      if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0 ||
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0 ||
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] != 0)
+      {
+         w = 0;
+      }
+
       PAL_PlayerInfoBox(PAL_XY(91 + 77 * i, 165), wPlayerRole,
-         (WORD)(g_Battle.rgPlayer[i].flTimeMeter), j, FALSE);
+         w, j, FALSE);
 
       // TODO: status
    }
@@ -705,7 +661,7 @@ PAL_BattleUIUpdate(
       // Draw the text message.
       //
       PAL_DrawText(g_Battle.UI.szMsg, PAL_XY(160 - 4 * strlen(g_Battle.UI.szMsg), 65),
-         MENUITEM_COLOR, TRUE, FALSE);
+         15, TRUE, FALSE);
    }
 
    if (g_InputState.dwKeyPress & kKeyAuto)
@@ -731,7 +687,7 @@ PAL_BattleUIUpdate(
       else
       {
          PAL_DrawText(PAL_GetWord(BATTLEUI_LABEL_AUTO), PAL_XY(280, 10),
-            MENUITEM_COLOR, TRUE, FALSE);
+            MENUITEM_COLOR_CONFIRMED, TRUE, FALSE);
       }
    }
 
@@ -739,22 +695,39 @@ PAL_BattleUIUpdate(
    {
       wPlayerRole = gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole;
 
-      //
-      // Cancel any actions if player is dead or sleeping or confused.
-      //
-      if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0 ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0)
+      if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 &&
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet])
       {
-         g_Battle.UI.state = kBattleUIWait;
-         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].flTimeMeter = 0;
+         g_Battle.UI.wActionType = kBattleActionAttack;
 
-         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0 &&
-            gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] != 0 &&
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] == 0)
+         if (PAL_PlayerCanAttackAll(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole))
          {
+            g_Battle.UI.wSelectedIndex = -1;
+         }
+         else
+         {
+            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
          }
 
+         PAL_BattleCommitAction();
+         goto end; // don't go further
+      }
+
+      //
+      // Cancel any actions if player is dead or sleeping.
+      //
+      if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0)
+      {
+         g_Battle.UI.wActionType = kBattleActionPass;
+         PAL_BattleCommitAction();
+         goto end; // don't go further
+      }
+
+      if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0)
+      {
+         g_Battle.UI.wActionType = kBattleActionAttackMate;
+         PAL_BattleCommitAction();
          goto end; // don't go further
       }
 
@@ -792,6 +765,9 @@ PAL_BattleUIUpdate(
 
    switch (g_Battle.UI.state)
    {
+   case kBattleUIWait:
+      break;
+
    case kBattleUISelectMove:
       //
       // Draw the icons
@@ -1241,12 +1217,15 @@ PAL_BattleUIUpdate(
       }
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
-         w = gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber;
-
-         if (gpGlobals->g.lprgMagic[w].wType == kMagicTypeTransform)
+         if (g_Battle.UI.wActionType == kBattleActionMagic)
          {
-            if (i != g_Battle.UI.wCurPlayerIndex)
-               continue;
+            w = gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber;
+
+            if (gpGlobals->g.lprgMagic[w].wType == kMagicTypeTransform)
+            {
+               if (i != g_Battle.UI.wCurPlayerIndex)
+                  continue;
+            }
          }
 
          //

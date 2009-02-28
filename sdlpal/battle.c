@@ -49,6 +49,7 @@ PAL_BattleMakeScene(
 --*/
 {
    int          i;
+   PAL_POS      pos;
 
    //
    // Draw the background
@@ -66,17 +67,27 @@ PAL_BattleMakeScene(
    //
    for (i = g_Battle.wMaxEnemyIndex; i >= 0; i--)
    {
+      pos = g_Battle.rgEnemy[i].pos;
+
+      if (g_Battle.rgEnemy[i].rgStatus[kStatusConfused] > 0)
+      {
+         //
+         // Enemy is confused
+         //
+         pos = PAL_XY(PAL_X(pos) + RandomLong(-3, 3), PAL_Y(pos) + RandomLong(-3, 3));
+      }
+
       if (g_Battle.rgEnemy[i].wObjectID != 0)
       {
-         if (g_Battle.rgEnemy[i].fDamaged)
+         if (g_Battle.rgEnemy[i].iColorShift)
          {
             PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, g_Battle.rgEnemy[i].pos, 6);
+               g_Battle.lpSceneBuf, pos, g_Battle.rgEnemy[i].iColorShift);
          }
          else
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, g_Battle.rgEnemy[i].pos);
+               g_Battle.lpSceneBuf, pos);
          }
       }
    }
@@ -91,23 +102,28 @@ PAL_BattleMakeScene(
    {
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
-         if (g_Battle.rgPlayer[i].fDamaged)
+         pos = g_Battle.rgPlayer[i].pos;
+
+         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0)
+         {
+            //
+            // Player is confused
+            //
+            pos = PAL_XY(PAL_X(pos) + RandomLong(-3, 3), PAL_Y(pos) + RandomLong(-3, 3));
+         }
+
+         if (g_Battle.rgPlayer[i].iColorShift)
          {
             PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, g_Battle.rgPlayer[i].pos, 6);
+               g_Battle.lpSceneBuf, pos, g_Battle.rgPlayer[i].iColorShift);
          }
          else
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, g_Battle.rgPlayer[i].pos);
+               g_Battle.lpSceneBuf, pos);
          }
       }
    }
-
-   //
-   // Draw the effects
-   //
-   // TODO
 }
 
 VOID
@@ -829,7 +845,7 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].wScriptOnBattleEnd = gpGlobals->g.rgObject[w].enemy.wScriptOnBattleEnd;
          g_Battle.rgEnemy[i].wScriptOnReady = gpGlobals->g.rgObject[w].enemy.wScriptOnReady;
          g_Battle.rgEnemy[i].flTimeMeter = 50;
-         g_Battle.rgEnemy[i].fDamaged = FALSE;
+         g_Battle.rgEnemy[i].iColorShift = FALSE;
       }
    }
 
@@ -850,7 +866,7 @@ PAL_StartBattle(
       g_Battle.rgPlayer[i].action.sTarget = 0;
       g_Battle.rgPlayer[i].fDefending = FALSE;
       g_Battle.rgPlayer[i].wCurrentFrame = 0;
-      g_Battle.rgPlayer[i].fDamaged = FALSE;
+      g_Battle.rgPlayer[i].iColorShift = FALSE;
    }
 
    //

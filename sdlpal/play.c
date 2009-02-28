@@ -578,4 +578,3 @@ PAL_WaitForKey(
       }
    }
 }
-

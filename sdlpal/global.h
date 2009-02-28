@@ -89,7 +89,7 @@ typedef enum tagSTATUS
    kStatusSleep,         // not allowed to move
    kStatusSilence,       // cannot use magic
    kStatusPuppet,        // for dead players only, continue attacking
-   kStatusBerserk,       // more power for normal attacks
+   kStatusBerserk,       // more power for physical attacks
    kStatusProtect,       // more defense value
    kStatusHaste,         // faster
    kStatusDualAttack,    // dual attack
