@@ -501,7 +501,8 @@ PAL_BattleUIPlayerReady(
    //
    if (gpGlobals->rgPlayerStatus[w][kStatusPuppet] == 0 &&
       gpGlobals->rgPlayerStatus[w][kStatusSleep] == 0 &&
-      gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0)
+      gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0 &&
+      !g_Battle.UI.fAutoAttack && !gpGlobals->fAutoBattle)
    {
       SOUND_Play(78);
    }

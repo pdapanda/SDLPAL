@@ -163,6 +163,11 @@ PAL_BattleFadeScene(
    VOID
 );
 
+VOID
+PAL_BattleEnemyEscape(
+   VOID
+);
+
 BATTLERESULT
 PAL_StartBattle(
    WORD        wEnemyTeam,

@@ -295,7 +295,10 @@ PAL_BattleMain(
          PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
    }
 
-   g_Battle.BattleResult = kBattleResultOnGoing;
+   if (g_Battle.BattleResult == kBattleResultPreBattle)
+   {
+      g_Battle.BattleResult = kBattleResultOnGoing;
+   }
 
    PAL_UpdateTimeChargingUnit();
 
@@ -306,6 +309,14 @@ PAL_BattleMain(
    //
    while (TRUE)
    {
+      //
+      // Break out if the battle ended.
+      //
+      if (g_Battle.BattleResult != kBattleResultOnGoing)
+      {
+         break;
+      }
+
       //
       // Clear the input state of previous frame.
       //
@@ -335,14 +346,6 @@ PAL_BattleMain(
       // Update the screen.
       //
       VIDEO_UpdateScreen(NULL);
-
-      //
-      // Break out if the battle ended.
-      //
-      if (g_Battle.BattleResult != kBattleResultOnGoing)
-      {
-         break;
-      }
    }
 
    //
@@ -766,6 +769,68 @@ PAL_BattleWon(
    {
       PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnBattleEnd, i);
    }
+}
+
+VOID
+PAL_BattleEnemyEscape(
+   VOID
+)
+/*++
+  Purpose:
+
+    Enemy escape in battle.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int j, x, y, w;
+   BOOL f = TRUE;
+
+   SOUND_Play(45);
+
+   //
+   // Show the animation
+   //
+   while (f)
+   {
+   	  f = FALSE;
+
+   	  for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
+   	  {
+   	  	 if (g_Battle.rgEnemy[j].wObjectID == 0)
+   	  	 {
+   	  	 	continue;
+   	  	 }
+
+   	  	 x = PAL_X(g_Battle.rgEnemy[j].pos) - 3;
+   	  	 y = PAL_Y(g_Battle.rgEnemy[j].pos);
+
+   	  	 g_Battle.rgEnemy[j].pos = PAL_XY(x, y);
+
+   	  	 w = PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[j].lpSprite, 0));
+
+   	  	 if (x + w > 0)
+   	  	 {
+   	  	 	f = TRUE;
+   	  	 }
+
+         PAL_BattleMakeScene();
+         SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+         VIDEO_UpdateScreen(NULL);
+
+   	  	 UTIL_Delay(5);
+   	  }
+   }
+
+   UTIL_Delay(500);
+   g_Battle.BattleResult = kBattleResultTerminated;
 }
 
 BATTLERESULT

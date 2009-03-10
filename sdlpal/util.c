@@ -249,6 +249,10 @@ TerminateOnError(
    MessageBoxA(0, string, "FATAL ERROR", MB_ICONERROR);
 #endif
 
+#ifdef __linux__
+   system(va("xmessage \"FATAL ERROR: %s\"", string));
+#endif
+
 #ifdef _DEBUG
    assert(!"TerminateOnError()"); // allows jumping to debugger
 #endif

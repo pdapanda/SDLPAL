@@ -1482,6 +1482,10 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0069:
+      //
+      // Enemy escape in battle
+      //
+      PAL_BattleEnemyEscape();
       break;
 
    case 0x006A:
@@ -1984,6 +1988,10 @@ PAL_InterpretInstruction(
       break;
 
    case 0x008A:
+      //
+      // Enable Auto-Battle
+      //
+      gpGlobals->fAutoBattle = TRUE;
       break;
 
    case 0x008B:
@@ -2449,7 +2457,7 @@ PAL_RunTriggerScript(
          {
             wScriptEntry++;
          }
-
+         gpGlobals->fAutoBattle = FALSE;
          break;
 
       case 0x0008:

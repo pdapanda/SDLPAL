@@ -304,6 +304,14 @@ PAL_GetTimeChargingSpeed(
       return 0;
    }
 
+   if (gpGlobals->fAutoBattle)
+   {
+   	  //
+   	  // The battle should be faster when using Auto Battle
+   	  //
+   	  wDexterity *= 3;
+   }
+
    return g_Battle.flTimeChargingUnit * wDexterity;
 }
 
