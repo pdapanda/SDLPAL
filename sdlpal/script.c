@@ -2707,6 +2707,7 @@ begin:
       break;
 
    case 0xFFFF:
+	  wScriptEntry++;
 	  break;
 
    default:
