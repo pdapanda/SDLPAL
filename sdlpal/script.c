@@ -2706,6 +2706,9 @@ begin:
       }
       break;
 
+   case 0xFFFF:
+	  break;
+
    default:
       //
       // Other operations
