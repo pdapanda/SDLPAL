@@ -373,7 +373,7 @@ PAL_BattleDelay(
 
     [IN]  wDuration - Number of frames of the delay.
 
-    [IN]  wObjectID - The object ID to be displayed during the delay. 
+    [IN]  wObjectID - The object ID to be displayed during the delay.
 
   Return value:
 
@@ -522,7 +522,7 @@ PAL_BattleDisplayStatChange(
          // Show the number of damage
          //
          sDamage = g_Battle.rgEnemy[i].e.wHealth - g_Battle.rgEnemy[i].wPrevHP;
- 
+
          x = PAL_X(g_Battle.rgEnemy[i].pos);
          y = PAL_Y(g_Battle.rgEnemy[i].pos) - 70;
 
@@ -1478,9 +1478,112 @@ PAL_BattlePlayerValidateAction(
 
 --*/
 {
-   // TODO
+   WORD   wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+   WORD   wObjectID = g_Battle.rgPlayer[wPlayerIndex].action.wActionID;
+   SHORT  sTarget = g_Battle.rgPlayer[wPlayerIndex].action.sTarget;
+   BOOL   fValid = TRUE;
+   WORD   w;
+   int    i;
+
    switch (g_Battle.rgPlayer[wPlayerIndex].action.ActionType)
    {
+   case kBattleActionAttack:
+      break;
+
+   case kBattleActionPass:
+      break;
+
+   case kBattleActionDefend:
+      break;
+
+   case kBattleActionMagic:
+      w = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
+
+      if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0)
+      {
+         //
+         // Player is silenced
+         //
+         fValid = FALSE;
+      }
+
+      if (gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] <
+         gpGlobals->g.lprgMagic[w].wCostMP)
+      {
+         //
+         // No enough MP
+         //
+         fValid = FALSE;
+      }
+
+      //
+      // Fallback to physical attack if player is using an offensive magic,
+      // defend if player is using a defensive or healing magic
+      //
+      if (!fValid)
+      {
+         if (gpGlobals->g.rgObject[wObjectID].magic.wFlags & kMagicFlagUsableToEnemy)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+         }
+         else
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionDefend;
+         }
+      }
+      break;
+
+   case kBattleActionCoopMagic:
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+
+         if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+            break;
+         }
+      }
+      break;
+
+   case kBattleActionFlee:
+      break;
+
+   case kBattleActionThrowItem:
+      if (PAL_GetItemAmount(wObjectID) == 0)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+      }
+      break;
+
+   case kBattleActionUseItem:
+      if (PAL_GetItemAmount(wObjectID) == 0)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionDefend;
+      }
+      break;
+
+   case kBattleActionAttackMate:
+      break;
+   }
+
+   //
+   // Check if player can attack all enemies at once, or attack one enemy
+   //
+   if (g_Battle.rgPlayer[wPlayerIndex].action.ActionType == kBattleActionAttack)
+   {
+      if (sTarget == -1)
+      {
+         if (!PAL_PlayerCanAttackAll(wPlayerRole))
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+         }
+      }
+      else if (PAL_PlayerCanAttackAll(wPlayerRole))
+      {
+         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
+      }
    }
 }
 
