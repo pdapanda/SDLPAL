@@ -1075,7 +1075,7 @@ PAL_BattleCommitAction(
       {
          w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber].wType;
          if (w == kMagicTypeApplyToPlayer || w == kMagicTypeApplyToParty ||
-            w == kMagicTypeTransform)
+            w == kMagicTypeTrance)
          {
             g_Battle.UI.wActionType = kBattleActionDefend;
          }
@@ -1122,7 +1122,7 @@ PAL_BattleCommitAction(
             }
          }
          else if (p->wType == kMagicTypeApplyToPlayer || p->wType == kMagicTypeApplyToParty ||
-            p->wType == kMagicTypeTransform)
+            p->wType == kMagicTypeTrance)
          {
             //
             // Healing magics should take shorter
@@ -1460,6 +1460,121 @@ PAL_BattleShowPlayerUseItemAnim(
 }
 
 static VOID
+PAL_BattleShowPlayerPreMagicAnim(
+   WORD         wPlayerIndex,
+   BOOL         fSummon
+)
+/*++
+  Purpose:
+
+    Show the effect for player before using a magic.
+
+  Parameters:
+
+    [IN]  wPlayerIndex - the index of the player.
+
+    [IN]  fSummon - TRUE if player is using a summon magic.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int   i, j;
+   DWORD dwTime = SDL_GetTicks();
+   WORD  wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+
+   for (i = 0; i < 4; i++)
+   {
+      g_Battle.rgPlayer[wPlayerIndex].pos =
+         PAL_XY(PAL_X(g_Battle.rgPlayer[wPlayerIndex].pos) - (4 - i),
+                PAL_Y(g_Battle.rgPlayer[wPlayerIndex].pos) - (4 - i) / 2);
+
+      PAL_BattleDelay(1, 0);
+   }
+
+   PAL_BattleDelay(2, 0);
+
+   g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
+   SOUND_Play(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
+
+   if (!fSummon)
+   {
+      int x, y, index;
+
+      x = PAL_X(g_Battle.rgPlayer[wPlayerIndex].pos);
+      y = PAL_Y(g_Battle.rgPlayer[wPlayerIndex].pos);
+
+      x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame)) / 2;
+      y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame));
+
+      index = gpGlobals->g.rgwBattleEffectIndex[gpGlobals->g.PlayerRoles.rgwSpriteNumInBattle[wPlayerRole]][0];
+      index *= 10;
+      index += 14;
+
+      for (i = 0; i < 10; i++)
+      {
+         LPCBITMAPRLE b = PAL_SpriteGetFrame(g_Battle.lpEffectSprite, index++);
+
+         //
+         // Clear the input state of previous frame.
+         //
+         PAL_ClearKeyState();
+
+         //
+         // Wait for the time of one frame. Accept input here.
+         //
+         PAL_ProcessEvent();
+         while (SDL_GetTicks() <= dwTime)
+         {
+            PAL_ProcessEvent();
+            SDL_Delay(1);
+         }
+
+         //
+         // Set the time of the next frame.
+         //
+         dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
+
+         //
+         // Update the gesture of enemies.
+         //
+         for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
+         {
+            if (g_Battle.rgEnemy[j].wObjectID == 0)
+            {
+               continue;
+            }
+
+            if (--g_Battle.rgEnemy[j].e.wIdleAnimSpeed == 0)
+            {
+               g_Battle.rgEnemy[j].wCurrentFrame++;
+               g_Battle.rgEnemy[j].e.wIdleAnimSpeed =
+                  gpGlobals->g.lprgEnemy[gpGlobals->g.rgObject[g_Battle.rgEnemy[j].wObjectID].enemy.wEnemyID].wIdleAnimSpeed;
+            }
+
+            if (g_Battle.rgEnemy[j].wCurrentFrame >= g_Battle.rgEnemy[j].e.wIdleFrames)
+            {
+               g_Battle.rgEnemy[j].wCurrentFrame = 0;
+            }
+         }
+
+         PAL_BattleMakeScene();
+         SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+
+         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
+         PAL_BattleUIUpdate();
+
+         VIDEO_UpdateScreen(NULL);
+      }
+   }
+
+   PAL_BattleDelay(1, 0);
+}
+
+static VOID
 PAL_BattlePlayerValidateAction(
    WORD         wPlayerIndex
 )
@@ -1612,7 +1727,7 @@ PAL_BattlePlayerPerformAction(
    SHORT    sTarget = g_Battle.rgPlayer[wPlayerIndex].action.sTarget;
    int      x, y;
    int      i, t;
-   WORD     str, def, res, wObject;
+   WORD     str, def, res, wObject, wMagicNum;
    BOOL     fCritical, fPoisoned;
 
    PAL_BattlePlayerValidateAction(wPlayerIndex);
@@ -1802,6 +1917,50 @@ PAL_BattlePlayerPerformAction(
       break;
 
    case kBattleActionMagic:
+      wObject = g_Battle.rgPlayer[wPlayerIndex].action.wActionID;
+      wMagicNum = gpGlobals->g.rgObject[wObject].magic.wMagicNumber;
+
+      PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex,
+         (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon));
+
+      if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeApplyToPlayer ||
+         gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeApplyToParty ||
+         gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeTrance)
+      {
+         //
+         // Using a defensive magic
+         //
+         WORD w = 0xFFFF;
+
+         if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget != -1)
+         {
+            w = gpGlobals->rgParty[g_Battle.rgPlayer[wPlayerIndex].action.sTarget].wPlayerRole;
+         }
+
+         gpGlobals->g.rgObject[wObject].magic.wScriptOnUse =
+            PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnUse, w);
+
+         if (g_fScriptSuccess)
+         {
+            gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
+               PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, w);
+
+            if (g_fScriptSuccess)
+            {
+               PAL_BattleDisplayStatChange();
+               PAL_BattleDelay(8, 0);
+
+               gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -=
+                  gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
+            }
+         }
+      }
+      else
+      {
+         //
+         // Using an offensive magic
+         //
+      }
       break;
 
    case kBattleActionThrowItem:

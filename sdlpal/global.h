@@ -346,7 +346,7 @@ typedef enum tagMAGIC_TYPE
    kMagicTypeKeepEffect       = 3,  // keep the effect on the scene
    kMagicTypeApplyToPlayer    = 4,  // the magic is used on one player
    kMagicTypeApplyToParty     = 5,  // the magic is used on the whole party
-   kMagicTypeTransform        = 8,  // transform the player
+   kMagicTypeTrance           = 8,  // trance the player
    kMagicTypeSummon           = 9,  // summon
 } MAGIC_TYPE;
 

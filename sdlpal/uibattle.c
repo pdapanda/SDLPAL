@@ -1223,7 +1223,7 @@ PAL_BattleUIUpdate(
          {
             w = gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber;
 
-            if (gpGlobals->g.lprgMagic[w].wType == kMagicTypeTransform)
+            if (gpGlobals->g.lprgMagic[w].wType == kMagicTypeTrance)
             {
                if (i != g_Battle.UI.wCurPlayerIndex)
                   continue;
