@@ -100,7 +100,7 @@ PAL_BattleMakeScene(
    }
    else
    {
-      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
       {
          pos = g_Battle.rgPlayer[i].pos;
 

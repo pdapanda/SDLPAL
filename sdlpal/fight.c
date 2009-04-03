@@ -960,6 +960,13 @@ g_Battle.rgEnemy[i].state = kFighterWait;
          break;
 
       case kFighterAct:
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
+         {
+            g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
+            g_Battle.rgPlayer[i].action.flRemainingTime = 0;
+         }
+
          wDexterity = PAL_GetPlayerActualDexterity(wPlayerRole);
          g_Battle.rgPlayer[i].action.flRemainingTime -= PAL_GetTimeChargingSpeed(wDexterity);
 
@@ -1949,9 +1956,6 @@ PAL_BattlePlayerPerformAction(
             {
                PAL_BattleDisplayStatChange();
                PAL_BattleDelay(8, 0);
-
-               gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -=
-                  gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
             }
          }
       }
@@ -1961,6 +1965,8 @@ PAL_BattlePlayerPerformAction(
          // Using an offensive magic
          //
       }
+
+      gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
       break;
 
    case kBattleActionThrowItem:
