@@ -759,7 +759,7 @@ PAL_MagicMenu(
                   }
                }
 
-               SDL_Delay(1);
+               SDL_Delay(5);
             }
          }
       }
@@ -1309,7 +1309,7 @@ PAL_ItemUseMenu(
             break;
          }
 
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
 
       if (i <= 0)
@@ -1766,7 +1766,7 @@ PAL_EquipItemMenu(
             break;
          }
 
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
 
       if (wItem == 0)

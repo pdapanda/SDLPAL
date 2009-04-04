@@ -142,7 +142,7 @@ PAL_PartyWalkTo(
       while (SDL_GetTicks() <= t)
       {
          PAL_ProcessEvent();
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
 
       t = SDL_GetTicks() + FRAME_TIME;
@@ -255,7 +255,7 @@ PAL_PartyRideEventObject(
       while (SDL_GetTicks() <= t)
       {
          PAL_ProcessEvent();
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
 
       t = SDL_GetTicks() + FRAME_TIME;
@@ -1795,7 +1795,7 @@ PAL_InterpretInstruction(
             while (SDL_GetTicks() < time)
             {
                PAL_ProcessEvent();
-               SDL_Delay(1);
+               SDL_Delay(5);
             }
             time = SDL_GetTicks() + FRAME_TIME;
          } while (++i < (SHORT)(pScript->rgwOperand[2]));

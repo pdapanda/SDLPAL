@@ -421,7 +421,7 @@ PAL_BattleDelay(
       while (SDL_GetTicks() <= dwTime)
       {
          PAL_ProcessEvent();
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
 
       //
@@ -1279,7 +1279,7 @@ PAL_BattleShowPlayerAttackAnim(
       while (SDL_GetTicks() <= dwTime)
       {
          PAL_ProcessEvent();
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
 
       //
@@ -1536,7 +1536,7 @@ PAL_BattleShowPlayerPreMagicAnim(
          while (SDL_GetTicks() <= dwTime)
          {
             PAL_ProcessEvent();
-            SDL_Delay(1);
+            SDL_Delay(5);
          }
 
          //
@@ -1625,6 +1625,9 @@ PAL_BattleShowPlayerDefMagicAnim(
 
    n = PAL_SpriteGetNumFrames(lpSpriteEffect);
 
+   g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+   PAL_BattleDelay(1, 0);
+
    SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
 
    for (i = 0; i < n; i++)
@@ -1645,7 +1648,7 @@ PAL_BattleShowPlayerDefMagicAnim(
          while (SDL_GetTicks() <= dwTime)
          {
             PAL_ProcessEvent();
-            SDL_Delay(1);
+            SDL_Delay(5);
          }
 
          //

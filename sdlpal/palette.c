@@ -168,7 +168,7 @@ PAL_FadeOut(
       while (SDL_GetTicks() < time)
       {
          while (SDL_PollEvent(NULL));
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
    }
 }
@@ -230,7 +230,7 @@ PAL_FadeIn(
       while (SDL_GetTicks() < time)
       {
          while (SDL_PollEvent(NULL));
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
    }
 }
@@ -309,7 +309,7 @@ PAL_SceneFade(
          while (SDL_GetTicks() < time)
          {
             while (SDL_PollEvent(NULL));
-            SDL_Delay(1);
+            SDL_Delay(5);
          }
       }
    }
@@ -344,7 +344,7 @@ PAL_SceneFade(
          while (SDL_GetTicks() < time)
          {
             while (SDL_PollEvent(NULL));
-            SDL_Delay(1);
+            SDL_Delay(5);
          }
       }
    }
@@ -422,7 +422,7 @@ PAL_PaletteFade(
       while (SDL_GetTicks() < time)
       {
          while (SDL_PollEvent(NULL));
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
    }
 }

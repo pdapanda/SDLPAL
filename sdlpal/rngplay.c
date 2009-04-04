@@ -468,7 +468,7 @@ PAL_RNGPlay(
       while (SDL_GetTicks() <= iTime)
       {
          PAL_ProcessEvent();
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
    }
 }

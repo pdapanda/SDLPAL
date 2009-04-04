@@ -184,7 +184,7 @@ PAL_BattleFadeScene(
          while (SDL_GetTicks() <= time)
          {
             SDL_PollEvent(NULL);
-            SDL_Delay(1);
+            SDL_Delay(5);
          }
          time = SDL_GetTicks() + 35;
 
@@ -329,7 +329,7 @@ PAL_BattleMain(
       while (SDL_GetTicks() <= dwTime)
       {
          PAL_ProcessEvent();
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
 
       //
