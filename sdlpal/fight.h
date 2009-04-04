@@ -82,6 +82,18 @@ PAL_BattlePlayerPerformAction(
    WORD         wPlayerIndex
 );
 
+VOID
+PAL_BattleShowPlayerPreMagicAnim(
+   WORD         wPlayerIndex,
+   BOOL         fSummon
+);
+
+VOID
+PAL_BattleDelay(
+   WORD       wDuration,
+   WORD       wObjectID
+);
+
 #ifdef __cplusplus
 }
 #endif

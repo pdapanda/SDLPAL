@@ -391,7 +391,7 @@ PAL_FreeBattleSprites(
    }
 }
 
-static VOID
+VOID
 PAL_LoadBattleSprites(
    VOID
 )
@@ -410,7 +410,7 @@ PAL_LoadBattleSprites(
 
 --*/
 {
-   int           i, l, x, y;
+   int           i, l, x, y, s;
 
    PAL_FreeBattleSprites();
 
@@ -419,8 +419,9 @@ PAL_LoadBattleSprites(
    //
    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
-      l = PAL_MKFGetDecompressedSize(g_Battle.rgPlayer[i].wBattleSprite,
-         gpGlobals->f.fpF);
+      s = PAL_GetPlayerBattleSprite(gpGlobals->rgParty[i].wPlayerRole);
+
+      l = PAL_MKFGetDecompressedSize(s, gpGlobals->f.fpF);
 
       if (l <= 0)
       {
@@ -430,7 +431,7 @@ PAL_LoadBattleSprites(
       g_Battle.rgPlayer[i].lpSprite = UTIL_calloc(l, 1);
 
       PAL_MKFDecompressChunk(g_Battle.rgPlayer[i].lpSprite, l,
-         g_Battle.rgPlayer[i].wBattleSprite, gpGlobals->f.fpF);
+         s, gpGlobals->f.fpF);
 
       //
       // Set the default position for this player
@@ -923,7 +924,6 @@ PAL_StartBattle(
    {
       w = gpGlobals->rgParty[i].wPlayerRole;
 
-      g_Battle.rgPlayer[i].wBattleSprite = PAL_GetPlayerBattleSprite(w);
       g_Battle.rgPlayer[i].flTimeMeter = 15.0f;
       g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
       g_Battle.rgPlayer[i].wHidingTime = 0;

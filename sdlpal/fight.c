@@ -359,7 +359,7 @@ PAL_GetPlayerActualDexterity(
    return wDexterity;
 }
 
-static VOID
+VOID
 PAL_BattleDelay(
    WORD       wDuration,
    WORD       wObjectID
@@ -1215,7 +1215,7 @@ PAL_BattleShowPlayerAttackAnim(
       enemy_y = 100;
    }
 
-   index = gpGlobals->g.rgwBattleEffectIndex[gpGlobals->g.PlayerRoles.rgwSpriteNumInBattle[wPlayerRole]][1];
+   index = gpGlobals->g.rgwBattleEffectIndex[PAL_GetPlayerBattleSprite(wPlayerRole)][1];
    index *= 3;
 
    //
@@ -1466,7 +1466,7 @@ PAL_BattleShowPlayerUseItemAnim(
    }
 }
 
-static VOID
+VOID
 PAL_BattleShowPlayerPreMagicAnim(
    WORD         wPlayerIndex,
    BOOL         fSummon
@@ -1516,7 +1516,7 @@ PAL_BattleShowPlayerPreMagicAnim(
       x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame)) / 2;
       y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame));
 
-      index = gpGlobals->g.rgwBattleEffectIndex[gpGlobals->g.PlayerRoles.rgwSpriteNumInBattle[wPlayerRole]][0];
+      index = gpGlobals->g.rgwBattleEffectIndex[PAL_GetPlayerBattleSprite(wPlayerRole)][0];
       index *= 10;
       index += 15;
 
@@ -2159,8 +2159,27 @@ PAL_BattlePlayerPerformAction(
 
             if (g_fScriptSuccess)
             {
-               PAL_BattleDisplayStatChange();
-               PAL_BattleDelay(8, 0);
+               if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeTrance)
+               {
+                  for (i = 0; i < 6; i++)
+                  {
+                     g_Battle.rgPlayer[wPlayerIndex].iColorShift = i * 2;
+                     PAL_BattleDelay(1, 0);
+                  }
+
+                  PAL_BattleBackupScene();
+                  PAL_LoadBattleSprites();
+
+                  g_Battle.rgPlayer[wPlayerIndex].iColorShift = 0;
+
+                  PAL_BattleMakeScene();
+                  PAL_BattleFadeScene();
+               }
+               else
+               {
+                  PAL_BattleDisplayStatChange();
+                  PAL_BattleDelay(8, 0);
+               }
             }
          }
       }

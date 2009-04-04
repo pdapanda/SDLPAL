@@ -98,7 +98,6 @@ typedef struct tagBATTLEENEMY
 // We only put some data used in battle here; other data can be accessed in the global data.
 typedef struct tagBATTLEPLAYER
 {
-   WORD               wBattleSprite;
    INT                iColorShift;
    FLOAT              flTimeMeter;          // time-charging meter (0 = empty, 100 = full).
    FLOAT              flTimeSpeedModifier;
@@ -147,6 +146,11 @@ typedef struct tagBATTLE
 } BATTLE;
 
 extern BATTLE g_Battle;
+
+VOID
+PAL_LoadBattleSprites(
+   VOID
+);
 
 VOID
 PAL_BattleMakeScene(

@@ -2055,6 +2055,26 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0092:
+      //
+      // Show a magic-casting animation for a player in battle
+      //
+      if (gpGlobals->fInBattle)
+      {
+         PAL_BattleShowPlayerPreMagicAnim(pScript->rgwOperand[0] - 1, FALSE);
+         g_Battle.rgPlayer[pScript->rgwOperand[0] - 1].wCurrentFrame = 6;
+         for (i = 0; i < 5; i++)
+         {
+            for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+            {
+               g_Battle.rgPlayer[j].iColorShift = i * 2;
+            }
+            PAL_BattleDelay(1, 0);
+         }
+         PAL_BattleBackupScene();
+         PAL_BattleUpdateFighters();
+         PAL_BattleMakeScene();
+         PAL_BattleFadeScene();
+      }
       break;
 
    case 0x0093:
