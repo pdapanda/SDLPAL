@@ -1607,10 +1607,11 @@ PAL_BattleShowPlayerDefMagicAnim(
 --*/
 {
    LPSPRITE   lpSpriteEffect;
-   int        l, iMagicNum, iEffectNum, n, i;
+   int        l, iMagicNum, iEffectNum, n, i, j, x, y;
+   DWORD      dwTime = SDL_GetTicks();
 
    iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
-   iEffectNum = gpGlobals->g.lprgMagic[wObjectID].wEffect;
+   iEffectNum = gpGlobals->g.lprgMagic[iMagicNum].wEffect;
 
    l = PAL_MKFGetDecompressedSize(iEffectNum, gpGlobals->f.fpFIRE);
    if (l <= 0)
@@ -1624,11 +1625,116 @@ PAL_BattleShowPlayerDefMagicAnim(
 
    n = PAL_SpriteGetNumFrames(lpSpriteEffect);
 
+   SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+
    for (i = 0; i < n; i++)
    {
+      LPCBITMAPRLE b = PAL_SpriteGetFrame(lpSpriteEffect, i);
+
+      for (j = 0; j <= gpGlobals->g.lprgMagic[iMagicNum].wEffectDuration; j++)
+      {
+         //
+         // Clear the input state of previous frame.
+         //
+         PAL_ClearKeyState();
+
+         //
+         // Wait for the time of one frame. Accept input here.
+         //
+         PAL_ProcessEvent();
+         while (SDL_GetTicks() <= dwTime)
+         {
+            PAL_ProcessEvent();
+            SDL_Delay(1);
+         }
+
+         //
+         // Set the time of the next frame.
+         //
+         dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
+
+         PAL_BattleMakeScene();
+         SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+
+         if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToParty)
+         {
+            assert(sTarget == -1);
+
+            for (l = 0; l <= gpGlobals->wMaxPartyMemberIndex; l++)
+            {
+               x = PAL_X(g_Battle.rgPlayer[l].pos);
+               y = PAL_Y(g_Battle.rgPlayer[l].pos);
+
+               x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[l].lpSprite, g_Battle.rgPlayer[l].wCurrentFrame)) / 2;
+               y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[l].lpSprite, g_Battle.rgPlayer[l].wCurrentFrame));
+
+               x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
+               y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
+
+               PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            }
+         }
+         else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToPlayer)
+         {
+            assert(sTarget != -1);
+
+            x = PAL_X(g_Battle.rgPlayer[sTarget].pos);
+            y = PAL_Y(g_Battle.rgPlayer[sTarget].pos);
+
+            x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget].lpSprite, g_Battle.rgPlayer[sTarget].wCurrentFrame)) / 2;
+            y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget].lpSprite, g_Battle.rgPlayer[sTarget].wCurrentFrame));
+
+            x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
+            y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
+
+            PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         }
+         else
+         {
+            assert(FALSE);
+         }
+
+         PAL_BattleUIUpdate();
+
+         VIDEO_UpdateScreen(NULL);
+      }
    }
 
    free(lpSpriteEffect);
+
+   for (i = 0; i < 6; i++)
+   {
+      if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToParty)
+      {
+         for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+         {
+            g_Battle.rgPlayer[j].iColorShift = i;
+         }
+      }
+      else
+      {
+         g_Battle.rgPlayer[sTarget].iColorShift = i;
+      }
+
+      PAL_BattleDelay(1, 0);
+   }
+
+   for (i = 6; i >= 0; i--)
+   {
+      if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToParty)
+      {
+         for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+         {
+            g_Battle.rgPlayer[j].iColorShift = i;
+         }
+      }
+      else
+      {
+         g_Battle.rgPlayer[sTarget].iColorShift = i;
+      }
+
+      PAL_BattleDelay(1, 0);
+   }
 }
 
 static VOID
