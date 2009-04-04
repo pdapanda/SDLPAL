@@ -314,13 +314,13 @@ UTIL_malloc(
 
    // first off, check if buffer size is valid
    if (buffer_size == 0)
-      TerminateOnError ("UTIL_malloc() called with invalid buffer size: %d\n", buffer_size);
+      TerminateOnError("UTIL_malloc() called with invalid buffer size: %d\n", buffer_size);
 
    buffer = malloc(buffer_size); // allocate real memory space
 
    // last check, check if malloc call succeeded
    if (buffer == NULL)
-      TerminateOnError ("UTIL_malloc() failure for %d bytes (out of memory?)\n", buffer_size);
+      TerminateOnError("UTIL_malloc() failure for %d bytes (out of memory?)\n", buffer_size);
 
    return buffer; // nothing went wrong, so return buffer pointer
 }

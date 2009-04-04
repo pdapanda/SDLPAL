@@ -1518,7 +1518,7 @@ PAL_BattleShowPlayerPreMagicAnim(
 
       index = gpGlobals->g.rgwBattleEffectIndex[gpGlobals->g.PlayerRoles.rgwSpriteNumInBattle[wPlayerRole]][0];
       index *= 10;
-      index += 14;
+      index += 15;
 
       for (i = 0; i < 10; i++)
       {
@@ -1579,6 +1579,83 @@ PAL_BattleShowPlayerPreMagicAnim(
    }
 
    PAL_BattleDelay(1, 0);
+}
+
+static VOID
+PAL_BattleShowPlayerDefMagicAnim(
+   WORD         wPlayerIndex,
+   WORD         wObjectID,
+   SHORT        sTarget
+)
+/*++
+  Purpose:
+
+    Show the defensive magic effect for player.
+
+  Parameters:
+
+    [IN]  wPlayerIndex - the index of the player.
+
+    [IN]  wObjectID - the object ID of the magic to be used.
+
+    [IN]  sTarget - the target player of the action.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   LPSPRITE   lpSpriteEffect;
+   int        l, iMagicNum, iEffectNum, n, i;
+
+   iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
+   iEffectNum = gpGlobals->g.lprgMagic[wObjectID].wEffect;
+
+   l = PAL_MKFGetDecompressedSize(iEffectNum, gpGlobals->f.fpFIRE);
+   if (l <= 0)
+   {
+      return;
+   }
+
+   lpSpriteEffect = (LPSPRITE)UTIL_malloc(l);
+
+   PAL_MKFDecompressChunk((LPBYTE)lpSpriteEffect, l, iEffectNum, gpGlobals->f.fpFIRE);
+
+   n = PAL_SpriteGetNumFrames(lpSpriteEffect);
+
+   for (i = 0; i < n; i++)
+   {
+   }
+
+   free(lpSpriteEffect);
+}
+
+static VOID
+PAL_BattleShowPlayerOffMagicAnim(
+   WORD         wPlayerIndex,
+   WORD         wObjectID,
+   SHORT        sTarget
+)
+/*++
+  Purpose:
+
+    Show the offensive magic effect for player.
+
+  Parameters:
+
+    [IN]  wPlayerIndex - the index of the player.
+
+    [IN]  wObjectID - the object ID of the magic to be used.
+
+    [IN]  sTarget - the target player of the action.
+
+  Return value:
+
+    None.
+
+--*/
+{
 }
 
 static VOID
@@ -1949,6 +2026,11 @@ PAL_BattlePlayerPerformAction(
 
          if (g_fScriptSuccess)
          {
+            if (gpGlobals->g.lprgMagic[wMagicNum].wEffect > 0)
+            {
+               PAL_BattleShowPlayerDefMagicAnim(wPlayerIndex, wObject, sTarget);
+            }
+
             gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
                PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, w);
 
