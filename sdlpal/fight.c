@@ -1688,6 +1688,20 @@ PAL_BattleShowPlayerDefMagicAnim(
             y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
             PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
+            //
+            // Repaint the previous player
+            //
+            if (sTarget > 0)
+            {
+               LPCBITMAPRLE p = PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget - 1].lpSprite,
+                  g_Battle.rgPlayer[sTarget - 1].wCurrentFrame);
+
+               if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[sTarget - 1].wPlayerRole][kStatusConfused] == 0)
+               {
+                  PAL_RLEBlitToSurface(p, gpScreen, g_Battle.rgPlayer[sTarget - 1].pos);
+               }
+            }
          }
          else
          {
