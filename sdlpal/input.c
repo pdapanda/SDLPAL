@@ -157,6 +157,9 @@ PAL_KeyboardEventFilter(
       case SDLK_p:
          VIDEO_SaveScreenshot();
          break;
+
+      default:
+         break;
       }
       break;
 
@@ -200,6 +203,9 @@ PAL_KeyboardEventFilter(
             g_InputState.dir = g_InputState.prevdir;
          }
          g_InputState.prevdir = kDirUnknown;
+         break;
+
+      default:
          break;
       }
       break;

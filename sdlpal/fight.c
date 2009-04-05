@@ -209,8 +209,6 @@ PAL_CalcPhysicalAttackDamage(
    sDamage = PAL_CalcBaseDamage(wAttackStrength, wDefense);
    sDamage /= wAttackResistance;
 
-   sDamage = (SHORT)(sDamage * RandomFloat(1, 1.125));
-
    return sDamage;
 }
 
@@ -1965,6 +1963,11 @@ PAL_BattlePlayerPerformAction(
 
             sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
 
+            if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBerserk] > 0)
+            {
+               sDamage *= 3;
+            }
+
             if (RandomLong(0, 5) == 0)
             {
                //
@@ -1982,6 +1985,8 @@ PAL_BattlePlayerPerformAction(
                sDamage *= 2;
                fCritical = TRUE;
             }
+
+            sDamage = (SHORT)(sDamage * RandomFloat(1, 1.125));
 
             if (sDamage <= 0)
             {
@@ -2056,6 +2061,12 @@ PAL_BattlePlayerPerformAction(
                res = g_Battle.rgEnemy[index[i]].e.wAttackResistance;
 
                sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
+
+               if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBerserk] > 0)
+               {
+                  sDamage *= 3;
+               }
+
                if (fCritical)
                {
                   //
@@ -2065,6 +2076,8 @@ PAL_BattlePlayerPerformAction(
                }
 
                sDamage /= division;
+
+               sDamage = (SHORT)(sDamage * RandomFloat(1, 1.125));
 
                if (sDamage <= 0)
                {
