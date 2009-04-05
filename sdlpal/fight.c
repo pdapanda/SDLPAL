@@ -1135,7 +1135,7 @@ PAL_BattleCommitAction(
             wCostMP /= 3;
          }
 
-         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = wCostMP;
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = wCostMP + 5;
       }
       break;
 
@@ -2222,10 +2222,9 @@ PAL_BattlePlayerPerformAction(
             (sTarget == -1) ? 0xFFFF : gpGlobals->rgParty[sTarget].wPlayerRole);
 
       //
-      // Remove the item if the item is consuming and the script succeeded
+      // Remove the item if the item is consuming
       //
-      if ((gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagConsuming) &&
-         g_fScriptSuccess)
+      if (gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagConsuming)
       {
          PAL_AddItemToInventory(wObject, -1);
       }

@@ -878,6 +878,7 @@ PAL_StartBattle(
       if (gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
       {
          gpGlobals->g.PlayerRoles.rgwHP[w] = 1;
+         gpGlobals->rgPlayerStatus[w][kStatusPuppet] = 0;
       }
    }
 
