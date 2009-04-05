@@ -258,7 +258,7 @@ UTIL_Delay(
    SDL_PollEvent(NULL);
    while (SDL_GetTicks() < t)
    {
-      SDL_Delay(5);
+      SDL_Delay(1);
       while (SDL_PollEvent(NULL));
    }
 }

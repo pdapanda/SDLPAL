@@ -419,7 +419,7 @@ PAL_BattleDelay(
       while (SDL_GetTicks() <= dwTime)
       {
          PAL_ProcessEvent();
-         SDL_Delay(5);
+         SDL_Delay(1);
       }
 
       //
@@ -1277,7 +1277,7 @@ PAL_BattleShowPlayerAttackAnim(
       while (SDL_GetTicks() <= dwTime)
       {
          PAL_ProcessEvent();
-         SDL_Delay(5);
+         SDL_Delay(1);
       }
 
       //
@@ -1534,7 +1534,7 @@ PAL_BattleShowPlayerPreMagicAnim(
          while (SDL_GetTicks() <= dwTime)
          {
             PAL_ProcessEvent();
-            SDL_Delay(5);
+            SDL_Delay(1);
          }
 
          //
@@ -1646,7 +1646,7 @@ PAL_BattleShowPlayerDefMagicAnim(
          while (SDL_GetTicks() <= dwTime)
          {
             PAL_ProcessEvent();
-            SDL_Delay(5);
+            SDL_Delay(1);
          }
 
          //
@@ -1963,7 +1963,7 @@ PAL_BattlePlayerPerformAction(
 
             sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
 
-            if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBerserk] > 0)
+            if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0)
             {
                sDamage *= 3;
             }
@@ -2062,7 +2062,7 @@ PAL_BattlePlayerPerformAction(
 
                sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
 
-               if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBerserk] > 0)
+               if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0)
                {
                   sDamage *= 3;
                }

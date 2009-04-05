@@ -1777,7 +1777,7 @@ PAL_SetPlayerStatus(
       }
       break;
 
-   case kStatusBerserk:
+   case kStatusBravery:
    case kStatusProtect:
    case kStatusDualAttack:
    case kStatusHaste:
