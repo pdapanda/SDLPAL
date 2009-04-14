@@ -1147,6 +1147,7 @@ PAL_BattleCommitAction(
       break;
 
    case kBattleActionDefend:
+   case kBattleActionCoopMagic:
       //
       // Defend takes no time
       //
@@ -1926,7 +1927,6 @@ PAL_BattlePlayerPerformAction(
 
 --*/
 {
-   // TODO
    SHORT    sDamage;
    WORD     wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
    SHORT    sTarget = g_Battle.rgPlayer[wPlayerIndex].action.sTarget;
@@ -2201,6 +2201,8 @@ PAL_BattlePlayerPerformAction(
          //
          // Using an offensive magic
          //
+
+         // TODO
       }
 
       gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
