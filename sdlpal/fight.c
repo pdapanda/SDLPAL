@@ -2156,6 +2156,10 @@ PAL_BattlePlayerPerformAction(
          {
             w = gpGlobals->rgParty[g_Battle.rgPlayer[wPlayerIndex].action.sTarget].wPlayerRole;
          }
+         else if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeTrance)
+         {
+            w = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+         }
 
          gpGlobals->g.rgObject[wObject].magic.wScriptOnUse =
             PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnUse, w);
