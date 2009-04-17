@@ -1363,6 +1363,13 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0057:
+      //
+      // Set the base damage of magic according to MP value
+      //
+      i = ((pScript->rgwOperand[1] == 0) ? 8 : pScript->rgwOperand[1]);
+      j = gpGlobals->g.rgObject[pScript->rgwOperand[0]].magic.wMagicNumber;
+      gpGlobals->g.lprgMagic[j].wBaseDamage =
+         gpGlobals->g.PlayerRoles.rgwMP[wEventObjectID] * i;
       break;
 
    case 0x0058:
@@ -1429,6 +1436,10 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0060:
+      //
+      // Immediate KO of the enemy
+      //
+      g_Battle.rgEnemy[wEventObjectID].e.wHealth = 0;
       break;
 
    case 0x0061:
@@ -1458,6 +1469,15 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0064:
+      //
+      // Jump if enemy's HP is more than the specified percentage
+      //
+      i = gpGlobals->g.rgObject[g_Battle.rgEnemy[wEventObjectID].wObjectID].enemy.wEnemyID;
+      if ((INT)(g_Battle.rgEnemy[wEventObjectID].e.wHealth) * 100 >
+         (INT)(gpGlobals->g.lprgEnemy[i].wHealth) * pScript->rgwOperand[0])
+      {
+         wScriptEntry = pScript->rgwOperand[1] - 1;
+      }
       break;
 
    case 0x0065:
@@ -1476,9 +1496,22 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0067:
+      //
+      // Enemy use magic
+      //
+      g_Battle.rgEnemy[wEventObjectID].e.wMagic = pScript->rgwOperand[0];
+      g_Battle.rgEnemy[wEventObjectID].e.wMagicRate =
+         ((pScript->rgwOperand[1] == 0) ? 10 : pScript->rgwOperand[1]);
       break;
 
    case 0x0068:
+      //
+      // Jump if it's enemy's turn
+      //
+      if (g_Battle.fEnemyMoving)
+      {
+         wScriptEntry = pScript->rgwOperand[0] - 1;
+      }
       break;
 
    case 0x0069:

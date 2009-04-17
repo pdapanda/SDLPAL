@@ -969,6 +969,7 @@ PAL_StartBattle(
    }
 
    g_Battle.fIsBoss = fIsBoss;
+   g_Battle.fEnemyMoving = FALSE;
 
    g_Battle.UI.szMsg[0] = '\0';
    g_Battle.UI.dwMsgShowTime = 0;

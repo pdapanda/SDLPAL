@@ -893,14 +893,19 @@ PAL_BattleStartFrame(
          break;
 
       case kFighterAct:
+         g_Battle.fEnemyMoving = TRUE;
+
 ////TEST///////////////////////////////////////////////////////////
 SOUND_Play(g_Battle.rgEnemy[i].e.wAttackSound);
 if (g_Battle.rgEnemy[i].fFirstMoveDone)
 PAL_BattleUIShowText(va("enemy %d attack (2nd)",i), 500);
 else PAL_BattleUIShowText(va("enemy %d attack",i), 500);
-g_Battle.rgEnemy[i].flTimeMeter =0;
-g_Battle.rgEnemy[i].state = kFighterWait;
 ////////////////////////////////////////////////////////////////////
+
+         g_Battle.rgEnemy[i].flTimeMeter = 0;
+         g_Battle.rgEnemy[i].state = kFighterWait;
+         g_Battle.fEnemyMoving = FALSE;
+
          if (!g_Battle.rgEnemy[i].fFirstMoveDone)
          {
             if (g_Battle.rgEnemy[i].e.wDualMove >= 2 ||
@@ -2150,7 +2155,7 @@ PAL_BattlePlayerPerformAction(
          //
          // Using a defensive magic
          //
-         WORD w = 0xFFFF;
+         WORD w = 0;
 
          if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget != -1)
          {
@@ -2207,6 +2212,19 @@ PAL_BattlePlayerPerformAction(
          //
 
          // TODO
+         gpGlobals->g.rgObject[wObject].magic.wScriptOnUse =
+            PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnUse, wPlayerRole);
+
+         if (g_fScriptSuccess)
+         {
+            if (gpGlobals->g.lprgMagic[wMagicNum].wEffect > 0)
+            {
+               PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
+            }
+
+            gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
+               PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, (WORD)sTarget);
+         }
       }
 
       gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;

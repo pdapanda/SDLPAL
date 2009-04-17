@@ -684,7 +684,7 @@ PAL_ShowDialogText(
       //
       if (gpGlobals->fInBattle && g_Battle.BattleResult == kBattleResultOnGoing)
       {
-         PAL_BattleUIShowText(lpszText, 2000);
+         PAL_BattleUIShowText(lpszText, 1000);
       }
       else
       {
