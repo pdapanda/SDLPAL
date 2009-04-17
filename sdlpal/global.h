@@ -263,10 +263,10 @@ typedef struct tagENEMY
    WORD        wMagicFrames;        // total number of frames when using magics
    WORD        wAttackFrames;       // total number of frames when doing normal attack
    WORD        wIdleAnimSpeed;      // speed of the animation when idle
-   WORD        wUnknown2;           // FIXME: ???
+   WORD        wActWaitFrames;      // FIXME: ???
    WORD        wYPosOffset;
    WORD        wAttackSound;        // sound played when this enemy uses normal attack
-   WORD        wUnknown3;           // FIXME: ???
+   WORD        wActionSound;        // FIXME: ???
    WORD        wMagicSound;         // sound played when this enemy uses magic
    WORD        wDeathSound;         // sound played when this enemy dies
    WORD        wCallSound;          // sound played when entering the battle
