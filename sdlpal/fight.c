@@ -138,7 +138,7 @@ PAL_CalcMagicDamage(
 
      [IN]  wDefense - defense value of inflictor.
 
-     [IN]  rgwAttribResistance - inflictor's resistance to the attributed magics.
+     [IN]  rgwAttribResistance - inflictor's resistance to the elemental magics.
 
      [IN]  wMagicID - object ID of the magic.
 
@@ -593,11 +593,10 @@ PAL_BattleDisplayStatChange(
             y = 10;
          }
 
-         if (sDamage < 0)
-         {
-            PAL_BattleUIShowNum((WORD)(-sDamage), PAL_XY(x, y), kNumColorBlue);
-         }
-         else
+         //
+         // Only show MP increasing
+         //
+         if (sDamage > 0)
          {
             PAL_BattleUIShowNum((WORD)(sDamage), PAL_XY(x, y), kNumColorCyan);
          }
@@ -638,7 +637,7 @@ PAL_BattlePostActionCheck(
          continue;
       }
 
-      if (g_Battle.rgEnemy[i].e.wHealth == 0)
+      if ((SHORT)(g_Battle.rgEnemy[i].e.wHealth) <= 0)
       {
          //
          // This enemy is KO'ed
@@ -845,6 +844,24 @@ PAL_BattleStartFrame(
    }
 
    //
+   // Check for hiding status
+   //
+   if (g_Battle.iHidingTime > 0)
+   {
+      if (PAL_GetTimeChargingSpeed(1000) > 0)
+      {
+         g_Battle.iHidingTime--;
+      }
+
+      if (g_Battle.iHidingTime == 0)
+      {
+         PAL_BattleBackupScene();
+         PAL_BattleMakeScene();
+         PAL_BattleFadeScene();
+      }
+   }
+
+   //
    // Run the logic for all enemies
    //
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
@@ -895,12 +912,15 @@ PAL_BattleStartFrame(
       case kFighterAct:
          g_Battle.fEnemyMoving = TRUE;
 
+         if (g_Battle.iHidingTime == 0)
+         {
 ////TEST///////////////////////////////////////////////////////////
 SOUND_Play(g_Battle.rgEnemy[i].e.wAttackSound);
 if (g_Battle.rgEnemy[i].fFirstMoveDone)
 PAL_BattleUIShowText(va("enemy %d attack (2nd)",i), 500);
 else PAL_BattleUIShowText(va("enemy %d attack",i), 500);
 ////////////////////////////////////////////////////////////////////
+         }
 
          g_Battle.rgEnemy[i].flTimeMeter = 0;
          g_Battle.rgEnemy[i].state = kFighterWait;
@@ -1699,7 +1719,7 @@ PAL_BattleShowPlayerDefMagicAnim(
             //
             // Repaint the previous player
             //
-            if (sTarget > 0)
+            if (sTarget > 0 && g_Battle.iHidingTime == 0)
             {
                LPCBITMAPRLE p = PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget - 1].lpSprite,
                   g_Battle.rgPlayer[sTarget - 1].wCurrentFrame);
@@ -1998,14 +2018,7 @@ PAL_BattlePlayerPerformAction(
                sDamage = 1;
             }
 
-            if (g_Battle.rgEnemy[sTarget].e.wHealth > (WORD)sDamage)
-            {
-               g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
-            }
-            else
-            {
-               g_Battle.rgEnemy[sTarget].e.wHealth = 0;
-            }
+            g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
 
             if (t == 0)
             {
@@ -2089,14 +2102,7 @@ PAL_BattlePlayerPerformAction(
                   sDamage = 1;
                }
 
-               if (g_Battle.rgEnemy[index[i]].e.wHealth > (WORD)sDamage)
-               {
-                  g_Battle.rgEnemy[index[i]].e.wHealth -= sDamage;
-               }
-               else
-               {
-                  g_Battle.rgEnemy[index[i]].e.wHealth = 0;
-               }
+               g_Battle.rgEnemy[index[i]].e.wHealth -= sDamage;
 
                //
                // Show the number of damage
@@ -2163,11 +2169,11 @@ PAL_BattlePlayerPerformAction(
          }
          else if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeTrance)
          {
-            w = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+            w = wPlayerRole;
          }
 
          gpGlobals->g.rgObject[wObject].magic.wScriptOnUse =
-            PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnUse, w);
+            PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnUse, wPlayerRole);
 
          if (g_fScriptSuccess)
          {
@@ -2210,8 +2216,6 @@ PAL_BattlePlayerPerformAction(
          //
          // Using an offensive magic
          //
-
-         // TODO
          gpGlobals->g.rgObject[wObject].magic.wScriptOnUse =
             PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnUse, wPlayerRole);
 
@@ -2222,12 +2226,50 @@ PAL_BattlePlayerPerformAction(
                PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
             }
 
+            if (sTarget == -1)
+            {
+               for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+               {
+                  if (g_Battle.rgEnemy[i].wObjectID == 0)
+                  {
+                     continue;
+                  }
+
+                  str = PAL_GetPlayerMagicStrength(wPlayerRole);
+                  def = g_Battle.rgEnemy[i].e.wDefense;
+                  def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 4;
+
+                  sDamage = PAL_CalcMagicDamage(str, def,
+                     g_Battle.rgEnemy[i].e.wElemResistance, wObject);
+
+                  g_Battle.rgEnemy[i].e.wHealth -= sDamage;
+               }
+            }
+            else
+            {
+               str = PAL_GetPlayerMagicStrength(wPlayerRole);
+               def = g_Battle.rgEnemy[sTarget].e.wDefense;
+               def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
+
+               sDamage = PAL_CalcMagicDamage(str, def,
+                  g_Battle.rgEnemy[sTarget].e.wElemResistance, wObject);
+
+               g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
+            }
+
             gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
                PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, (WORD)sTarget);
+
+            PAL_BattleDisplayStatChange();
+            PAL_BattleDelay(8, 0);
          }
       }
 
       gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
+      if ((SHORT)(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole]) < 0)
+      {
+         gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] = 0;
+      }
       break;
 
    case kBattleActionThrowItem:
@@ -2251,6 +2293,14 @@ PAL_BattlePlayerPerformAction(
       if (gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagConsuming)
       {
          PAL_AddItemToInventory(wObject, -1);
+      }
+
+      if (g_Battle.iHidingTime < 0)
+      {
+         g_Battle.iHidingTime = -g_Battle.iHidingTime * 85;
+         PAL_BattleBackupScene();
+         PAL_BattleMakeScene();
+         PAL_BattleFadeScene();
       }
 
       PAL_BattleUpdateFighters();

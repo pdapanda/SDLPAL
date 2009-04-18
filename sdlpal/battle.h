@@ -145,6 +145,8 @@ typedef struct tagBATTLE
    LPBYTE           lpEffectSprite;
 
    BOOL             fEnemyMoving;         // TRUE if enemy is moving
+
+   INT              iHidingTime;          // Time of hiding
 } BATTLE;
 
 extern BATTLE g_Battle;

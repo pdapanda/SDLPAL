@@ -112,12 +112,12 @@ PAL_BattleMakeScene(
             pos = PAL_XY(PAL_X(pos) + RandomLong(-3, 3), PAL_Y(pos) + RandomLong(-3, 3));
          }
 
-         if (g_Battle.rgPlayer[i].iColorShift)
+         if (g_Battle.rgPlayer[i].iColorShift != 0)
          {
             PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
                g_Battle.lpSceneBuf, pos, g_Battle.rgPlayer[i].iColorShift);
          }
-         else
+         else if (g_Battle.iHidingTime == 0)
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
                g_Battle.lpSceneBuf, pos);
@@ -970,6 +970,7 @@ PAL_StartBattle(
 
    g_Battle.fIsBoss = fIsBoss;
    g_Battle.fEnemyMoving = FALSE;
+   g_Battle.iHidingTime = 0;
 
    g_Battle.UI.szMsg[0] = '\0';
    g_Battle.UI.dwMsgShowTime = 0;

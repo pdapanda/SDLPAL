@@ -1008,6 +1008,33 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0034:
+      //
+      // Transform collected enemies into items
+      //
+      if (gpGlobals->wCollectValue > 0)
+      {
+         char s[256];
+
+         i = RandomLong(1, 9);
+         if (i > gpGlobals->wCollectValue)
+         {
+            i = gpGlobals->wCollectValue;
+         }
+
+         gpGlobals->wCollectValue -= i;
+         i--;
+
+         PAL_AddItemToInventory(gpGlobals->g.lprgStore[0].rgwItems[i], 1);
+
+         PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
+         strcpy(s, PAL_GetWord(42));
+         strcat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
+         PAL_ShowDialogText(s);
+      }
+      else
+      {
+         wScriptEntry = pScript->rgwOperand[0] - 1;
+      }
       break;
 
    case 0x0035:
@@ -1370,6 +1397,7 @@ PAL_InterpretInstruction(
       j = gpGlobals->g.rgObject[pScript->rgwOperand[0]].magic.wMagicNumber;
       gpGlobals->g.lprgMagic[j].wBaseDamage =
          gpGlobals->g.PlayerRoles.rgwMP[wEventObjectID] * i;
+      gpGlobals->g.PlayerRoles.rgwMP[wEventObjectID] = 0;
       break;
 
    case 0x0058:
@@ -1412,6 +1440,10 @@ PAL_InterpretInstruction(
       break;
 
    case 0x005C:
+      //
+      // Hide for a while
+      //
+      g_Battle.iHidingTime = -(INT)(pScript->rgwOperand[0]);
       break;
 
    case 0x005D:
