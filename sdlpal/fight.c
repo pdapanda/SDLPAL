@@ -1016,10 +1016,6 @@ else PAL_BattleUIShowText(va("enemy %d attack",i), 500);
                g_Battle.rgPlayer[i].flTimeMeter = 0;
             }
 
-            //
-            // Revert this player back to waiting state.
-            //
-            g_Battle.rgPlayer[i].state = kFighterWait;
             g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
          }
          break;
@@ -1787,7 +1783,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 /*++
   Purpose:
 
-    Show the offensive magic effect for player.
+    Show the offensive magic animation for player.
 
   Parameters:
 
@@ -1803,6 +1799,64 @@ PAL_BattleShowPlayerOffMagicAnim(
 
 --*/
 {
+}
+
+static VOID
+PAL_BattleShowPostMagicAnim(
+   VOID
+)
+/*++
+  Purpose:
+
+    Show the post-magic animation.
+
+  Parameters:
+
+    None
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int i, j, x, y, dist = 8;
+   PAL_POS rgEnemyPosBak[MAX_ENEMIES_IN_TEAM];
+
+   for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
+   {
+      rgEnemyPosBak[i] = g_Battle.rgEnemy[i].pos;
+   }
+
+   for (i = 0; i < 3; i++)
+   {
+      for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
+      {
+         if (g_Battle.rgEnemy[j].e.wHealth == g_Battle.rgEnemy[j].wPrevHP)
+         {
+            continue;
+         }
+
+         x = PAL_X(g_Battle.rgEnemy[j].pos);
+         y = PAL_Y(g_Battle.rgEnemy[j].pos);
+
+         x -= dist;
+         y -= dist / 2;
+
+         g_Battle.rgEnemy[j].pos = PAL_XY(x, y);
+
+         g_Battle.rgEnemy[j].iColorShift = ((i == 1) ? 6 : 0);
+      }
+
+      PAL_BattleDelay(1, 0);
+      dist /= -2;
+   }
+
+   for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
+   {
+      g_Battle.rgEnemy[i].pos = rgEnemyPosBak[i];
+   }
+   PAL_BattleDelay(1, 0);
 }
 
 static VOID
@@ -2226,44 +2280,61 @@ PAL_BattlePlayerPerformAction(
                PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
             }
 
-            if (sTarget == -1)
-            {
-               for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
-               {
-                  if (g_Battle.rgEnemy[i].wObjectID == 0)
-                  {
-                     continue;
-                  }
-
-                  str = PAL_GetPlayerMagicStrength(wPlayerRole);
-                  def = g_Battle.rgEnemy[i].e.wDefense;
-                  def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 4;
-
-                  sDamage = PAL_CalcMagicDamage(str, def,
-                     g_Battle.rgEnemy[i].e.wElemResistance, wObject);
-
-                  g_Battle.rgEnemy[i].e.wHealth -= sDamage;
-               }
-            }
-            else
-            {
-               str = PAL_GetPlayerMagicStrength(wPlayerRole);
-               def = g_Battle.rgEnemy[sTarget].e.wDefense;
-               def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
-
-               sDamage = PAL_CalcMagicDamage(str, def,
-                  g_Battle.rgEnemy[sTarget].e.wElemResistance, wObject);
-
-               g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
-            }
-
             gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
                PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, (WORD)sTarget);
 
-            PAL_BattleDisplayStatChange();
-            PAL_BattleDelay(8, 0);
+            //
+            // Inflict damage to enemies
+            //
+            if ((SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wBaseDamage) > 0)
+            {
+               if (sTarget == -1)
+               {
+                  for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+                  {
+                     if (g_Battle.rgEnemy[i].wObjectID == 0)
+                     {
+                        continue;
+                     }
+
+                     str = PAL_GetPlayerMagicStrength(wPlayerRole);
+                     def = g_Battle.rgEnemy[i].e.wDefense;
+                     def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 4;
+
+                     sDamage = PAL_CalcMagicDamage(str, def,
+                        g_Battle.rgEnemy[i].e.wElemResistance, wObject);
+
+                     if (sDamage <= 0)
+                     {
+                        sDamage = 1;
+                     }
+
+                     g_Battle.rgEnemy[i].e.wHealth -= sDamage;
+                  }
+               }
+               else
+               {
+                  str = PAL_GetPlayerMagicStrength(wPlayerRole);
+                  def = g_Battle.rgEnemy[sTarget].e.wDefense;
+                  def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
+
+                  sDamage = PAL_CalcMagicDamage(str, def,
+                     g_Battle.rgEnemy[sTarget].e.wElemResistance, wObject);
+
+                  if (sDamage <= 0)
+                  {
+                     sDamage = 1;
+                  }
+
+                  g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
+               }
+            }
          }
       }
+
+      PAL_BattleDisplayStatChange();
+      PAL_BattleShowPostMagicAnim();
+      PAL_BattleDelay(5, 0);
 
       gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
       if ((SHORT)(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole]) < 0)
@@ -2311,6 +2382,11 @@ PAL_BattlePlayerPerformAction(
    case kBattleActionPass:
       break;
    }
+
+   //
+   // Revert this player back to waiting state.
+   //
+   g_Battle.rgPlayer[wPlayerIndex].state = kFighterWait;
 
    PAL_BattlePostActionCheck(FALSE);
 
