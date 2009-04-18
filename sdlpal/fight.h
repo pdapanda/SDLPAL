@@ -74,7 +74,7 @@ PAL_BattleStartFrame(
 
 VOID
 PAL_BattleCommitAction(
-   VOID
+   BOOL         fRepeat
 );
 
 VOID

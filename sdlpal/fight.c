@@ -1064,7 +1064,7 @@ if (g_InputState.dwKeyPress & kKeyFlee){
 
 VOID
 PAL_BattleCommitAction(
-   VOID
+   BOOL           fRepeat
 )
 /*++
   Purpose:
@@ -1073,7 +1073,7 @@ PAL_BattleCommitAction(
 
   Parameters:
 
-    None.
+    [IN]  fRepeat - TRUE if repeat the last action.
 
   Return value:
 
@@ -1083,12 +1083,15 @@ PAL_BattleCommitAction(
 {
    WORD      w;
 
-   g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType =
-      g_Battle.UI.wActionType;
-   g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget =
-      (SHORT)g_Battle.UI.wSelectedIndex;
-   g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
-      g_Battle.UI.wObjectID;
+   if (!fRepeat)
+   {
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType =
+         g_Battle.UI.wActionType;
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget =
+         (SHORT)g_Battle.UI.wSelectedIndex;
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
+         g_Battle.UI.wObjectID;
+   }
 
    //
    // Check if the action is valid
@@ -2290,6 +2293,9 @@ PAL_BattlePlayerPerformAction(
             {
                if (sTarget == -1)
                {
+                  //
+                  // Attack all enemies
+                  //
                   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
                   {
                      if (g_Battle.rgEnemy[i].wObjectID == 0)
@@ -2314,6 +2320,9 @@ PAL_BattlePlayerPerformAction(
                }
                else
                {
+                  //
+                  // Attack one enemy
+                  //
                   str = PAL_GetPlayerMagicStrength(wPlayerRole);
                   def = g_Battle.rgEnemy[sTarget].e.wDefense;
                   def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;

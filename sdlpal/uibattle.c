@@ -601,6 +601,60 @@ PAL_BattleUIThrowItem(
    }
 }
 
+static WORD
+PAL_BattleUIPickAutoMagic(
+   WORD          wPlayerRole
+)
+/*++
+  Purpose:
+
+    Pick a magic for the specified player for automatic usage.
+
+  Parameters:
+
+    [IN]  wPlayerRole - the player role ID.
+
+  Return value:
+
+    The object ID of the selected magic. 0 for physical attack.
+
+--*/
+{
+   WORD             wMagic = 0, w, wMagicNum;
+   int              i, iMaxPower = 0, iPower;
+
+   for (i = 0; i < MAX_PLAYER_MAGICS; i++)
+   {
+      w = gpGlobals->g.PlayerRoles.rgwMagic[i][wPlayerRole];
+      if (w == 0)
+      {
+         continue;
+      }
+
+      wMagicNum = gpGlobals->g.rgObject[w].magic.wMagicNumber;
+
+      //
+      // skip if the magic is an ultimate move or not enough MP
+      //
+      if (gpGlobals->g.lprgMagic[wMagicNum].wCostMP == 1 ||
+         gpGlobals->g.lprgMagic[wMagicNum].wCostMP > gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole])
+      {
+         continue;
+      }
+
+      iPower = (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wBaseDamage) +
+         RandomLong(0, 60);
+
+      if (iPower > iMaxPower)
+      {
+         iMaxPower = iPower;
+         wMagic = w;
+      }
+   }
+
+   return wMagic;
+}
+
 VOID
 PAL_BattleUIUpdate(
    VOID
@@ -711,7 +765,7 @@ PAL_BattleUIUpdate(
             g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
          }
 
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
          goto end; // don't go further
       }
 
@@ -722,14 +776,14 @@ PAL_BattleUIUpdate(
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0)
       {
          g_Battle.UI.wActionType = kBattleActionPass;
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
          goto end; // don't go further
       }
 
       if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0)
       {
          g_Battle.UI.wActionType = kBattleActionAttackMate;
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
          goto end; // don't go further
       }
 
@@ -746,7 +800,7 @@ PAL_BattleUIUpdate(
             g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
          }
 
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
          goto end; // don't go further
       }
 
@@ -912,15 +966,46 @@ PAL_BattleUIUpdate(
             else if (g_InputState.dwKeyPress & kKeyDefend)
             {
                g_Battle.UI.wActionType = kBattleActionDefend;
-               PAL_BattleCommitAction();
+               PAL_BattleCommitAction(FALSE);
             }
             else if (g_InputState.dwKeyPress & kKeyForce)
             {
+               w = PAL_BattleUIPickAutoMagic(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole);
+
+               if (w == 0)
+               {
+                  g_Battle.UI.wActionType = kBattleActionAttack;
+
+                  if (PAL_PlayerCanAttackAll(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole))
+                  {
+                     g_Battle.UI.wSelectedIndex = -1;
+                  }
+                  else
+                  {
+                     g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+                  }
+               }
+               else
+               {
+                  g_Battle.UI.wActionType = kBattleActionMagic;
+                  g_Battle.UI.wObjectID = w;
+
+                  if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
+                  {
+                     g_Battle.UI.wSelectedIndex = -1;
+                  }
+                  else
+                  {
+                     g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+                  }
+               }
+
+               PAL_BattleCommitAction(FALSE);
             }
             else if (g_InputState.dwKeyPress & kKeyFlee)
             {
                g_Battle.UI.wActionType = kBattleActionFlee;
-               PAL_BattleCommitAction();
+               PAL_BattleCommitAction(FALSE);
             }
             else if (g_InputState.dwKeyPress & kKeyUseItem)
             {
@@ -934,6 +1019,7 @@ PAL_BattleUIUpdate(
             }
             else if (g_InputState.dwKeyPress & kKeyRepeat)
             {
+               PAL_BattleCommitAction(TRUE);
             }
             else if (g_InputState.dwKeyPress & kKeyMenu)
             {
@@ -1007,7 +1093,7 @@ PAL_BattleUIUpdate(
 
                case 2: // defend
                   g_Battle.UI.wActionType = kBattleActionDefend;
-                  PAL_BattleCommitAction();
+                  PAL_BattleCommitAction(FALSE);
                   break;
 
                case 3: // auto
@@ -1016,7 +1102,7 @@ PAL_BattleUIUpdate(
 
                case 4: // flee
                   g_Battle.UI.wActionType = kBattleActionFlee;
-                  PAL_BattleCommitAction();
+                  PAL_BattleCommitAction(FALSE);
                   break;
 
                case 5: // status
@@ -1108,7 +1194,7 @@ PAL_BattleUIUpdate(
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
          g_Battle.UI.wPrevEnemyTarget = g_Battle.UI.wSelectedIndex;
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
       {
@@ -1157,7 +1243,7 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
       {
@@ -1207,7 +1293,7 @@ PAL_BattleUIUpdate(
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
          g_Battle.UI.wSelectedIndex = (WORD)-1;
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
       }
       break;
 
@@ -1246,7 +1332,7 @@ PAL_BattleUIUpdate(
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
          g_Battle.UI.wSelectedIndex = (WORD)-1;
-         PAL_BattleCommitAction();
+         PAL_BattleCommitAction(FALSE);
       }
       break;
    }
