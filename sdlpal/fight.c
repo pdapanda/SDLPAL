@@ -159,10 +159,12 @@ PAL_CalcMagicDamage(
    //
    // Formula courtesy of palxex and shenyanduxing
    //
-   wMagicStrength *= RandomLong(9, 11);
+   wMagicStrength *= RandomFloat(10, 11);
    wMagicStrength /= 10;
 
-   sDamage = PAL_CalcBaseDamage(wMagicStrength, wDefense) / 2;
+   sDamage = PAL_CalcBaseDamage(wMagicStrength, wDefense);
+   sDamage /= 4;
+
    sDamage += gpGlobals->g.lprgMagic[wMagicID].wBaseDamage;
 
    if (gpGlobals->g.lprgMagic[wMagicID].wElemental != 0)
@@ -1666,93 +1668,95 @@ PAL_BattleShowPlayerDefMagicAnim(
    g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
    PAL_BattleDelay(1, 0);
 
-   SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
-
    for (i = 0; i < n; i++)
    {
       LPCBITMAPRLE b = PAL_SpriteGetFrame(lpSpriteEffect, i);
 
-      for (j = 0; j <= gpGlobals->g.lprgMagic[iMagicNum].wEffectDuration; j++)
+      if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
       {
-         //
-         // Clear the input state of previous frame.
-         //
-         PAL_ClearKeyState();
-
-         //
-         // Wait for the time of one frame. Accept input here.
-         //
-         PAL_ProcessEvent();
-         while (SDL_GetTicks() <= dwTime)
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(1);
-         }
-
-         //
-         // Set the time of the next frame.
-         //
-         dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
-
-         PAL_BattleMakeScene();
-         SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
-
-         if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToParty)
-         {
-            assert(sTarget == -1);
-
-            for (l = 0; l <= gpGlobals->wMaxPartyMemberIndex; l++)
-            {
-               x = PAL_X(g_Battle.rgPlayer[l].pos);
-               y = PAL_Y(g_Battle.rgPlayer[l].pos);
-
-               x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[l].lpSprite, g_Battle.rgPlayer[l].wCurrentFrame)) / 2;
-               y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[l].lpSprite, g_Battle.rgPlayer[l].wCurrentFrame));
-
-               x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
-               y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
-
-               PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
-            }
-         }
-         else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToPlayer)
-         {
-            assert(sTarget != -1);
-
-            x = PAL_X(g_Battle.rgPlayer[sTarget].pos);
-            y = PAL_Y(g_Battle.rgPlayer[sTarget].pos);
-
-            x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget].lpSprite, g_Battle.rgPlayer[sTarget].wCurrentFrame)) / 2;
-            y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget].lpSprite, g_Battle.rgPlayer[sTarget].wCurrentFrame));
-
-            x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
-            y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
-
-            PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
-
-            //
-            // Repaint the previous player
-            //
-            if (sTarget > 0 && g_Battle.iHidingTime == 0)
-            {
-               LPCBITMAPRLE p = PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget - 1].lpSprite,
-                  g_Battle.rgPlayer[sTarget - 1].wCurrentFrame);
-
-               if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[sTarget - 1].wPlayerRole][kStatusConfused] == 0)
-               {
-                  PAL_RLEBlitToSurface(p, gpScreen, g_Battle.rgPlayer[sTarget - 1].pos);
-               }
-            }
-         }
-         else
-         {
-            assert(FALSE);
-         }
-
-         PAL_BattleUIUpdate();
-
-         VIDEO_UpdateScreen(NULL);
+         SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
       }
+
+      //
+      // Clear the input state of previous frame.
+      //
+      PAL_ClearKeyState();
+
+      //
+      // Wait for the time of one frame. Accept input here.
+      //
+      PAL_ProcessEvent();
+      while (SDL_GetTicks() <= dwTime)
+      {
+         PAL_ProcessEvent();
+         SDL_Delay(1);
+      }
+
+      //
+      // Set the time of the next frame.
+      //
+      dwTime = SDL_GetTicks() +
+         ((SHORT)(gpGlobals->g.lprgMagic[iMagicNum].wSpeed) + 5) * 10;
+
+      PAL_BattleMakeScene();
+      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+
+      if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToParty)
+      {
+         assert(sTarget == -1);
+
+         for (l = 0; l <= gpGlobals->wMaxPartyMemberIndex; l++)
+         {
+            x = PAL_X(g_Battle.rgPlayer[l].pos);
+            y = PAL_Y(g_Battle.rgPlayer[l].pos);
+
+            x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[l].lpSprite, g_Battle.rgPlayer[l].wCurrentFrame)) / 2;
+            y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[l].lpSprite, g_Battle.rgPlayer[l].wCurrentFrame));
+
+            x += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
+            y += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
+
+            PAL_RLEBlitToSurface(b, gpScreen,
+               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         }
+      }
+      else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToPlayer)
+      {
+         assert(sTarget != -1);
+
+         x = PAL_X(g_Battle.rgPlayer[sTarget].pos);
+         y = PAL_Y(g_Battle.rgPlayer[sTarget].pos);
+
+         x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget].lpSprite, g_Battle.rgPlayer[sTarget].wCurrentFrame)) / 2;
+         y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget].lpSprite, g_Battle.rgPlayer[sTarget].wCurrentFrame));
+
+         x += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
+         y += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
+
+         PAL_RLEBlitToSurface(b, gpScreen,
+            PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
+         //
+         // Repaint the previous player
+         //
+         if (sTarget > 0 && g_Battle.iHidingTime == 0)
+         {
+            LPCBITMAPRLE p = PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget - 1].lpSprite, g_Battle.rgPlayer[sTarget - 1].wCurrentFrame);
+
+            if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[sTarget - 1].wPlayerRole][kStatusConfused] == 0)
+            {
+               PAL_RLEBlitToSurface(p, gpScreen, g_Battle.rgPlayer[sTarget - 1].pos);
+            }
+         }
+      }
+      else
+      {
+         assert(FALSE);
+      }
+
+      PAL_BattleUIUpdate();
+
+      VIDEO_UpdateScreen(NULL);
    }
 
    free(lpSpriteEffect);
@@ -1817,6 +1821,149 @@ PAL_BattleShowPlayerOffMagicAnim(
 
 --*/
 {
+   LPSPRITE   lpSpriteEffect;
+   int        l, iMagicNum, iEffectNum, n, i, k, x, y, wave;
+   DWORD      dwTime = SDL_GetTicks();
+
+   iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
+   iEffectNum = gpGlobals->g.lprgMagic[iMagicNum].wEffect;
+
+   l = PAL_MKFGetDecompressedSize(iEffectNum, gpGlobals->f.fpFIRE);
+   if (l <= 0)
+   {
+      return;
+   }
+
+   lpSpriteEffect = (LPSPRITE)UTIL_malloc(l);
+
+   PAL_MKFDecompressChunk((LPBYTE)lpSpriteEffect, l, iEffectNum, gpGlobals->f.fpFIRE);
+
+   n = PAL_SpriteGetNumFrames(lpSpriteEffect);
+
+   g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+   PAL_BattleDelay(1, 0);
+
+   l = n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+   l *= (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wEffectTimes;
+   l += n;
+   l += gpGlobals->g.lprgMagic[iMagicNum].wShake;
+
+   wave = gpGlobals->wScreenWave;
+   gpGlobals->wScreenWave += gpGlobals->g.lprgMagic[iMagicNum].wWave;
+
+   for (i = 0; i < l; i++)
+   {
+      LPCBITMAPRLE b;
+
+      if (l - i > gpGlobals->g.lprgMagic[iMagicNum].wShake)
+      {
+         b = PAL_SpriteGetFrame(lpSpriteEffect, i % n);
+      }
+      else
+      {
+         VIDEO_ShakeScreen(i, 3);
+         b = PAL_SpriteGetFrame(lpSpriteEffect, (l - gpGlobals->g.lprgMagic[iMagicNum].wShake - 1) % n);
+      }
+
+      if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
+      {
+         SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+      }
+
+      //
+      // Clear the input state of previous frame.
+      //
+      PAL_ClearKeyState();
+
+      //
+      // Wait for the time of one frame. Accept input here.
+      //
+      PAL_ProcessEvent();
+      while (SDL_GetTicks() <= dwTime)
+      {
+         PAL_ProcessEvent();
+         SDL_Delay(1);
+      }
+
+      //
+      // Set the time of the next frame.
+      //
+      dwTime = SDL_GetTicks() +
+         ((SHORT)(gpGlobals->g.lprgMagic[iMagicNum].wSpeed) + 5) * 10;
+
+      PAL_BattleMakeScene();
+      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+
+      if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeNormal)
+      {
+         assert(sTarget != -1);
+
+         x = PAL_X(g_Battle.rgEnemy[sTarget].pos);
+         y = PAL_Y(g_Battle.rgEnemy[sTarget].pos);
+
+         x += PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[sTarget].lpSprite, g_Battle.rgEnemy[sTarget].wCurrentFrame)) / 2;
+         y += PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[sTarget].lpSprite, g_Battle.rgEnemy[sTarget].wCurrentFrame));
+
+         x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
+         y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
+
+         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+      }
+      else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackAll)
+      {
+         const int effectpos[3][2] = {{70, 140}, {100, 110}, {160, 100}};
+
+         assert(sTarget == -1);
+
+         for (k = 0; k < 3; k++)
+         {
+            x = effectpos[k][0];
+            y = effectpos[k][1];
+
+            x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
+            y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
+
+            PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         }
+      }
+      else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackWhole ||
+         gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackField)
+      {
+         assert(sTarget == -1);
+
+         if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackWhole)
+         {
+            x = 120;
+            y = 100;
+         }
+         else
+         {
+            x = 160;
+            y = 200;
+         }
+
+         x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
+         y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
+
+         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+      }
+      else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeSummon)
+      {
+      }
+      else
+      {
+         assert(FALSE);
+      }
+
+      PAL_BattleUIUpdate();
+
+      VIDEO_UpdateScreen(NULL);
+   }
+
+   gpGlobals->wScreenWave = wave;
+   VIDEO_ShakeScreen(0, 0);
+
+   free(lpSpriteEffect);
 }
 
 static VOID
@@ -2249,10 +2396,7 @@ PAL_BattlePlayerPerformAction(
 
          if (g_fScriptSuccess)
          {
-            if (gpGlobals->g.lprgMagic[wMagicNum].wEffect > 0)
-            {
-               PAL_BattleShowPlayerDefMagicAnim(wPlayerIndex, wObject, sTarget);
-            }
+            PAL_BattleShowPlayerDefMagicAnim(wPlayerIndex, wObject, sTarget);
 
             gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
                PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, w);
@@ -2293,10 +2437,7 @@ PAL_BattlePlayerPerformAction(
 
          if (g_fScriptSuccess)
          {
-            if (gpGlobals->g.lprgMagic[wMagicNum].wEffect > 0)
-            {
-               PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
-            }
+            PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
 
             gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
                PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, (WORD)sTarget);

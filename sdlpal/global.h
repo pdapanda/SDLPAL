@@ -343,7 +343,7 @@ typedef enum tagMAGIC_TYPE
    kMagicTypeNormal           = 0,
    kMagicTypeAttackAll        = 1,  // draw the effect on each of the enemies
    kMagicTypeAttackWhole      = 2,  // draw the effect on the whole enemy team
-   kMagicTypeKeepEffect       = 3,  // keep the effect on the scene
+   kMagicTypeAttackField      = 3,  // draw the effect on the battle field
    kMagicTypeApplyToPlayer    = 4,  // the magic is used on one player
    kMagicTypeApplyToParty     = 5,  // the magic is used on the whole party
    kMagicTypeTrance           = 8,  // trance the player
@@ -357,10 +357,10 @@ typedef struct tagMAGIC
    WORD               wXOffset;
    WORD               wYOffset;
    WORD               wSummonEffect;         // summon effect sprite (in F.MKF)
-   WORD               wSpeed;                // speed of effect
-   WORD               wEffectDuration;       // effect duration
-   WORD               wDelay;                // delay duration
-   WORD               wActionDuration;       // action duration
+   WORD               wSpeed;                // speed of the effect
+   WORD               wUnknown1;             // FIXME: ???
+   WORD               wSoundDelay;           // delay of the SFX
+   WORD               wEffectTimes;          // total times of effect
    WORD               wShake;                // shake screen
    WORD               wWave;                 // wave screen
    WORD               wUnknown;              // FIXME: ???
