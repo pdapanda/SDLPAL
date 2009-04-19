@@ -287,7 +287,7 @@ typedef struct tagENEMY
    WORD        wFleeRate;           // chance for successful fleeing
    WORD        wPoisonResistance;   // resistance to poison
    WORD        wElemResistance[NUM_MAGIC_ELEMENTAL]; // resistance to elemental magics
-   WORD        wAttackResistance;   // resistance to normal attacking
+   WORD        wPhysicalResistance; // resistance to physical attack
    WORD        wDualMove;           // whether this enemy can do dual move or not
    WORD        wCollectValue;       // value for collecting this enemy for items
 } ENEMY, *LPENEMY;

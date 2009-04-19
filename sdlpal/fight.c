@@ -77,7 +77,7 @@ PAL_BattleSelectAutoTarget(
    return -1;
 }
 
-SHORT
+static SHORT
 PAL_CalcBaseDamage(
    WORD        wAttackStrength,
    WORD        wDefense
@@ -120,11 +120,12 @@ PAL_CalcBaseDamage(
    return sDamage;
 }
 
-SHORT
+static SHORT
 PAL_CalcMagicDamage(
    WORD             wMagicStrength,
    WORD             wDefense,
    const WORD       rgwElementalResistance[NUM_MAGIC_ELEMENTAL],
+   WORD             wPoisonResistance,
    WORD             wMagicID
 )
 /*++
@@ -138,7 +139,9 @@ PAL_CalcMagicDamage(
 
      [IN]  wDefense - defense value of inflictor.
 
-     [IN]  rgwAttribResistance - inflictor's resistance to the elemental magics.
+     [IN]  rgwElementalResistance - inflictor's resistance to the elemental magics.
+
+     [IN]  wPoisonResistance - inflictor's resistance to poison.
 
      [IN]  wMagicID - object ID of the magic.
 
@@ -164,14 +167,26 @@ PAL_CalcMagicDamage(
 
    if (gpGlobals->g.lprgMagic[wMagicID].wElemental != 0)
    {
-      wElem = gpGlobals->g.lprgMagic[wMagicID].wElemental - 1;
+      wElem = gpGlobals->g.lprgMagic[wMagicID].wElemental;
 
-      sDamage *= 10 - rgwElementalResistance[wElem];
+      if (wElem > NUM_MAGIC_ELEMENTAL)
+      {
+         sDamage *= 10 - wPoisonResistance;
+      }
+      else if (wElem == 0)
+      {
+         sDamage *= 5;
+      }
+      else
+      {
+         sDamage *= 10 - rgwElementalResistance[wElem - 1];
+      }
+
       sDamage /= 5;
 
-      if (wElem < NUM_MAGIC_ELEMENTAL)
+      if (wElem <= NUM_MAGIC_ELEMENTAL)
       {
-         sDamage *= 10 + gpGlobals->g.lprgBattleField[gpGlobals->wNumBattleField].rgsMagicEffect[wElem];
+         sDamage *= 10 + gpGlobals->g.lprgBattleField[gpGlobals->wNumBattleField].rgsMagicEffect[wElem - 1];
          sDamage /= 10;
       }
    }
@@ -2040,7 +2055,7 @@ PAL_BattlePlayerPerformAction(
             str = PAL_GetPlayerAttackStrength(wPlayerRole);
             def = g_Battle.rgEnemy[sTarget].e.wDefense;
             def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
-            res = g_Battle.rgEnemy[sTarget].e.wAttackResistance;
+            res = g_Battle.rgEnemy[sTarget].e.wPhysicalResistance;
             fCritical = FALSE;
 
             sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
@@ -2133,7 +2148,7 @@ PAL_BattlePlayerPerformAction(
                str = PAL_GetPlayerAttackStrength(wPlayerRole);
                def = g_Battle.rgEnemy[index[i]].e.wDefense;
                def += (g_Battle.rgEnemy[index[i]].e.wLevel + 6) * 4;
-               res = g_Battle.rgEnemy[index[i]].e.wAttackResistance;
+               res = g_Battle.rgEnemy[index[i]].e.wPhysicalResistance;
 
                sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
 
@@ -2308,7 +2323,7 @@ PAL_BattlePlayerPerformAction(
                      def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 4;
 
                      sDamage = PAL_CalcMagicDamage(str, def,
-                        g_Battle.rgEnemy[i].e.wElemResistance, wObject);
+                        g_Battle.rgEnemy[i].e.wElemResistance, g_Battle.rgEnemy[i].e.wPoisonResistance, wObject);
 
                      if (sDamage <= 0)
                      {
@@ -2328,7 +2343,7 @@ PAL_BattlePlayerPerformAction(
                   def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
 
                   sDamage = PAL_CalcMagicDamage(str, def,
-                     g_Battle.rgEnemy[sTarget].e.wElemResistance, wObject);
+                     g_Battle.rgEnemy[sTarget].e.wElemResistance, g_Battle.rgEnemy[sTarget].e.wPoisonResistance, wObject);
 
                   if (sDamage <= 0)
                   {

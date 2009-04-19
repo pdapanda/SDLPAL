@@ -31,27 +31,6 @@ PAL_BattleSelectAutoTarget(
    VOID
 );
 
-SHORT
-PAL_CalcBaseDamage(
-   WORD        wAttackStrength,
-   WORD        wDefense
-);
-
-SHORT
-PAL_CalcMagicDamage(
-   WORD             wMagicStrength,
-   WORD             wDefense,
-   const WORD       rgwElementalResistance[NUM_MAGIC_ELEMENTAL],
-   WORD             wMagicID
-);
-
-SHORT
-PAL_CalcPhysicalAttackDamage(
-   WORD           wAttackStrength,
-   WORD           wDefense,
-   WORD           wAttackResistance
-);
-
 VOID
 PAL_UpdateTimeChargingUnit(
    VOID
