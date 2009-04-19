@@ -637,7 +637,8 @@ PAL_BattleUIPickAutoMagic(
       // skip if the magic is an ultimate move or not enough MP
       //
       if (gpGlobals->g.lprgMagic[wMagicNum].wCostMP == 1 ||
-         gpGlobals->g.lprgMagic[wMagicNum].wCostMP > gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole])
+         gpGlobals->g.lprgMagic[wMagicNum].wCostMP > gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] ||
+         (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wBaseDamage) <= 0)
       {
          continue;
       }
