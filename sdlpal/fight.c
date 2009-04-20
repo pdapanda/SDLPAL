@@ -21,6 +21,9 @@
 #include "main.h"
 #include <math.h>
 
+// Change this to FALSE to disable Active-Time Battle
+BOOL g_fActiveTime = TRUE;
+
 static BOOL
 PAL_IsPlayerDying(
    WORD        wPlayerRole
@@ -311,7 +314,8 @@ PAL_GetTimeChargingSpeed(
 
 --*/
 {
-   if (g_Battle.UI.state == kBattleUISelectMove && g_Battle.UI.MenuState != kBattleMenuMain)
+   if (g_Battle.UI.state == kBattleUISelectMove &&
+      g_Battle.UI.MenuState != kBattleMenuMain)
    {
       //
       // Pause the time when there are submenus
@@ -319,11 +323,16 @@ PAL_GetTimeChargingSpeed(
       return 0;
    }
 
+   if (!g_fActiveTime && g_Battle.UI.state != kBattleUIWait)
+   {
+      return 0;
+   }
+
+   //
+   // The battle should be faster when using Auto-Battle
+   //
    if (gpGlobals->fAutoBattle)
    {
-   	  //
-   	  // The battle should be faster when using Auto Battle
-   	  //
    	  wDexterity *= 3;
    }
 
@@ -907,6 +916,7 @@ PAL_BattleStartFrame(
       {
       case kFighterWait:
          flMax = PAL_GetTimeChargingSpeed(PAL_GetEnemyDexterity(i));
+         flMax /= (gpGlobals->fAutoBattle ? 2 : 1);
 
          if (flMax != 0)
          {
@@ -1814,7 +1824,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
     [IN]  wObjectID - the object ID of the magic to be used.
 
-    [IN]  sTarget - the target player of the action.
+    [IN]  sTarget - the target enemy of the action.
 
   Return value:
 
@@ -1823,7 +1833,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 --*/
 {
    LPSPRITE   lpSpriteEffect;
-   int        l, iMagicNum, iEffectNum, n, i, k, x, y, wave;
+   int        l, iMagicNum, iEffectNum, n, i, k, x, y, wave, blow;
    DWORD      dwTime = SDL_GetTicks();
 
    iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
@@ -1855,6 +1865,21 @@ PAL_BattleShowPlayerOffMagicAnim(
    for (i = 0; i < l; i++)
    {
       LPCBITMAPRLE b;
+
+      blow = ((g_Battle.iBlow > 0) ? RandomLong(0, g_Battle.iBlow) : RandomLong(g_Battle.iBlow, 0));
+
+      for (k = 0; k <= g_Battle.wMaxEnemyIndex; k++)
+      {
+         if (g_Battle.rgEnemy[k].wObjectID == 0)
+         {
+            continue;
+         }
+
+         x = PAL_X(g_Battle.rgEnemy[k].pos) + blow;
+         y = PAL_Y(g_Battle.rgEnemy[k].pos) + blow / 2;
+
+         g_Battle.rgEnemy[k].pos = PAL_XY(x, y);
+      }
 
       if (l - i > gpGlobals->g.lprgMagic[iMagicNum].wShake)
       {
@@ -1969,9 +1994,6 @@ PAL_BattleShowPlayerOffMagicAnim(
                PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
          }
       }
-      else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeSummon)
-      {
-      }
       else
       {
          assert(FALSE);
@@ -1986,6 +2008,38 @@ PAL_BattleShowPlayerOffMagicAnim(
    VIDEO_ShakeScreen(0, 0);
 
    free(lpSpriteEffect);
+
+   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+   {
+      g_Battle.rgEnemy[i].pos = g_Battle.rgEnemy[i].posOriginal;
+   }
+}
+
+static VOID
+PAL_BattleShowPlayerSummonMagicAnim(
+   WORD         wPlayerIndex,
+   WORD         wObjectID,
+   SHORT        sTarget
+)
+/*++
+  Purpose:
+
+    Show the summon magic animation for player.
+
+  Parameters:
+
+    [IN]  wPlayerIndex - the index of the player.
+
+    [IN]  wObjectID - the object ID of the magic to be used.
+
+    [IN]  sTarget - the target enemy of the action.
+
+  Return value:
+
+    None.
+
+--*/
+{
 }
 
 static VOID
@@ -2217,6 +2271,7 @@ PAL_BattlePlayerPerformAction(
    BOOL     fCritical, fPoisoned;
 
    g_Battle.wMovingPlayerIndex = wPlayerIndex;
+   g_Battle.iBlow = 0;
 
    PAL_BattlePlayerValidateAction(wPlayerIndex);
    PAL_BattleBackupStat();
@@ -2471,7 +2526,14 @@ PAL_BattlePlayerPerformAction(
 
          if (g_fScriptSuccess)
          {
-            PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
+            if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon)
+            {
+               PAL_BattleShowPlayerSummonMagicAnim(wPlayerIndex, wObject, sTarget);
+            }
+            else
+            {
+               PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
+            }
 
             gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
                PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess, (WORD)sTarget);
@@ -2535,10 +2597,13 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleShowPostMagicAnim();
       PAL_BattleDelay(5, 0);
 
-      gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
-      if ((SHORT)(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole]) < 0)
+      if (!gpGlobals->fAutoBattle)
       {
-         gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] = 0;
+         gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
+         if ((SHORT)(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole]) < 0)
+         {
+            gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] = 0;
+         }
       }
       break;
 
@@ -2653,7 +2718,7 @@ PAL_BattleStealFromEnemy(
 {
    int   iPlayerIndex = g_Battle.wMovingPlayerIndex;
    int   offset, x, y, i;
-   char  s[256];
+   char  s[256] = "";
 
    g_Battle.rgPlayer[iPlayerIndex].wCurrentFrame = 10;
    offset = ((INT)wTarget - iPlayerIndex) * 8;
@@ -2700,14 +2765,20 @@ PAL_BattleStealFromEnemy(
          g_Battle.rgEnemy[wTarget].e.nStealItem -= c;
          gpGlobals->dwCash += c;
 
-         strcpy(s, PAL_GetWord(34));
-         strcat(s, " ");
-         strcat(s, va("%d", c));
-         strcat(s, " ");
-         strcat(s, PAL_GetWord(10));
+         if (c > 0)
+         {
+            strcpy(s, PAL_GetWord(34));
+            strcat(s, " ");
+            strcat(s, va("%d", c));
+            strcat(s, " ");
+            strcat(s, PAL_GetWord(10));
+         }
       }
       else
       {
+         //
+         // stolen item
+         //
          g_Battle.rgEnemy[wTarget].e.nStealItem--;
          PAL_AddItemToInventory(g_Battle.rgEnemy[wTarget].e.wStealItem, 1);
 
@@ -2715,7 +2786,10 @@ PAL_BattleStealFromEnemy(
          strcat(s, PAL_GetWord(g_Battle.rgEnemy[wTarget].e.wStealItem));
       }
 
-      PAL_BattleUIShowText(s, 1000);
+      if (s[0] != '\0')
+      {
+         PAL_BattleUIShowText(s, 1000);
+      }
    }
 
    g_Battle.rgPlayer[iPlayerIndex].state = kFighterWait;

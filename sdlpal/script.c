@@ -1561,6 +1561,10 @@ PAL_InterpretInstruction(
       break;
 
    case 0x006B:
+      //
+      // Blow away enemies
+      //
+      g_Battle.iBlow = (SHORT)(pScript->rgwOperand[0]);
       break;
 
    case 0x006C:

@@ -149,6 +149,7 @@ typedef struct tagBATTLE
    INT              iHidingTime;          // Time of hiding
 
    WORD             wMovingPlayerIndex;   // current moving player index
+   int              iBlow;
 } BATTLE;
 
 extern BATTLE g_Battle;

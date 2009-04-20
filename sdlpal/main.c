@@ -440,7 +440,7 @@ main(
    //
    // Parse parameters.
    //
-   while ((c = getopt(argc, argv, "w:h:f")) != -1)
+   while ((c = getopt(argc, argv, "w:h:fa")) != -1)
    {
       switch (c)
       {
@@ -472,6 +472,15 @@ main(
          //
          fFullScreen = TRUE;
          break;
+
+      case 'a':
+         //
+         // Toggle active time battle mode
+         //
+         {
+            extern BOOL g_fActiveTime;
+            g_fActiveTime = !g_fActiveTime;
+         }
       }
    }
 

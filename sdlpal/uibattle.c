@@ -603,7 +603,8 @@ PAL_BattleUIThrowItem(
 
 static WORD
 PAL_BattleUIPickAutoMagic(
-   WORD          wPlayerRole
+   WORD          wPlayerRole,
+   WORD          wRandomRange
 )
 /*++
   Purpose:
@@ -613,6 +614,8 @@ PAL_BattleUIPickAutoMagic(
   Parameters:
 
     [IN]  wPlayerRole - the player role ID.
+
+    [IN]  wRandomRange - the range of the magic power.
 
   Return value:
 
@@ -644,7 +647,7 @@ PAL_BattleUIPickAutoMagic(
       }
 
       iPower = (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wBaseDamage) +
-         RandomLong(0, 60);
+         RandomLong(0, wRandomRange);
 
       if (iPower > iMaxPower)
       {
@@ -677,6 +680,41 @@ PAL_BattleUIUpdate(
 {
    int              i, j, x, y;
    WORD             wPlayerRole, w;
+   extern BOOL      g_fActiveTime;
+
+   if (gpGlobals->fAutoBattle)
+   {
+      if (g_Battle.UI.state == kBattleUIWait)
+      {
+         goto end;
+      }
+
+      w = PAL_BattleUIPickAutoMagic(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole, 9999);
+
+      if (w == 0)
+      {
+         g_Battle.UI.wActionType = kBattleActionAttack;
+         g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+      }
+      else
+      {
+         g_Battle.UI.wActionType = kBattleActionMagic;
+         g_Battle.UI.wObjectID = w;
+
+         if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
+         {
+            g_Battle.UI.wSelectedIndex = -1;
+         }
+         else
+         {
+            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+         }
+      }
+
+      PAL_BattleCommitAction(FALSE);
+
+      goto end;
+   }
 
    //
    // Draw the player info boxes.
@@ -735,7 +773,7 @@ PAL_BattleUIUpdate(
    //
    // Draw the "auto attack" message if in the autoattack mode.
    //
-   if (g_Battle.UI.fAutoAttack)
+   if (g_Battle.UI.fAutoAttack && !gpGlobals->fAutoBattle)
    {
       if (g_InputState.dwKeyPress & kKeyMenu)
       {
@@ -971,7 +1009,7 @@ PAL_BattleUIUpdate(
             }
             else if (g_InputState.dwKeyPress & kKeyForce)
             {
-               w = PAL_BattleUIPickAutoMagic(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole);
+               w = PAL_BattleUIPickAutoMagic(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole, 60);
 
                if (w == 0)
                {
@@ -1022,7 +1060,7 @@ PAL_BattleUIUpdate(
             {
                PAL_BattleCommitAction(TRUE);
             }
-            else if (g_InputState.dwKeyPress & kKeyMenu)
+            else if (g_InputState.dwKeyPress & kKeyMenu && g_fActiveTime)
             {
                g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].flTimeMeter = 100;
                g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
