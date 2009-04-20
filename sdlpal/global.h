@@ -358,7 +358,7 @@ typedef struct tagMAGIC
    WORD               wYOffset;
    WORD               wSummonEffect;         // summon effect sprite (in F.MKF)
    WORD               wSpeed;                // speed of the effect
-   WORD               wUnknown1;             // FIXME: ???
+   WORD               wKeepEffect;             // FIXME: ???
    WORD               wSoundDelay;           // delay of the SFX
    WORD               wEffectTimes;          // total times of effect
    WORD               wShake;                // shake screen

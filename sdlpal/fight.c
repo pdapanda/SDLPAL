@@ -1908,6 +1908,13 @@ PAL_BattleShowPlayerOffMagicAnim(
          y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
          PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
+         if (i == l - 1 &&
+            gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
+         {
+            PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
+               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         }
       }
       else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackAll)
       {
@@ -1924,6 +1931,13 @@ PAL_BattleShowPlayerOffMagicAnim(
             y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
             PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
+            if (i == l - 1 &&
+               gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
+            {
+               PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
+                  PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            }
          }
       }
       else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackWhole ||
@@ -1946,6 +1960,13 @@ PAL_BattleShowPlayerOffMagicAnim(
          y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
          PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
+         if (i == l - 1 &&
+            gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
+         {
+            PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
+               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         }
       }
       else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeSummon)
       {
