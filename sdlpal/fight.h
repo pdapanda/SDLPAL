@@ -62,6 +62,11 @@ PAL_BattlePlayerPerformAction(
 );
 
 VOID
+PAL_BattleEnemyPerformAction(
+   WORD         wEnemyIndex
+);
+
+VOID
 PAL_BattleShowPlayerPreMagicAnim(
    WORD         wPlayerIndex,
    BOOL         fSummon
@@ -70,7 +75,8 @@ PAL_BattleShowPlayerPreMagicAnim(
 VOID
 PAL_BattleDelay(
    WORD       wDuration,
-   WORD       wObjectID
+   WORD       wObjectID,
+   BOOL       fUpdateGesture
 );
 
 VOID

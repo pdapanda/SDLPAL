@@ -2141,7 +2141,7 @@ PAL_InterpretInstruction(
             {
                g_Battle.rgPlayer[j].iColorShift = i * 2;
             }
-            PAL_BattleDelay(1, 0);
+            PAL_BattleDelay(1, 0, TRUE);
          }
          PAL_BattleBackupScene();
          PAL_BattleUpdateFighters();
