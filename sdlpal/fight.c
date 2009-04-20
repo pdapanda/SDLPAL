@@ -216,7 +216,7 @@ PAL_CalcPhysicalAttackDamage(
 
     [IN]  wDefense - defense value of inflictor.
 
-    [IN]  wAttackResistance - inflictor's resistance to phycal attack.
+    [IN]  wAttackResistance - inflictor's resistance to physical attack.
 
   Return value:
 
@@ -2768,6 +2768,22 @@ PAL_BattleEnemyPerformAction(
          //
          return;
       }
+
+      for (i = 0; i < NUM_MAGIC_ELEMENTAL; i++)
+      {
+         rgwElementalResistance[i] = gpGlobals->g.PlayerRoles.rgwElementalResistance[i][wPlayerRole];
+      }
+
+      str = g_Battle.rgEnemy[wEnemyIndex].e.wMagicStrength;
+      str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 6;
+      str *= RandomFloat(0.9, 1.1);
+      def = PAL_GetPlayerDefense(wPlayerRole);
+
+      if (g_Battle.rgPlayer[sTarget].fDefending)
+      {
+         def *= 2;
+      }
+
 ////TEST///////////////////////////////////////////////////////////
 if (g_Battle.rgEnemy[wEnemyIndex].fFirstMoveDone)
 PAL_BattleUIShowText(va("enemy %d %s (2nd)",wEnemyIndex,PAL_GetWord(g_Battle.rgEnemy[wEnemyIndex].e.wMagic)), 500);
@@ -2782,8 +2798,10 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
       WORD wFrameBak = g_Battle.rgPlayer[sTarget].wCurrentFrame;
 
       str = g_Battle.rgEnemy[wEnemyIndex].e.wAttackStrength;
-      str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 4;
+      str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 6;
+      str *= RandomFloat(0.9, 1.1);
       def = PAL_GetPlayerDefense(wPlayerRole);
+
       if (g_Battle.rgPlayer[sTarget].fDefending)
       {
          def *= 2;
@@ -2906,18 +2924,10 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
       if (!fAutoDefend)
       {
          g_Battle.rgPlayer[sTarget].wCurrentFrame = 4;
-      }
 
-      if (iCoverIndex == -1)
-      {
-         sDamage = PAL_CalcBaseDamage(str, def);
+         sDamage = PAL_CalcPhysicalAttackDamage(str, def, 1);
 
          if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusProtect])
-         {
-            sDamage /= 2;
-         }
-
-         if (fAutoDefend)
          {
             sDamage /= 2;
          }
