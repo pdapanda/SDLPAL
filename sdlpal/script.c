@@ -1554,6 +1554,10 @@ PAL_InterpretInstruction(
       break;
 
    case 0x006A:
+      //
+      // Steal from the enemy
+      //
+      PAL_BattleStealFromEnemy(wEventObjectID, pScript->rgwOperand[0]);
       break;
 
    case 0x006B:

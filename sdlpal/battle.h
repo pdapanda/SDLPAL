@@ -147,6 +147,8 @@ typedef struct tagBATTLE
    BOOL             fEnemyMoving;         // TRUE if enemy is moving
 
    INT              iHidingTime;          // Time of hiding
+
+   WORD             wMovingPlayerIndex;   // current moving player index
 } BATTLE;
 
 extern BATTLE g_Battle;

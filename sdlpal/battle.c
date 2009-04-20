@@ -58,7 +58,7 @@ PAL_BattleMakeScene(
    PAL_ApplyWave(g_Battle.lpSceneBuf);
 
    //
-   // Darken the background when there are summons
+   // Darken/Brighten the background when there are summons
    //
    // TODO
 
@@ -376,17 +376,23 @@ PAL_FreeBattleSprites(
    int         i;
 
    //
-   // Free all the sprites
+   // Free all the loaded sprites
    //
    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
-      free(g_Battle.rgPlayer[i].lpSprite);
+      if (g_Battle.rgPlayer[i].lpSprite != NULL)
+      {
+         free(g_Battle.rgPlayer[i].lpSprite);
+      }
       g_Battle.rgPlayer[i].lpSprite = NULL;
    }
 
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
    {
-      free(g_Battle.rgEnemy[i].lpSprite);
+      if (g_Battle.rgEnemy[i].lpSprite != NULL)
+      {
+         free(g_Battle.rgEnemy[i].lpSprite);
+      }
       g_Battle.rgEnemy[i].lpSprite = NULL;
    }
 }
@@ -615,6 +621,9 @@ PAL_BattleWon(
          fLevelUp = TRUE;
          dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel];
          PAL_PlayerLevelUp(w, 1);
+
+         gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
+         gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
       }
 
       gpGlobals->Exp.rgPrimaryExp[w].wExp = (WORD)dwExp;

@@ -73,6 +73,12 @@ PAL_BattleDelay(
    WORD       wObjectID
 );
 
+VOID
+PAL_BattleStealFromEnemy(
+   WORD           wTarget,
+   WORD           wStealRate
+);
+
 #ifdef __cplusplus
 }
 #endif
