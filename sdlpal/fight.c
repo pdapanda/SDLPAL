@@ -2628,7 +2628,7 @@ PAL_BattlePlayerPerformAction(
 
       if (g_Battle.iHidingTime < 0)
       {
-         g_Battle.iHidingTime = -g_Battle.iHidingTime * 85;
+         g_Battle.iHidingTime = -g_Battle.iHidingTime * 75;
          PAL_BattleBackupScene();
          PAL_BattleMakeScene();
          PAL_BattleFadeScene();
@@ -2647,6 +2647,7 @@ PAL_BattlePlayerPerformAction(
    // Revert this player back to waiting state.
    //
    g_Battle.rgPlayer[wPlayerIndex].state = kFighterWait;
+   g_Battle.rgPlayer[wPlayerIndex].flTimeMeter = 0;
 
    PAL_BattlePostActionCheck(FALSE);
 
@@ -2834,8 +2835,7 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
          {
             if (PAL_IsPlayerDying(gpGlobals->rgParty[iCoverIndex].wPlayerRole) ||
                gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusConfused] > 0 ||
-               gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusSleep] > 0 ||
-               gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusSlow] > 0)
+               gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusSleep] > 0)
             {
                iCoverIndex = -1;
             }
@@ -2905,11 +2905,11 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
       }
       else
       {
-         for (i = 0; i < g_Battle.rgEnemy[wEnemyIndex].e.wAttackFrames; i++)
+         for (i = 0; i <= g_Battle.rgEnemy[wEnemyIndex].e.wAttackFrames; i++)
          {
             g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame =
                g_Battle.rgEnemy[wEnemyIndex].e.wIdleFrames +
-               g_Battle.rgEnemy[wEnemyIndex].e.wMagicFrames + i;
+               g_Battle.rgEnemy[wEnemyIndex].e.wMagicFrames + i - 1;
 
             x = ex - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[wEnemyIndex].lpSprite, g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame)) / 2;
             y = ey - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[wEnemyIndex].lpSprite, g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame));
@@ -2975,6 +2975,10 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
       {
          SOUND_Play(gpGlobals->g.PlayerRoles.rgwDeathSound[wPlayerRole]);
          wFrameBak = 2;
+      }
+      else if (PAL_IsPlayerDying(wPlayerRole))
+      {
+         wFrameBak = 1;
       }
 
       if (iCoverIndex == -1)

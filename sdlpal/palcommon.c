@@ -611,7 +611,7 @@ PAL_SpriteGetFrame(
       return NULL;
    }
 
-   imagecount = SWAP16(*((LPWORD)lpSprite)) - 1;
+   imagecount = SWAP16(*((LPWORD)lpSprite));
 
    if (iFrameNum < 0 || iFrameNum >= imagecount)
    {

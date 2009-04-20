@@ -486,7 +486,7 @@ typedef struct tagALLEXPERIENCE
    EXPERIENCE        rgMagicExp[MAX_PLAYER_ROLES];
    EXPERIENCE        rgAttackExp[MAX_PLAYER_ROLES];
    EXPERIENCE        rgMagicPowerExp[MAX_PLAYER_ROLES];
-   EXPERIENCE        rgResistanceExp[MAX_PLAYER_ROLES];
+   EXPERIENCE        rgDefenseExp[MAX_PLAYER_ROLES];
    EXPERIENCE        rgDexterityExp[MAX_PLAYER_ROLES];
    EXPERIENCE        rgFleeExp[MAX_PLAYER_ROLES];
 } ALLEXPERIENCE, *LPALLEXPERIENCE;
