@@ -293,6 +293,11 @@ PAL_BattleMain(
    {
       g_Battle.rgEnemy[i].wScriptOnTurnStart =
          PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
+
+      if (g_Battle.BattleResult != kBattleResultPreBattle)
+      {
+         break;
+      }
    }
 
    if (g_Battle.BattleResult == kBattleResultPreBattle)
@@ -819,7 +824,7 @@ PAL_BattleEnemyEscape(
    	  	 	continue;
    	  	 }
 
-   	  	 x = PAL_X(g_Battle.rgEnemy[j].pos) - 3;
+   	  	 x = PAL_X(g_Battle.rgEnemy[j].pos) - 5;
    	  	 y = PAL_Y(g_Battle.rgEnemy[j].pos);
 
    	  	 g_Battle.rgEnemy[j].pos = PAL_XY(x, y);

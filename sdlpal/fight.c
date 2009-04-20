@@ -2799,7 +2799,6 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
 
       str = g_Battle.rgEnemy[wEnemyIndex].e.wAttackStrength;
       str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 6;
-      str *= RandomFloat(0.9, 1.1);
       def = PAL_GetPlayerDefense(wPlayerRole);
 
       if (g_Battle.rgPlayer[sTarget].fDefending)
@@ -2926,13 +2925,14 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
          g_Battle.rgPlayer[sTarget].wCurrentFrame = 4;
 
          sDamage = PAL_CalcPhysicalAttackDamage(str, def, 1);
+         sDamage *= RandomFloat(0.9, 1.1);
 
          if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusProtect])
          {
             sDamage /= 2;
          }
 
-         if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] < sDamage)
+         if ((SHORT)gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] < sDamage)
          {
             sDamage = gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole];
          }
