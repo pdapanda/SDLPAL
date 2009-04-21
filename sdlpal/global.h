@@ -163,8 +163,8 @@ typedef struct tagSCENE
 typedef struct tagOBJECT_PLAYER
 {
    WORD         wReserved[2];    // always zero
-   WORD         wScriptOnFriendDeath; // when friends in team dies, execute script from here
-   WORD         wScriptOnDeath;  // when died, execute script from here
+   WORD         wScriptOnFriendDeath; // when friends in party dies, execute script from here
+   WORD         wScriptOnDying;  // when dying, execute script from here
 } OBJECT_PLAYER;
 
 typedef enum tagITEMFLAG

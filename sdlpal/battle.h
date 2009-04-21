@@ -40,6 +40,7 @@ typedef enum tagBATTLERESULT
    kBattleResultTerminated = 0,      // battle terminated with scripts
    kBattleResultOnGoing    = 1000,   // the battle is ongoing
    kBattleResultPreBattle  = 1001,   // running pre-battle scripts
+   kBattleResultPause      = 1002,   // battle pause
 } BATTLERESULT;
 
 typedef enum tagFIGHTERSTATE

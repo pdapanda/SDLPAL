@@ -684,36 +684,34 @@ PAL_BattleUIUpdate(
 
    if (gpGlobals->fAutoBattle)
    {
-      if (g_Battle.UI.state == kBattleUIWait)
+      if (g_Battle.UI.state != kBattleUIWait)
       {
-         goto end;
-      }
+         w = PAL_BattleUIPickAutoMagic(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole, 9999);
 
-      w = PAL_BattleUIPickAutoMagic(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole, 9999);
-
-      if (w == 0)
-      {
-         g_Battle.UI.wActionType = kBattleActionAttack;
-         g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
-      }
-      else
-      {
-         g_Battle.UI.wActionType = kBattleActionMagic;
-         g_Battle.UI.wObjectID = w;
-
-         if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
+         if (w == 0)
          {
-            g_Battle.UI.wSelectedIndex = -1;
+            g_Battle.UI.wActionType = kBattleActionAttack;
+            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
          }
          else
          {
-            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+            g_Battle.UI.wActionType = kBattleActionMagic;
+            g_Battle.UI.wObjectID = w;
+
+            if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
+            {
+               g_Battle.UI.wSelectedIndex = -1;
+            }
+            else
+            {
+               g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+            }
          }
+
+         PAL_BattleCommitAction(FALSE);
       }
 
-      PAL_BattleCommitAction(FALSE);
-
-      goto end;
+      return;
    }
 
    //

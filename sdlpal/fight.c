@@ -649,7 +649,7 @@ PAL_BattlePostActionCheck(
 
 --*/
 {
-   int      i;
+   int      i, j;
    BOOL     fFade = FALSE;
 
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
@@ -670,10 +670,79 @@ PAL_BattlePostActionCheck(
       }
    }
 
-   if (fCheckPlayers)
+   if (fCheckPlayers && !gpGlobals->fAutoBattle)
    {
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         WORD w = gpGlobals->rgParty[i].wPlayerRole, wName;
+
+         if (gpGlobals->g.PlayerRoles.rgwHP[w] < g_Battle.rgPlayer[i].wPrevHP &&
+            gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
+         {
+            w = gpGlobals->g.PlayerRoles.rgwCoveredBy[w];
+
+            for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+            {
+               if (gpGlobals->rgParty[j].wPlayerRole == w)
+               {
+                  break;
+               }
+            }
+
+            if (j > gpGlobals->wMaxPartyMemberIndex)
+            {
+               continue;
+            }
+
+            if (gpGlobals->g.PlayerRoles.rgwHP[w] > 0)
+            {
+               wName = gpGlobals->g.PlayerRoles.rgwName[w];
+
+               PAL_BattleMakeScene();
+               SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+               VIDEO_UpdateScreen(NULL);
+
+               g_Battle.BattleResult = kBattleResultPause;
+
+               gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath =
+                  PAL_RunTriggerScript(gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath, w);
+
+               g_Battle.BattleResult = kBattleResultOnGoing;
+
+               goto end;
+            }
+         }
+      }
+
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         WORD w = gpGlobals->rgParty[i].wPlayerRole, wName;
+
+         if (gpGlobals->g.PlayerRoles.rgwHP[w] < g_Battle.rgPlayer[i].wPrevHP)
+         {
+            if (gpGlobals->g.PlayerRoles.rgwHP[w] > 0 && PAL_IsPlayerDying(w) &&
+               g_Battle.rgPlayer[i].wPrevHP >= gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5)
+            {
+               wName = gpGlobals->g.PlayerRoles.rgwName[w];
+
+               PAL_BattleMakeScene();
+               SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+               VIDEO_UpdateScreen(NULL);
+
+               g_Battle.BattleResult = kBattleResultPause;
+
+               gpGlobals->g.rgObject[wName].player.wScriptOnDying =
+                  PAL_RunTriggerScript(gpGlobals->g.rgObject[wName].player.wScriptOnDying, w);
+
+               g_Battle.BattleResult = kBattleResultOnGoing;
+
+               goto end;
+            }
+         }
+      }
    }
 
+end:
    if (fFade)
    {
       PAL_BattleBackupScene();
@@ -806,7 +875,7 @@ PAL_BattleStartFrame(
    WORD                     wPlayerRole;
    WORD                     wDexterity;
    FLOAT                    flMax;
-   BOOL                     fMoved = FALSE;
+   BOOL                     fMoved = FALSE, fOnlyPuppet = TRUE;
 
    PAL_BattleUpdateFighters();
 
@@ -846,11 +915,16 @@ PAL_BattleStartFrame(
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
          wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
-         if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] != 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] != 0)
+
+         if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] != 0)
          {
+            fOnlyPuppet = FALSE;
             fEnded = FALSE;
             break;
+         }
+         else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] != 0)
+         {
+            fEnded = FALSE;
          }
       }
 
@@ -933,7 +1007,7 @@ PAL_BattleStartFrame(
          break;
 
       case kFighterAct:
-         if (!fMoved && PAL_GetTimeChargingSpeed(9999) > 0)
+         if (!fMoved && PAL_GetTimeChargingSpeed(9999) > 0 && !fOnlyPuppet)
          {
             fMoved = TRUE;
 
