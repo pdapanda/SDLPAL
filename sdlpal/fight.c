@@ -749,6 +749,8 @@ end:
       PAL_BattleMakeScene();
       PAL_BattleFadeScene();
    }
+
+   PAL_ClearKeyState();
 }
 
 VOID
@@ -2477,7 +2479,7 @@ PAL_BattlePlayerValidateAction(
       if (g_Battle.rgEnemy[g_Battle.rgPlayer[wPlayerIndex].action.sTarget].wObjectID == 0)
       {
          g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
-         assert(g_Battle.rgPlayer[wPlayerIndex].action.sTarget > 0);
+         assert(g_Battle.rgPlayer[wPlayerIndex].action.sTarget >= 0);
       }
    }
 }
