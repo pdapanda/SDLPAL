@@ -929,11 +929,11 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].iColorShift = FALSE;
 
          //
-         // HACK: Otherwise the black thief lady will be too hard to beat.
+         // HACK: Otherwise the black thief lady will be too hard to beat
          //
          if (g_Battle.rgEnemy[i].e.wDexterity == 164 && gpGlobals->wMaxPartyMemberIndex == 0)
          {
-            g_Battle.rgEnemy[i].e.wDexterity /= 4;
+            g_Battle.rgEnemy[i].e.wDexterity /= 6;
          }
       }
    }

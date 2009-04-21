@@ -553,7 +553,7 @@ PAL_BattleDisplayStatChange(
          //
          sDamage = g_Battle.rgEnemy[i].e.wHealth - g_Battle.rgEnemy[i].wPrevHP;
 
-         x = PAL_X(g_Battle.rgEnemy[i].pos);
+         x = PAL_X(g_Battle.rgEnemy[i].pos) - 9;
          y = PAL_Y(g_Battle.rgEnemy[i].pos) - 110;
 
          if (y < 10)
@@ -583,7 +583,7 @@ PAL_BattleDisplayStatChange(
          sDamage =
             gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] - g_Battle.rgPlayer[i].wPrevHP;
 
-         x = PAL_X(g_Battle.rgPlayer[i].pos);
+         x = PAL_X(g_Battle.rgPlayer[i].pos) - 9;
          y = PAL_Y(g_Battle.rgPlayer[i].pos) - 70;
 
          if (y < 10)
@@ -608,7 +608,7 @@ PAL_BattleDisplayStatChange(
          sDamage =
             gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] - g_Battle.rgPlayer[i].wPrevMP;
 
-         x = PAL_X(g_Battle.rgPlayer[i].pos);
+         x = PAL_X(g_Battle.rgPlayer[i].pos) - 9;
          y = PAL_Y(g_Battle.rgPlayer[i].pos) - 62;
 
          if (y < 10)
@@ -2319,7 +2319,7 @@ PAL_BattlePlayerPerformAction(
             //
             // Show the number of damage
             //
-            x = PAL_X(g_Battle.rgEnemy[sTarget].pos);
+            x = PAL_X(g_Battle.rgEnemy[sTarget].pos) - 9;
             y = PAL_Y(g_Battle.rgEnemy[sTarget].pos) - 110;
 
             if (y < 10)
@@ -2392,7 +2392,7 @@ PAL_BattlePlayerPerformAction(
                //
                // Show the number of damage
                //
-               x = PAL_X(g_Battle.rgEnemy[index[i]].pos);
+               x = PAL_X(g_Battle.rgEnemy[index[i]].pos) - 9;
                y = PAL_Y(g_Battle.rgEnemy[index[i]].pos) - 110;
 
                if (y < 10)
@@ -2946,7 +2946,7 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
                    PAL_Y(g_Battle.rgPlayer[sTarget].pos) + 1);
       }
 
-      PAL_BattleDelay(1, 0, FALSE);
+      PAL_BattleDelay(3, 0, FALSE);
 
       g_Battle.rgEnemy[wEnemyIndex].pos = g_Battle.rgEnemy[wEnemyIndex].posOriginal;
       g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame = 0;

@@ -1400,7 +1400,7 @@ end:
       if (g_Battle.UI.rgShowNum[i].wTime > 0)
       {
          PAL_DrawNumber(g_Battle.UI.rgShowNum[i].wNum, 5, g_Battle.UI.rgShowNum[i].pos,
-            g_Battle.UI.rgShowNum[i].color, kNumAlignMid);
+            g_Battle.UI.rgShowNum[i].color, kNumAlignRight);
 
          g_Battle.UI.rgShowNum[i].wTime--;
          g_Battle.UI.rgShowNum[i].pos =
