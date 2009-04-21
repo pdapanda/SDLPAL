@@ -3095,7 +3095,54 @@ PAL_BattleEnemyPerformAction(
       }
 
       PAL_BattleDisplayStatChange();
-      PAL_BattleDelay(5, 0, TRUE);
+
+      for (i = 0; i < 5; i++)
+      {
+         if (sTarget == -1)
+         {
+            for (x = 0; x <= gpGlobals->wMaxPartyMemberIndex; x++)
+            {
+               if (g_Battle.rgPlayer[x].wPrevHP ==
+                  gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[x].wPlayerRole])
+               {
+                  //
+                  // Skip unaffected players
+                  //
+                  continue;
+               }
+
+               g_Battle.rgPlayer[x].wCurrentFrame = 4;
+               if (i > 0)
+               {
+                  g_Battle.rgPlayer[x].pos =
+                     PAL_XY(PAL_X(g_Battle.rgPlayer[x].pos) + (8 >> i),
+                            PAL_Y(g_Battle.rgPlayer[x].pos) + (4 >> i));
+               }
+               g_Battle.rgPlayer[x].iColorShift = ((i < 3) ? 6 : 0);
+            }
+         }
+         else
+         {
+            g_Battle.rgPlayer[sTarget].wCurrentFrame = 4;
+            if (i > 0)
+            {
+               g_Battle.rgPlayer[sTarget].pos =
+                  PAL_XY(PAL_X(g_Battle.rgPlayer[sTarget].pos) + (8 >> i),
+                         PAL_Y(g_Battle.rgPlayer[sTarget].pos) + (4 >> i));
+            }
+            g_Battle.rgPlayer[sTarget].iColorShift = ((i < 3) ? 6 : 0);
+         }
+
+         PAL_BattleDelay(1, 0, FALSE);
+      }
+
+      g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame = 0;
+      g_Battle.rgEnemy[wEnemyIndex].pos = g_Battle.rgEnemy[wEnemyIndex].posOriginal;
+
+      PAL_BattleDelay(1, 0, FALSE);
+      PAL_BattleUpdateFighters();
+
+      PAL_BattleDelay(8, 0, TRUE);
    }
    else
    {
