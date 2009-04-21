@@ -77,6 +77,9 @@ PAL_BattleMakeScene(
          pos = PAL_XY(PAL_X(pos) + RandomLong(-3, 3), PAL_Y(pos) + RandomLong(-3, 3));
       }
 
+      pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)) / 2,
+         PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)));
+
       if (g_Battle.rgEnemy[i].wObjectID != 0)
       {
          if (g_Battle.rgEnemy[i].iColorShift)
@@ -111,6 +114,9 @@ PAL_BattleMakeScene(
             //
             pos = PAL_XY(PAL_X(pos) + RandomLong(-3, 3), PAL_Y(pos) + RandomLong(-3, 3));
          }
+
+         pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)) / 2,
+            PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)));
 
          if (g_Battle.rgPlayer[i].iColorShift != 0)
          {
@@ -450,9 +456,6 @@ PAL_LoadBattleSprites(
       x = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][i][0];
       y = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][i][1];
 
-      x -= PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, 0)) / 2;
-      y -= PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, 0));
-
       g_Battle.rgPlayer[i].posOriginal = PAL_XY(x, y);
       g_Battle.rgPlayer[i].pos = PAL_XY(x, y);
    }
@@ -487,9 +490,6 @@ PAL_LoadBattleSprites(
       //
       x = gpGlobals->g.EnemyPos.pos[i][g_Battle.wMaxEnemyIndex].x;
       y = gpGlobals->g.EnemyPos.pos[i][g_Battle.wMaxEnemyIndex].y;
-
-      x -= PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, 0)) / 2;
-      y -= PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, 0));
 
       y += g_Battle.rgEnemy[i].e.wYPosOffset;
 

@@ -1222,8 +1222,16 @@ PAL_BattleUIUpdate(
       //
       if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
       {
-         PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[g_Battle.UI.wSelectedIndex].lpSprite, g_Battle.rgEnemy[g_Battle.UI.wSelectedIndex].wCurrentFrame),
-            gpScreen, g_Battle.rgEnemy[g_Battle.UI.wSelectedIndex].pos, 7);
+         i = g_Battle.UI.wSelectedIndex;
+
+         x = PAL_X(g_Battle.rgEnemy[i].pos);
+         y = PAL_Y(g_Battle.rgEnemy[i].pos);
+
+         x -= PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)) / 2;
+         y -= PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame));
+
+         PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
+            gpScreen, PAL_XY(x, y), 7);
       }
 
       if (g_InputState.dwKeyPress & kKeyMenu)
@@ -1321,8 +1329,15 @@ PAL_BattleUIUpdate(
             {
                continue;
             }
+
+            x = PAL_X(g_Battle.rgEnemy[i].pos);
+            y = PAL_Y(g_Battle.rgEnemy[i].pos);
+
+            x -= PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)) / 2;
+            y -= PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame));
+
             PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
-               gpScreen, g_Battle.rgEnemy[i].pos, 7);
+               gpScreen, PAL_XY(x, y), 7);
          }
       }
       if (g_InputState.dwKeyPress & kKeyMenu)
