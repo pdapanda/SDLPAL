@@ -1471,11 +1471,16 @@ PAL_GetPlayerPoisonResistance(
       w += gpGlobals->rgEquipmentEffect[i].rgwPoisonResistance[wPlayerRole];
    }
 
+   if (w > 100)
+   {
+      w = 100;
+   }
+
    return w;
 }
 
 WORD
-PAL_GetPlayerAttribResistance(
+PAL_GetPlayerElementalResistance(
    WORD           wPlayerRole,
    INT            iAttrib
 )
@@ -1505,6 +1510,11 @@ PAL_GetPlayerAttribResistance(
    for (i = 0; i <= MAX_PLAYER_EQUIPMENTS; i++)
    {
       w += gpGlobals->rgEquipmentEffect[i].rgwElementalResistance[iAttrib][wPlayerRole];
+   }
+
+   if (w > 100)
+   {
+      w = 100;
    }
 
    return w;

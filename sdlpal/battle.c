@@ -69,7 +69,8 @@ PAL_BattleMakeScene(
    {
       pos = g_Battle.rgEnemy[i].pos;
 
-      if (g_Battle.rgEnemy[i].rgStatus[kStatusConfused] > 0)
+      if (g_Battle.rgEnemy[i].rgStatus[kStatusConfused] > 0 &&
+         g_Battle.rgEnemy[i].rgStatus[kStatusSleep] == 0)
       {
          //
          // Enemy is confused
@@ -107,7 +108,9 @@ PAL_BattleMakeScene(
       {
          pos = g_Battle.rgPlayer[i].pos;
 
-         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0)
+         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
+            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
+            gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
          {
             //
             // Player is confused
