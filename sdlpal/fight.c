@@ -554,7 +554,7 @@ PAL_BattleDisplayStatChange(
          sDamage = g_Battle.rgEnemy[i].e.wHealth - g_Battle.rgEnemy[i].wPrevHP;
 
          x = PAL_X(g_Battle.rgEnemy[i].pos);
-         y = PAL_Y(g_Battle.rgEnemy[i].pos) - 70;
+         y = PAL_Y(g_Battle.rgEnemy[i].pos) - 110;
 
          if (y < 10)
          {
@@ -2320,7 +2320,7 @@ PAL_BattlePlayerPerformAction(
             // Show the number of damage
             //
             x = PAL_X(g_Battle.rgEnemy[sTarget].pos);
-            y = PAL_Y(g_Battle.rgEnemy[sTarget].pos) - 70;
+            y = PAL_Y(g_Battle.rgEnemy[sTarget].pos) - 110;
 
             if (y < 10)
             {
@@ -2393,7 +2393,7 @@ PAL_BattlePlayerPerformAction(
                // Show the number of damage
                //
                x = PAL_X(g_Battle.rgEnemy[index[i]].pos);
-               y = PAL_Y(g_Battle.rgEnemy[index[i]].pos) - 70;
+               y = PAL_Y(g_Battle.rgEnemy[index[i]].pos) - 110;
 
                if (y < 10)
                {
@@ -2784,7 +2784,7 @@ else PAL_BattleUIShowText(va("enemy %d %s",wEnemyIndex,PAL_GetWord(g_Battle.rgEn
 
       iCoverIndex = -1;
 
-      fAutoDefend = (RandomLong(0, 16) < 7);
+      fAutoDefend = (RandomLong(0, 16) >= 10);
 
       //
       // Check if the inflictor should be protected
@@ -3003,7 +3003,7 @@ PAL_BattleStealFromEnemy(
    offset = ((INT)wTarget - iPlayerIndex) * 8;
 
    x = PAL_X(g_Battle.rgEnemy[wTarget].pos) + 64 - offset;
-   y = PAL_Y(g_Battle.rgEnemy[wTarget].pos) + 20 - offset;
+   y = PAL_Y(g_Battle.rgEnemy[wTarget].pos) + 20 - offset / 2;
 
    g_Battle.rgPlayer[iPlayerIndex].pos = PAL_XY(x, y);
 

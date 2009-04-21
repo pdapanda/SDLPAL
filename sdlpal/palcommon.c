@@ -611,6 +611,10 @@ PAL_SpriteGetFrame(
       return NULL;
    }
 
+   //
+   // Hack for broken sprites like the Bloody-Mouth Bug
+   //
+//   imagecount = SWAP16(*((LPWORD)lpSprite)) - 1;
    imagecount = SWAP16(*((LPWORD)lpSprite));
 
    if (iFrameNum < 0 || iFrameNum >= imagecount)

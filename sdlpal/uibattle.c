@@ -1217,23 +1217,6 @@ PAL_BattleUIUpdate(
          g_Battle.UI.wSelectedIndex %= x + 1;
       }
 
-      //
-      // Highlight the selected enemy
-      //
-      if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
-      {
-         i = g_Battle.UI.wSelectedIndex;
-
-         x = PAL_X(g_Battle.rgEnemy[i].pos);
-         y = PAL_Y(g_Battle.rgEnemy[i].pos);
-
-         x -= PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)) / 2;
-         y -= PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame));
-
-         PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
-            gpScreen, PAL_XY(x, y), 7);
-      }
-
       if (g_InputState.dwKeyPress & kKeyMenu)
       {
          g_Battle.UI.state = kBattleUISelectMove;
@@ -1266,6 +1249,23 @@ PAL_BattleUIUpdate(
                g_Battle.UI.wSelectedIndex++;
             }
          }
+      }
+
+      //
+      // Highlight the selected enemy
+      //
+      if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
+      {
+         i = g_Battle.UI.wSelectedIndex;
+
+         x = PAL_X(g_Battle.rgEnemy[i].pos);
+         y = PAL_Y(g_Battle.rgEnemy[i].pos);
+
+         x -= PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)) / 2;
+         y -= PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame));
+
+         PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
+            gpScreen, PAL_XY(x, y), 7);
       }
       break;
 
