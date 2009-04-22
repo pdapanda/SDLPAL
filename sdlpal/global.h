@@ -335,7 +335,7 @@ typedef struct tagPLAYERROLES
    PLAYERS            rgwCriticalSound;      // sound played when player make critical hits
    PLAYERS            rgwMagicSound;         // sound played when player is casting a magic
    PLAYERS            rgwCoverSound;         // sound played when player cover others
-   PLAYERS            rgwDamageSound;        // sound played when player is being attacked
+   PLAYERS            rgwDyingSound;         // sound played when player is dying
 } PLAYERROLES, *LPPLAYERROLES;
 
 typedef enum tagMAGIC_TYPE

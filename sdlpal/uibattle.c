@@ -61,6 +61,45 @@ PAL_PlayerInfoBox(
    int             i, iPartyIndex;
    WORD            wMaxLevel, w;
 
+   const BYTE      rgStatusPos[kStatusAll][2] =
+   {
+      {35, 19},  // confused
+      {0, 0},    // slow
+      {54, 1},   // sleep
+      {55, 20},  // silence
+      {0, 0},    // puppet
+      {0, 0},    // bravery
+      {0, 0},    // protect
+      {0, 0},    // haste
+      {0, 0},    // dualattack
+   };
+
+   const WORD      rgwStatusWord[kStatusAll] =
+   {
+      0x1D,  // confused
+      0x00,  // slow
+      0x1C,  // sleep
+      0x1A,  // silence
+      0x00,  // puppet
+      0x00,  // bravery
+      0x00,  // protect
+      0x00,  // haste
+      0x00,  // dualattack
+   };
+
+   const BYTE      rgbStatusColor[kStatusAll] =
+   {
+      0x5F,  // confused
+      0x00,  // slow
+      0x0E,  // sleep
+      0x3C,  // silence
+      0x00,  // puppet
+      0x00,  // bravery
+      0x00,  // protect
+      0x00,  // haste
+      0x00,  // dualattack
+   };
+
    //
    // Draw the box
    //
@@ -177,6 +216,23 @@ PAL_PlayerInfoBox(
       PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 26), kNumColorCyan, kNumAlignRight);
    PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole], 4,
       PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 23), kNumColorCyan, kNumAlignRight);
+
+   //
+   // Draw Statuses
+   //
+   if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] > 0)
+   {
+      for (i = 0; i < kStatusAll; i++)
+      {
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][i] > 0 &&
+            rgwStatusWord[i] != 0)
+         {
+            PAL_DrawText(PAL_GetWord(rgwStatusWord[i]),
+               PAL_XY(PAL_X(pos) + rgStatusPos[i][0], PAL_Y(pos) + rgStatusPos[i][1]),
+               rgbStatusColor[i], TRUE, FALSE);
+         }
+      }
+   }
 
    //
    // Update the screen area if needed
@@ -741,8 +797,6 @@ PAL_BattleUIUpdate(
 
       PAL_PlayerInfoBox(PAL_XY(91 + 77 * i, 165), wPlayerRole,
          w, j, FALSE);
-
-      // TODO: status
    }
 
    //

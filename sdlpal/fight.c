@@ -553,7 +553,7 @@ PAL_BattleDisplayStatChange(
          sDamage = g_Battle.rgEnemy[i].e.wHealth - g_Battle.rgEnemy[i].wPrevHP;
 
          x = PAL_X(g_Battle.rgEnemy[i].pos) - 9;
-         y = PAL_Y(g_Battle.rgEnemy[i].pos) - 110;
+         y = PAL_Y(g_Battle.rgEnemy[i].pos) - 115;
 
          if (y < 10)
          {
@@ -583,7 +583,7 @@ PAL_BattleDisplayStatChange(
             gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] - g_Battle.rgPlayer[i].wPrevHP;
 
          x = PAL_X(g_Battle.rgPlayer[i].pos) - 9;
-         y = PAL_Y(g_Battle.rgPlayer[i].pos) - 70;
+         y = PAL_Y(g_Battle.rgPlayer[i].pos) - 75;
 
          if (y < 10)
          {
@@ -608,7 +608,7 @@ PAL_BattleDisplayStatChange(
             gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] - g_Battle.rgPlayer[i].wPrevMP;
 
          x = PAL_X(g_Battle.rgPlayer[i].pos) - 9;
-         y = PAL_Y(g_Battle.rgPlayer[i].pos) - 62;
+         y = PAL_Y(g_Battle.rgPlayer[i].pos) - 67;
 
          if (y < 10)
          {
@@ -698,18 +698,21 @@ PAL_BattlePostActionCheck(
             {
                wName = gpGlobals->g.PlayerRoles.rgwName[w];
 
-               PAL_BattleMakeScene();
-               SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
-               VIDEO_UpdateScreen(NULL);
+               if (gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath != 0)
+               {
+                  PAL_BattleMakeScene();
+                  SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+                  VIDEO_UpdateScreen(NULL);
 
-               g_Battle.BattleResult = kBattleResultPause;
+                  g_Battle.BattleResult = kBattleResultPause;
 
-               gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath =
-                  PAL_RunTriggerScript(gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath, w);
+                  gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath =
+                     PAL_RunTriggerScript(gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath, w);
 
-               g_Battle.BattleResult = kBattleResultOnGoing;
+                  g_Battle.BattleResult = kBattleResultOnGoing;
 
-               goto end;
+                  goto end;
+               }
             }
          }
       }
@@ -723,18 +726,39 @@ PAL_BattlePostActionCheck(
             if (gpGlobals->g.PlayerRoles.rgwHP[w] > 0 && PAL_IsPlayerDying(w) &&
                g_Battle.rgPlayer[i].wPrevHP >= gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5)
             {
+               WORD wCover = gpGlobals->g.PlayerRoles.rgwCoveredBy[w];
+
+               for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+               {
+                  if (gpGlobals->rgParty[j].wPlayerRole == wCover)
+                  {
+                     break;
+                  }
+               }
+
+               if (j > gpGlobals->wMaxPartyMemberIndex || gpGlobals->g.PlayerRoles.rgwHP[wCover] == 0)
+               {
+                  continue;
+               }
+
                wName = gpGlobals->g.PlayerRoles.rgwName[w];
 
-               PAL_BattleMakeScene();
-               SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
-               VIDEO_UpdateScreen(NULL);
+               SOUND_Play(gpGlobals->g.PlayerRoles.rgwDyingSound[w]);
+               PAL_BattleDelay(10, 0, TRUE);
 
-               g_Battle.BattleResult = kBattleResultPause;
+               if (gpGlobals->g.rgObject[wName].player.wScriptOnDying != 0)
+               {
+                  PAL_BattleMakeScene();
+                  SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+                  VIDEO_UpdateScreen(NULL);
 
-               gpGlobals->g.rgObject[wName].player.wScriptOnDying =
-                  PAL_RunTriggerScript(gpGlobals->g.rgObject[wName].player.wScriptOnDying, w);
+                  g_Battle.BattleResult = kBattleResultPause;
 
-               g_Battle.BattleResult = kBattleResultOnGoing;
+                  gpGlobals->g.rgObject[wName].player.wScriptOnDying =
+                     PAL_RunTriggerScript(gpGlobals->g.rgObject[wName].player.wScriptOnDying, w);
+
+                  g_Battle.BattleResult = kBattleResultOnGoing;
+               }
 
                goto end;
             }
@@ -2581,7 +2605,7 @@ PAL_BattlePlayerPerformAction(
             // Show the number of damage
             //
             x = PAL_X(g_Battle.rgEnemy[sTarget].pos) - 9;
-            y = PAL_Y(g_Battle.rgEnemy[sTarget].pos) - 110;
+            y = PAL_Y(g_Battle.rgEnemy[sTarget].pos) - 115;
 
             if (y < 10)
             {
@@ -2654,7 +2678,7 @@ PAL_BattlePlayerPerformAction(
                // Show the number of damage
                //
                x = PAL_X(g_Battle.rgEnemy[index[i]].pos) - 9;
-               y = PAL_Y(g_Battle.rgEnemy[index[i]].pos) - 110;
+               y = PAL_Y(g_Battle.rgEnemy[index[i]].pos) - 115;
 
                if (y < 10)
                {
@@ -2696,6 +2720,15 @@ PAL_BattlePlayerPerformAction(
 
       PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex,
          (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon));
+
+      if (!gpGlobals->fAutoBattle)
+      {
+         gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
+         if ((SHORT)(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole]) < 0)
+         {
+            gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] = 0;
+         }
+      }
 
       if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeApplyToPlayer ||
          gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeApplyToParty ||
@@ -2827,14 +2860,6 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleShowPostMagicAnim();
       PAL_BattleDelay(5, 0, TRUE);
 
-      if (!gpGlobals->fAutoBattle)
-      {
-         gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] -= gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
-         if ((SHORT)(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole]) < 0)
-         {
-            gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole] = 0;
-         }
-      }
       break;
 
    case kBattleActionThrowItem:
@@ -3218,6 +3243,7 @@ PAL_BattleEnemyPerformAction(
       PAL_BattleDelay(1, 0, FALSE);
       PAL_BattleUpdateFighters();
 
+      PAL_BattlePostActionCheck(TRUE);
       PAL_BattleDelay(8, 0, TRUE);
    }
    else
@@ -3424,9 +3450,9 @@ PAL_BattleEnemyPerformAction(
          gpGlobals->g.rgObject[i].item.wScriptOnUse =
             PAL_RunTriggerScript(gpGlobals->g.rgObject[i].item.wScriptOnUse, wPlayerRole);
       }
-   }
 
-   PAL_BattlePostActionCheck(TRUE);
+      PAL_BattlePostActionCheck(TRUE);
+   }
 }
 
 VOID

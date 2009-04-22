@@ -934,9 +934,9 @@ PAL_StartBattle(
          //
          // HACK: Otherwise the black thief lady will be too hard to beat
          //
-         if (g_Battle.rgEnemy[i].e.wDexterity == 164 && gpGlobals->wMaxPartyMemberIndex == 0)
+         if (g_Battle.rgEnemy[i].e.wDexterity == 164)
          {
-            g_Battle.rgEnemy[i].e.wDexterity /= 6;
+            g_Battle.rgEnemy[i].e.wDexterity /= ((gpGlobals->wMaxPartyMemberIndex == 0) ? 6 : 3);
          }
       }
    }
