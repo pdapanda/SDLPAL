@@ -257,12 +257,12 @@ PAL_GetEnemyDexterity(
    s = (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 3;
    s += (SHORT)g_Battle.rgEnemy[wEnemyIndex].e.wDexterity;
 
-   if (g_Battle.rgEnemy[wEnemyIndex].rgStatus[kStatusHaste] != 0)
+   if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusHaste] != 0)
    {
       s *= 6;
       s /= 5;
    }
-   else if (g_Battle.rgEnemy[wEnemyIndex].rgStatus[kStatusSlow] != 0)
+   else if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusSlow] != 0)
    {
       s *= 2;
       s /= 3;
@@ -700,6 +700,8 @@ PAL_BattlePostActionCheck(
 
                if (gpGlobals->g.rgObject[wName].player.wScriptOnFriendDeath != 0)
                {
+                  PAL_BattleDelay(10, 0, TRUE);
+
                   PAL_BattleMakeScene();
                   SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
                   VIDEO_UpdateScreen(NULL);
@@ -728,6 +730,10 @@ PAL_BattlePostActionCheck(
             {
                WORD wCover = gpGlobals->g.PlayerRoles.rgwCoveredBy[w];
 
+               wName = gpGlobals->g.PlayerRoles.rgwName[w];
+
+               SOUND_Play(gpGlobals->g.PlayerRoles.rgwDyingSound[w]);
+
                for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
                {
                   if (gpGlobals->rgParty[j].wPlayerRole == wCover)
@@ -741,13 +747,10 @@ PAL_BattlePostActionCheck(
                   continue;
                }
 
-               wName = gpGlobals->g.PlayerRoles.rgwName[w];
-
-               SOUND_Play(gpGlobals->g.PlayerRoles.rgwDyingSound[w]);
-               PAL_BattleDelay(10, 0, TRUE);
-
                if (gpGlobals->g.rgObject[wName].player.wScriptOnDying != 0)
                {
+                  PAL_BattleDelay(10, 0, TRUE);
+
                   PAL_BattleMakeScene();
                   SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
                   VIDEO_UpdateScreen(NULL);
@@ -856,7 +859,7 @@ PAL_BattleUpdateFighters(
       g_Battle.rgEnemy[i].pos = g_Battle.rgEnemy[i].posOriginal;
       g_Battle.rgEnemy[i].iColorShift = 0;
 
-      if (g_Battle.rgEnemy[i].rgStatus[kStatusSleep] > 0)
+      if (g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] > 0)
       {
          g_Battle.rgEnemy[i].wCurrentFrame = 0;
          continue;
@@ -3012,12 +3015,20 @@ PAL_BattleEnemyPerformAction(
    wPlayerRole = gpGlobals->rgParty[sTarget].wPlayerRole;
    wMagic = g_Battle.rgEnemy[wEnemyIndex].e.wMagic;
 
-   if (FALSE)
+   if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusSleep] > 0)
    {
-      // TODO: status
+      //
+      // Do nothing
+      //
+      goto end;
+   }
+   else if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusConfused] > 0)
+   {
+      // TODO
    }
    else if (wMagic != 0 &&
-      RandomLong(0, 9) < g_Battle.rgEnemy[wEnemyIndex].e.wMagicRate)
+      RandomLong(0, 9) < g_Battle.rgEnemy[wEnemyIndex].e.wMagicRate &&
+      g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusSilence] == 0)
    {
       //
       // Magical attack
@@ -3452,6 +3463,37 @@ PAL_BattleEnemyPerformAction(
       }
 
       PAL_BattlePostActionCheck(TRUE);
+   }
+
+end:
+   //
+   // Check poisons
+   //
+   PAL_BattleBackupStat();
+
+   for (i = 0; i < MAX_POISONS; i++)
+   {
+      if (g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonID != 0)
+      {
+         g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonScript =
+            PAL_RunTriggerScript(g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonScript, wEnemyIndex);
+      }
+   }
+
+   if (PAL_BattleDisplayStatChange())
+   {
+      PAL_BattleDelay(8, 0, FALSE);
+   }
+
+   //
+   // Update statuses
+   //
+   for (i = 0; i < kStatusAll; i++)
+   {
+      if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[i] > 0)
+      {
+         g_Battle.rgEnemy[wEnemyIndex].rgwStatus[i]--;
+      }
    }
 }
 

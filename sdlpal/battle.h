@@ -75,7 +75,7 @@ typedef struct tagBATTLEENEMY
 {
    WORD               wObjectID;              // Object ID of this enemy
    ENEMY              e;                      // detailed data of this enemy
-   WORD               rgStatus[kStatusAll];   // status effects
+   WORD               rgwStatus[kStatusAll];  // status effects
    FLOAT              flTimeMeter;            // time-charging meter (0 = empty, 100 = full).
    POISONSTATUS       rgPoisons[MAX_POISONS]; // poisons
    LPSPRITE           lpSprite;

@@ -69,8 +69,8 @@ PAL_BattleMakeScene(
    {
       pos = g_Battle.rgEnemy[i].pos;
 
-      if (g_Battle.rgEnemy[i].rgStatus[kStatusConfused] > 0 &&
-         g_Battle.rgEnemy[i].rgStatus[kStatusSleep] == 0)
+      if (g_Battle.rgEnemy[i].rgwStatus[kStatusConfused] > 0 &&
+         g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] == 0)
       {
          //
          // Enemy is confused
@@ -938,6 +938,18 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity /= ((gpGlobals->wMaxPartyMemberIndex == 0) ? 6 : 3);
          }
+
+         //
+         // HACK: Heal up automatically for final boss
+         //
+         if (g_Battle.rgEnemy[i].e.wHealth == 32760)
+         {
+            for (w = 0; w <= gpGlobals->wMaxPartyMemberIndex; w++)
+            {
+               gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
+               gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
+            }
+         }
       }
    }
 
@@ -948,8 +960,6 @@ PAL_StartBattle(
    //
    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
-      w = gpGlobals->rgParty[i].wPlayerRole;
-
       g_Battle.rgPlayer[i].flTimeMeter = 15.0f;
       g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
       g_Battle.rgPlayer[i].wHidingTime = 0;
