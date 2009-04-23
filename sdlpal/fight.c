@@ -439,11 +439,6 @@ PAL_BattleDelay(
       }
 
       //
-      // Clear the input state of previous frame.
-      //
-      PAL_ClearKeyState();
-
-      //
       // Wait for the time of one frame. Accept input here.
       //
       PAL_ProcessEvent();
@@ -786,8 +781,6 @@ end:
       PAL_BattleMakeScene();
       PAL_BattleFadeScene();
    }
-
-   PAL_ClearKeyState();
 }
 
 VOID
@@ -1415,11 +1408,6 @@ PAL_BattleShowPlayerAttackAnim(
       LPCBITMAPRLE b = PAL_SpriteGetFrame(g_Battle.lpEffectSprite, index++);
 
       //
-      // Clear the input state of previous frame.
-      //
-      PAL_ClearKeyState();
-
-      //
       // Wait for the time of one frame. Accept input here.
       //
       PAL_ProcessEvent();
@@ -1669,11 +1657,6 @@ PAL_BattleShowPlayerPreMagicAnim(
          LPCBITMAPRLE b = PAL_SpriteGetFrame(g_Battle.lpEffectSprite, index++);
 
          //
-         // Clear the input state of previous frame.
-         //
-         PAL_ClearKeyState();
-
-         //
          // Wait for the time of one frame. Accept input here.
          //
          PAL_ProcessEvent();
@@ -1780,11 +1763,6 @@ PAL_BattleShowPlayerDefMagicAnim(
       {
          SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
       }
-
-      //
-      // Clear the input state of previous frame.
-      //
-      PAL_ClearKeyState();
 
       //
       // Wait for the time of one frame. Accept input here.
@@ -1984,11 +1962,6 @@ PAL_BattleShowPlayerOffMagicAnim(
       }
 
       //
-      // Clear the input state of previous frame.
-      //
-      PAL_ClearKeyState();
-
-      //
       // Wait for the time of one frame. Accept input here.
       //
       PAL_ProcessEvent();
@@ -2176,11 +2149,6 @@ PAL_BattleShowEnemyMagicAnim(
       {
          SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
       }
-
-      //
-      // Clear the input state of previous frame.
-      //
-      PAL_ClearKeyState();
 
       //
       // Wait for the time of one frame. Accept input here.

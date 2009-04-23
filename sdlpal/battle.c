@@ -187,8 +187,6 @@ PAL_BattleFadeScene(
    {
       for (j = 0; j < 6; j++)
       {
-         PAL_ClearKeyState();
-
          SDL_PollEvent(NULL);
          while (SDL_GetTicks() <= time)
          {
@@ -318,6 +316,8 @@ PAL_BattleMain(
 
    dwTime = SDL_GetTicks();
 
+   PAL_ClearKeyState();
+
    //
    // Run the main battle loop.
    //
@@ -330,11 +330,6 @@ PAL_BattleMain(
       {
          break;
       }
-
-      //
-      // Clear the input state of previous frame.
-      //
-      PAL_ClearKeyState();
 
       //
       // Wait for the time of one frame. Accept input here.

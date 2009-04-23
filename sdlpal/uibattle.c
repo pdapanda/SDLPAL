@@ -1459,6 +1459,8 @@ end:
             PAL_XY(PAL_X(g_Battle.UI.rgShowNum[i].pos), PAL_Y(g_Battle.UI.rgShowNum[i].pos) - 1);
       }
    }
+
+   PAL_ClearKeyState();
 }
 
 VOID
