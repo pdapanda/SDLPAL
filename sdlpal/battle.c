@@ -515,7 +515,7 @@ PAL_LoadBattleBackground(
 
 --*/
 {
-   BYTE           buf[320 * 200];
+   PAL_LARGE BYTE           buf[320 * 200];
 
    //
    // Create the surface

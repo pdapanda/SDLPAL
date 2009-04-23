@@ -969,8 +969,8 @@ PAL_PlayerStatus(
 
 --*/
 {
-   BYTE             bufBackground[320 * 200];
-   BYTE             bufImage[16384];
+   PAL_LARGE BYTE   bufBackground[320 * 200];
+   PAL_LARGE BYTE   bufImage[16384];
    int              iCurrent;
    int              iPlayerRole;
    int              i, y;
@@ -1609,8 +1609,8 @@ PAL_EquipItemMenu(
 
 --*/
 {
-   BYTE             bufBackground[320 * 200];
-   BYTE             bufImage[2048];
+   PAL_LARGE BYTE   bufBackground[320 * 200];
+   PAL_LARGE BYTE   bufImage[2048];
    WORD             w;
    int              iCurrentPlayer, i;
    BYTE             bColor, bSelectedColor;
