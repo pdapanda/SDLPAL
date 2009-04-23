@@ -3000,6 +3000,7 @@ PAL_BattleEnemyPerformAction(
    BOOL       fAutoDefend = FALSE, rgfMagAutoDefend[MAX_PLAYERS_IN_PARTY];
 
    PAL_BattleBackupStat();
+   g_Battle.iBlow = 0;
 
    sTarget = PAL_BattleEnemySelectTargetIndex();
    wPlayerRole = gpGlobals->rgParty[sTarget].wPlayerRole;
