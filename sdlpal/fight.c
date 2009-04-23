@@ -3038,8 +3038,12 @@ PAL_BattleEnemyPerformAction(
 
       wMagicNum = gpGlobals->g.rgObject[wMagic].magic.wMagicNumber;
 
-      str = g_Battle.rgEnemy[wEnemyIndex].e.wMagicStrength;
+      str = (SHORT)g_Battle.rgEnemy[wEnemyIndex].e.wMagicStrength;
       str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 6;
+      if (str < 0)
+      {
+         str = 0;
+      }
 
       ex = PAL_X(g_Battle.rgEnemy[wEnemyIndex].pos);
       ey = PAL_Y(g_Battle.rgEnemy[wEnemyIndex].pos);
@@ -3259,8 +3263,13 @@ PAL_BattleEnemyPerformAction(
       //
       WORD wFrameBak = g_Battle.rgPlayer[sTarget].wCurrentFrame;
 
-      str = g_Battle.rgEnemy[wEnemyIndex].e.wAttackStrength;
+      str = (SHORT)g_Battle.rgEnemy[wEnemyIndex].e.wAttackStrength;
       str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 6;
+      if (str < 0)
+      {
+         str = 0;
+      }
+
       def = PAL_GetPlayerDefense(wPlayerRole);
 
       if (g_Battle.rgPlayer[sTarget].fDefending)
