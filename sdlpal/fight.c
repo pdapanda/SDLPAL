@@ -689,12 +689,10 @@ PAL_BattlePostActionCheck(
                }
             }
 
-            if (j > gpGlobals->wMaxPartyMemberIndex)
-            {
-               continue;
-            }
-
-            if (gpGlobals->g.PlayerRoles.rgwHP[w] > 0)
+            if (gpGlobals->g.PlayerRoles.rgwHP[w] > 0 &&
+               gpGlobals->rgPlayerStatus[w][kStatusSleep] == 0 &&
+               gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0 &&
+               j <= gpGlobals->wMaxPartyMemberIndex)
             {
                wName = gpGlobals->g.PlayerRoles.rgwName[w];
 
@@ -723,12 +721,24 @@ PAL_BattlePostActionCheck(
       {
          WORD w = gpGlobals->rgParty[i].wPlayerRole, wName;
 
+         if (gpGlobals->rgPlayerStatus[w][kStatusSleep] != 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusConfused] != 0)
+         {
+            continue;
+         }
+
          if (gpGlobals->g.PlayerRoles.rgwHP[w] < g_Battle.rgPlayer[i].wPrevHP)
          {
             if (gpGlobals->g.PlayerRoles.rgwHP[w] > 0 && PAL_IsPlayerDying(w) &&
                g_Battle.rgPlayer[i].wPrevHP >= gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5)
             {
                WORD wCover = gpGlobals->g.PlayerRoles.rgwCoveredBy[w];
+
+               if (gpGlobals->rgPlayerStatus[wCover][kStatusSleep] != 0 ||
+                  gpGlobals->rgPlayerStatus[wCover][kStatusConfused] != 0)
+               {
+                  continue;
+               }
 
                wName = gpGlobals->g.PlayerRoles.rgwName[w];
 
@@ -3454,7 +3464,7 @@ PAL_BattleEnemyPerformAction(
 
       PAL_BattleUpdateFighters();
 
-      if (iCoverIndex == -1 &&
+      if (iCoverIndex == -1 && !fAutoDefend &&
          g_Battle.rgEnemy[wEnemyIndex].e.wAttackEquivItemRate >= RandomLong(1, 10))
       {
          i = g_Battle.rgEnemy[wEnemyIndex].e.wAttackEquivItem;
