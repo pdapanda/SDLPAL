@@ -826,26 +826,32 @@ PAL_BattleUpdateFighters(
             g_Battle.rgPlayer[i].wCurrentFrame = 0; // puppet
          }
       }
-      else if (PAL_IsPlayerDying(wPlayerRole) ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0)
-      {
-         g_Battle.rgPlayer[i].wCurrentFrame = 1;
-      }
-      else if (g_Battle.rgPlayer[i].state == kFighterAct &&
-         g_Battle.rgPlayer[i].action.ActionType == kBattleActionMagic)
-      {
-         //
-         // Player is using a magic
-         //
-         g_Battle.rgPlayer[i].wCurrentFrame = 5;
-      }
-      else if (g_Battle.rgPlayer[i].fDefending)
-      {
-         g_Battle.rgPlayer[i].wCurrentFrame = 3;
-      }
       else
       {
-         g_Battle.rgPlayer[i].wCurrentFrame = 0;
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0)
+         {
+            g_Battle.rgPlayer[i].wCurrentFrame = 1;
+         }
+         else if (g_Battle.rgPlayer[i].state == kFighterAct &&
+            g_Battle.rgPlayer[i].action.ActionType == kBattleActionMagic)
+         {
+            //
+            // Player is using a magic
+            //
+            g_Battle.rgPlayer[i].wCurrentFrame = 5;
+         }
+         else if (g_Battle.rgPlayer[i].fDefending)
+         {
+            g_Battle.rgPlayer[i].wCurrentFrame = 3;
+         }
+         else if (PAL_IsPlayerDying(wPlayerRole))
+         {
+            g_Battle.rgPlayer[i].wCurrentFrame = 1;
+         }
+         else
+         {
+            g_Battle.rgPlayer[i].wCurrentFrame = 0;
+         }
       }
    }
 
@@ -1817,11 +1823,17 @@ PAL_BattleShowPlayerDefMagicAnim(
          //
          if (sTarget > 0 && g_Battle.iHidingTime == 0)
          {
-            LPCBITMAPRLE p = PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget - 1].lpSprite, g_Battle.rgPlayer[sTarget - 1].wCurrentFrame);
-
             if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[sTarget - 1].wPlayerRole][kStatusConfused] == 0)
             {
-               PAL_RLEBlitToSurface(p, gpScreen, g_Battle.rgPlayer[sTarget - 1].pos);
+               LPCBITMAPRLE p = PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget - 1].lpSprite, g_Battle.rgPlayer[sTarget - 1].wCurrentFrame);
+
+               x = PAL_X(g_Battle.rgPlayer[sTarget - 1].pos);
+               y = PAL_Y(g_Battle.rgPlayer[sTarget - 1].pos);
+
+               x -= PAL_RLEGetWidth(p) / 2;
+               y -= PAL_RLEGetHeight(p);
+
+               PAL_RLEBlitToSurface(p, gpScreen, PAL_XY(x, y));
             }
          }
       }
