@@ -103,6 +103,12 @@ typedef const CHAR         *LPCSTR;
 
 #endif
 
+#if defined (__SYMBIAN__)
+#define PAL_LARGE           static
+#else
+#define PAL_LARGE           /* */
+#endif
+
 #ifdef __cplusplus
 }
 #endif
