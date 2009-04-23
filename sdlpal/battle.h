@@ -86,6 +86,7 @@ typedef struct tagBATTLEENEMY
 
    BOOL               fTurnStart;
    BOOL               fFirstMoveDone;
+   BOOL               fDualMove;
 
    WORD               wScriptOnTurnStart;
    WORD               wScriptOnBattleEnd;

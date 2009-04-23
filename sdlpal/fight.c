@@ -419,7 +419,8 @@ PAL_BattleDelay(
          //
          for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
          {
-            if (g_Battle.rgEnemy[j].wObjectID == 0)
+            if (g_Battle.rgEnemy[j].wObjectID == 0 ||
+               g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] != 0)
             {
                continue;
             }
@@ -1051,25 +1052,23 @@ PAL_BattleStartFrame(
 
             g_Battle.fEnemyMoving = TRUE;
 
-            if (g_Battle.iHidingTime == 0)
-            {
-               PAL_BattleEnemyPerformAction(i);
-            }
+            g_Battle.rgEnemy[i].fDualMove =
+               (!g_Battle.rgEnemy[i].fFirstMoveDone &&
+                  (g_Battle.rgEnemy[i].e.wDualMove >= 2 ||
+                     (g_Battle.rgEnemy[i].e.wDualMove != 0 && RandomLong(0, 1))));
+
+            PAL_BattleEnemyPerformAction(i);
 
             g_Battle.rgEnemy[i].flTimeMeter = 0;
             g_Battle.rgEnemy[i].state = kFighterWait;
             g_Battle.fEnemyMoving = FALSE;
 
-            if (!g_Battle.rgEnemy[i].fFirstMoveDone)
+            if (g_Battle.rgEnemy[i].fDualMove)
             {
-               if (g_Battle.rgEnemy[i].e.wDualMove >= 2 ||
-                  (g_Battle.rgEnemy[i].e.wDualMove != 0 && RandomLong(0, 1)))
-               {
-                  g_Battle.rgEnemy[i].flTimeMeter = 100;
-                  g_Battle.rgEnemy[i].state = kFighterCom;
-                  g_Battle.rgEnemy[i].fFirstMoveDone = TRUE;
-                  break;
-               }
+               g_Battle.rgEnemy[i].flTimeMeter = 100;
+               g_Battle.rgEnemy[i].state = kFighterCom;
+               g_Battle.rgEnemy[i].fFirstMoveDone = TRUE;
+               break;
             }
 
             g_Battle.rgEnemy[i].fFirstMoveDone = FALSE;
@@ -1928,7 +1927,11 @@ PAL_BattleShowPlayerOffMagicAnim(
 
    n = PAL_SpriteGetNumFrames(lpSpriteEffect);
 
-   g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+   if (wPlayerIndex != 0xFFFF)
+   {
+      g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+   }
+
    PAL_BattleDelay(1, 0, TRUE);
 
    l = n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
@@ -3006,7 +3009,8 @@ PAL_BattleEnemyPerformAction(
    wPlayerRole = gpGlobals->rgParty[sTarget].wPlayerRole;
    wMagic = g_Battle.rgEnemy[wEnemyIndex].e.wMagic;
 
-   if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusSleep] > 0)
+   if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusSleep] > 0 ||
+      g_Battle.iHidingTime > 0)
    {
       //
       // Do nothing
@@ -3460,21 +3464,26 @@ end:
    //
    // Check poisons
    //
-   PAL_BattleBackupStat();
-
-   for (i = 0; i < MAX_POISONS; i++)
+   if (!g_Battle.rgEnemy[wEnemyIndex].fDualMove)
    {
-      if (g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonID != 0)
+      PAL_BattleBackupStat();
+
+      for (i = 0; i < MAX_POISONS; i++)
       {
-         g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonScript =
-            PAL_RunTriggerScript(g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonScript, wEnemyIndex);
+         if (g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonID != 0)
+         {
+            g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonScript =
+               PAL_RunTriggerScript(g_Battle.rgEnemy[wEnemyIndex].rgPoisons[i].wPoisonScript, wEnemyIndex);
+         }
+      }
+
+      if (PAL_BattleDisplayStatChange())
+      {
+         PAL_BattleDelay(8, 0, FALSE);
       }
    }
 
-   if (PAL_BattleDisplayStatChange())
-   {
-      PAL_BattleDelay(8, 0, FALSE);
-   }
+   PAL_BattlePostActionCheck(FALSE);
 
    //
    // Update statuses

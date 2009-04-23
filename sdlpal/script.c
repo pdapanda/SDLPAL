@@ -885,6 +885,85 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0028:
+      //
+      // Apply poison to enemy
+      //
+      if (pScript->rgwOperand[0])
+      {
+         //
+         // Apply to everyone
+         //
+         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+         {
+            w = g_Battle.rgEnemy[i].wObjectID;
+
+            if (w == 0)
+            {
+               continue;
+            }
+
+            if (RandomLong(0, 9) >=
+               gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery)
+            {
+               for (j = 0; j < MAX_POISONS; j++)
+               {
+                  if (g_Battle.rgEnemy[i].rgPoisons[j].wPoisonID ==
+                     pScript->rgwOperand[1])
+                  {
+                     break;
+                  }
+               }
+
+               if (j >= MAX_POISONS)
+               {
+                  for (j = 0; j < MAX_POISONS; j++)
+                  {
+                     if (g_Battle.rgEnemy[i].rgPoisons[j].wPoisonID == 0)
+                     {
+                        g_Battle.rgEnemy[i].rgPoisons[j].wPoisonID = pScript->rgwOperand[1];
+                        g_Battle.rgEnemy[i].rgPoisons[j].wPoisonScript =
+                           gpGlobals->g.rgObject[pScript->rgwOperand[1]].poison.wEnemyScript;
+                        break;
+                     }
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         //
+         // Apply to one enemy
+         //
+         w = g_Battle.rgEnemy[wEventObjectID].wObjectID;
+
+         if (RandomLong(0, 9) >=
+            gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery)
+         {
+            for (j = 0; j < MAX_POISONS; j++)
+            {
+               if (g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonID ==
+                  pScript->rgwOperand[1])
+               {
+                  break;
+               }
+            }
+
+            if (j >= MAX_POISONS)
+            {
+               for (j = 0; j < MAX_POISONS; j++)
+               {
+                  if (g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonID == 0)
+                  {
+                     g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonID = pScript->rgwOperand[1];
+                     g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonScript =
+                        gpGlobals->g.rgObject[pScript->rgwOperand[1]].poison.wEnemyScript;
+                     break;
+                  }
+               }
+            }
+         }
+      }
       break;
 
    case 0x0029:
@@ -918,11 +997,52 @@ PAL_InterpretInstruction(
       break;
 
    case 0x002A:
+      //
+      // Cure poison by object ID for enemy
+      //
+      if (pScript->rgwOperand[0])
+      {
+         //
+         // Apply to all enemies
+         //
+         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+         {
+            if (g_Battle.rgEnemy[i].wObjectID == 0)
+            {
+               continue;
+            }
+
+            for (j = 0; j < MAX_POISONS; j++)
+            {
+               if (g_Battle.rgEnemy[i].rgPoisons[j].wPoisonID == pScript->rgwOperand[1])
+               {
+                  g_Battle.rgEnemy[i].rgPoisons[j].wPoisonID = 0;
+                  g_Battle.rgEnemy[i].rgPoisons[j].wPoisonScript = 0;
+                  break;
+               }
+            }
+         }
+      }
+      else
+      {
+         //
+         // Apply to one enemy
+         //
+         for (j = 0; j < MAX_POISONS; j++)
+         {
+            if (g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonID == pScript->rgwOperand[1])
+            {
+               g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonID = 0;
+               g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonScript = 0;
+               break;
+            }
+         }
+      }
       break;
 
    case 0x002B:
       //
-      // Cure poison by object ID
+      // Cure poison by object ID for player
       //
       if (pScript->rgwOperand[0])
       {
@@ -964,6 +1084,23 @@ PAL_InterpretInstruction(
       break;
 
    case 0x002E:
+      //
+      // Set the status for enemy
+      //
+      w = g_Battle.rgEnemy[wEventObjectID].wObjectID;
+
+      if (RandomLong(0, ((pScript->rgwOperand[0] == kStatusSlow) ? 12 : 9)) >=
+         gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery)
+      {
+         if (g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] == 0)
+         {
+            g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] = pScript->rgwOperand[1];
+         }
+      }
+      else
+      {
+         wScriptEntry = pScript->rgwOperand[2] - 1;
+      }
       break;
 
    case 0x002F:
@@ -1005,6 +1142,18 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0033:
+      //
+      // collect the enemy for items
+      //
+      if (g_Battle.rgEnemy[wEventObjectID].e.wCollectValue != 0)
+      {
+         gpGlobals->wCollectValue +=
+            g_Battle.rgEnemy[wEventObjectID].e.wCollectValue;
+      }
+      else
+      {
+         wScriptEntry = pScript->rgwOperand[0] - 1;
+      }
       break;
 
    case 0x0034:
@@ -1091,9 +1240,22 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0039:
+      //
+      // Drain HP from enemy
+      //
+      g_Battle.rgEnemy[wEventObjectID].e.wHealth -= pScript->rgwOperand[0];
+      gpGlobals->g.PlayerRoles.rgwHP[g_Battle.wMovingPlayerIndex] += pScript->rgwOperand[0];
+
+      if (gpGlobals->g.PlayerRoles.rgwHP[g_Battle.wMovingPlayerIndex] >
+         gpGlobals->g.PlayerRoles.rgwMaxHP[g_Battle.wMovingPlayerIndex])
+      {
+         gpGlobals->g.PlayerRoles.rgwHP[g_Battle.wMovingPlayerIndex] =
+            gpGlobals->g.PlayerRoles.rgwMaxHP[g_Battle.wMovingPlayerIndex];
+      }
       break;
 
    case 0x003A:
+      // TODO
       break;
 
    case 0x003F:
@@ -1122,6 +1284,7 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0042:
+      // TODO
       break;
 
    case 0x0043:
@@ -1437,6 +1600,15 @@ PAL_InterpretInstruction(
       break;
 
    case 0x005B:
+      //
+      // Halve the enemy's HP
+      //
+      w = g_Battle.rgEnemy[wEventObjectID].e.wHealth / 2 + 1;
+      if (w > pScript->rgwOperand[0])
+      {
+         w = pScript->rgwOperand[0];
+      }
+      g_Battle.rgEnemy[wEventObjectID].e.wHealth -= w;
       break;
 
    case 0x005C:
@@ -1457,6 +1629,21 @@ PAL_InterpretInstruction(
       break;
 
    case 0x005E:
+      //
+      // Jump if enemy doesn't have the specified poison
+      //
+      for (i = 0; i < MAX_POISONS; i++)
+      {
+         if (g_Battle.rgEnemy[wEventObjectID].rgPoisons[i].wPoisonID == pScript->rgwOperand[0])
+         {
+            break;
+         }
+      }
+
+      if (i >= MAX_POISONS)
+      {
+         wScriptEntry = pScript->rgwOperand[1] - 1;
+      }
       break;
 
    case 0x005F:
@@ -1525,6 +1712,7 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0066:
+      // TODO
       break;
 
    case 0x0067:
@@ -1717,6 +1905,9 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0078:
+      //
+      // FIXME: ???
+      //
       break;
 
    case 0x0079:
@@ -2259,12 +2450,15 @@ PAL_InterpretInstruction(
       break;
 
    case 0x009C:
+      // TODO
       break;
 
    case 0x009E:
+      // TODO
       break;
 
    case 0x009F:
+      // TODO
       break;
 
    case 0x00A0:
