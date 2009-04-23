@@ -939,7 +939,7 @@ PAL_StartBattle(
          //
          if (g_Battle.rgEnemy[i].e.wHealth == 32760)
          {
-            for (w = 0; w <= gpGlobals->wMaxPartyMemberIndex; w++)
+            for (w = 0; w <= MAX_PLAYER_ROLES; w++)
             {
                gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
                gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
