@@ -67,6 +67,15 @@ PAL_BattleSelectAutoTarget(
 {
    int          i;
 
+   i = (int)g_Battle.UI.wPrevEnemyTarget;
+
+   if (i >= 0 && i <= g_Battle.wMaxEnemyIndex &&
+      g_Battle.rgEnemy[i].wObjectID != 0 &&
+      g_Battle.rgEnemy[i].e.wHealth > 0)
+   {
+      return i;
+   }
+
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
    {
       if (g_Battle.rgEnemy[i].wObjectID != 0 &&
@@ -1432,7 +1441,8 @@ PAL_BattleShowPlayerAttackAnim(
       //
       for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
       {
-         if (g_Battle.rgEnemy[j].wObjectID == 0)
+         if (g_Battle.rgEnemy[j].wObjectID == 0 ||
+            g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] > 0)
          {
             continue;
          }
@@ -2859,6 +2869,41 @@ PAL_BattlePlayerPerformAction(
       break;
 
    case kBattleActionThrowItem:
+      wObject = g_Battle.rgPlayer[wPlayerIndex].action.wActionID;
+
+      for (i = 0; i < 4; i++)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].pos =
+            PAL_XY(PAL_X(g_Battle.rgPlayer[wPlayerIndex].pos) - (4 - i),
+                   PAL_Y(g_Battle.rgPlayer[wPlayerIndex].pos) - (4 - i) / 2);
+
+         PAL_BattleDelay(1, 0, TRUE);
+      }
+
+      PAL_BattleDelay(2, wObject, TRUE);
+
+      g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
+      SOUND_Play(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
+
+      PAL_BattleDelay(8, wObject, TRUE);
+
+      g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+      PAL_BattleDelay(2, wObject, TRUE);
+
+      //
+      // Run the script
+      //
+      gpGlobals->g.rgObject[wObject].item.wScriptOnThrow =
+         PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].item.wScriptOnThrow, (WORD)sTarget);
+
+      //
+      // Remove the thrown item from inventory
+      //
+      PAL_AddItemToInventory(wObject, -1);
+
+      PAL_BattleUpdateFighters();
+      PAL_BattleDisplayStatChange();
+      PAL_BattleDelay(8, 0, TRUE);
       break;
 
    case kBattleActionUseItem:
@@ -3635,11 +3680,6 @@ PAL_BattleSimulateMagic(
    SHORT   sDamage;
    int     i;
 
-   //
-   // Show the magic animation
-   //
-   PAL_BattleShowPlayerOffMagicAnim(0xFFFF, wMagicObjectID, sTarget);
-
    if (gpGlobals->g.rgObject[wMagicObjectID].magic.wFlags & kMagicFlagApplyToAll)
    {
       sTarget = -1;
@@ -3649,42 +3689,51 @@ PAL_BattleSimulateMagic(
       sTarget = PAL_BattleSelectAutoTarget();
    }
 
-   if (sTarget == -1)
+   //
+   // Show the magic animation
+   //
+   PAL_BattleShowPlayerOffMagicAnim(0xFFFF, wMagicObjectID, sTarget);
+
+   if (gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[wMagicObjectID].magic.wMagicNumber].wBaseDamage > 0 ||
+      wBaseDamage > 0)
    {
-      //
-      // Apply to all enemies
-      //
-      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      if (sTarget == -1)
       {
-         if (g_Battle.rgEnemy[i].wObjectID == 0)
+         //
+         // Apply to all enemies
+         //
+         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
          {
-            continue;
+            if (g_Battle.rgEnemy[i].wObjectID == 0)
+            {
+               continue;
+            }
+
+            sDamage = PAL_CalcMagicDamage(wBaseDamage / 2, 0, g_Battle.rgEnemy[i].e.wElemResistance,
+               g_Battle.rgEnemy[i].e.wPoisonResistance, wMagicObjectID);
+
+            if (sDamage < 0)
+            {
+               sDamage = 0;
+            }
+
+            g_Battle.rgEnemy[i].e.wHealth -= sDamage;
+         }
+      }
+      else
+      {
+         //
+         // Apply to one enemy
+         //
+         sDamage = PAL_CalcMagicDamage(wBaseDamage / 2, 0, g_Battle.rgEnemy[sTarget].e.wElemResistance,
+            g_Battle.rgEnemy[sTarget].e.wPoisonResistance, wMagicObjectID);
+
+         if (sDamage < 0)
+         {
+            sDamage = 0;
          }
 
-         sDamage = PAL_CalcMagicDamage(0, 0, g_Battle.rgEnemy[i].e.wElemResistance,
-            g_Battle.rgEnemy[i].e.wPoisonResistance, wMagicObjectID);
-
-         if (sDamage <= 0)
-         {
-            sDamage = 1;
-         }
-
-         g_Battle.rgEnemy[i].e.wHealth -= sDamage;
+         g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
       }
-   }
-   else
-   {
-      //
-      // Apply to one enemy
-      //
-      sDamage = PAL_CalcMagicDamage(0, 0, g_Battle.rgEnemy[sTarget].e.wElemResistance,
-         g_Battle.rgEnemy[sTarget].e.wPoisonResistance, wMagicObjectID);
-
-      if (sDamage <= 0)
-      {
-         sDamage = 1;
-      }
-
-      g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
    }
 }
