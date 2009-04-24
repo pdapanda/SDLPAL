@@ -151,7 +151,6 @@ typedef struct tagBATTLE
    INT              iHidingTime;          // Time of hiding
 
    WORD             wMovingPlayerIndex;   // current moving player index
-   BOOL             fActionPerforming;    // TRUE if an action is performing
 
    int              iBlow;
 } BATTLE;

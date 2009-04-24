@@ -1116,9 +1116,7 @@ PAL_BattleStartFrame(
                   (g_Battle.rgEnemy[i].e.wDualMove >= 2 ||
                      (g_Battle.rgEnemy[i].e.wDualMove != 0 && RandomLong(0, 1))));
 
-            g_Battle.fActionPerforming = TRUE;
             PAL_BattleEnemyPerformAction(i);
-            g_Battle.fActionPerforming = FALSE;
 
             g_Battle.rgEnemy[i].flTimeMeter = 0;
             g_Battle.rgEnemy[i].state = kFighterWait;
@@ -1189,9 +1187,7 @@ PAL_BattleStartFrame(
             //
             // Perform the action for this player.
             //
-            g_Battle.fActionPerforming = TRUE;
             PAL_BattlePlayerPerformAction(i);
-            g_Battle.fActionPerforming = FALSE;
 
             fMoved = TRUE;
 
@@ -1335,7 +1331,8 @@ PAL_BattleCommitAction(
       break;
 
    default:
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 5;
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime =
+         (g_fActiveTime ? 5 : 0);
       break;
    }
 
@@ -2924,6 +2921,7 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleUpdateFighters();
       PAL_BattleDisplayStatChange();
       PAL_BattleDelay(8, 0, TRUE);
+
       break;
 
    case kBattleActionUseItem:
@@ -3698,7 +3696,7 @@ PAL_BattleSimulateMagic(
 --*/
 {
    SHORT   sDamage;
-   int     i;
+   int     i, def;
 
    if (gpGlobals->g.rgObject[wMagicObjectID].magic.wFlags & kMagicFlagApplyToAll)
    {
@@ -3729,7 +3727,15 @@ PAL_BattleSimulateMagic(
                continue;
             }
 
-            sDamage = PAL_CalcMagicDamage(wBaseDamage / 2, 0, g_Battle.rgEnemy[i].e.wElemResistance,
+            def = (SHORT)g_Battle.rgEnemy[i].e.wDefense;
+            def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 4;
+
+            if (def < 0)
+            {
+               def = 0;
+            }
+
+            sDamage = PAL_CalcMagicDamage(wBaseDamage, (WORD)def, g_Battle.rgEnemy[i].e.wElemResistance,
                g_Battle.rgEnemy[i].e.wPoisonResistance, wMagicObjectID);
 
             if (sDamage < 0)
@@ -3745,7 +3751,15 @@ PAL_BattleSimulateMagic(
          //
          // Apply to one enemy
          //
-         sDamage = PAL_CalcMagicDamage(wBaseDamage / 2, 0, g_Battle.rgEnemy[sTarget].e.wElemResistance,
+         def = (SHORT)g_Battle.rgEnemy[sTarget].e.wDefense;
+         def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
+
+         if (def < 0)
+         {
+            def = 0;
+         }
+
+         sDamage = PAL_CalcMagicDamage(wBaseDamage, (WORD)def, g_Battle.rgEnemy[sTarget].e.wElemResistance,
             g_Battle.rgEnemy[sTarget].e.wPoisonResistance, wMagicObjectID);
 
          if (sDamage < 0)

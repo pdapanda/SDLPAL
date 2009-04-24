@@ -1270,12 +1270,14 @@ PAL_BattleUIUpdate(
 
    case kBattleUISelectTargetEnemy:
       x = -1;
+      y = 0;
 
       for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
       {
          if (g_Battle.rgEnemy[i].wObjectID != 0)
          {
             x = i;
+            y++;
          }
       }
 
@@ -1292,6 +1294,17 @@ PAL_BattleUIUpdate(
             g_Battle.UI.state = kBattleUISelectMove;
             break;
          }
+      }
+
+      //
+      // Don't bother selecting when only 1 enemy left unless
+      // in Active-Time Battle mode
+      //
+      if (!g_fActiveTime && y == 1)
+      {
+         g_Battle.UI.wPrevEnemyTarget = (WORD)x;
+         PAL_BattleCommitAction(FALSE);
+         break;
       }
 
       if (g_Battle.UI.wSelectedIndex > x)
@@ -1401,6 +1414,16 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetEnemyAll:
+      if (!g_fActiveTime)
+      {
+         //
+         // Don't bother selecting unless using Active-Time Battle
+         //
+         g_Battle.UI.wSelectedIndex = (WORD)-1;
+         PAL_BattleCommitAction(FALSE);
+         break;
+      }
+
       if (g_Battle.UI.wActionType == kBattleActionCoopMagic)
       {
          if (!PAL_BattleUIIsActionValid(kBattleActionCoopMagic))
@@ -1444,6 +1467,16 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetPlayerAll:
+      if (!g_fActiveTime)
+      {
+         //
+         // Don't bother selecting unless using Active-Time Battle
+         //
+         g_Battle.UI.wSelectedIndex = (WORD)-1;
+         PAL_BattleCommitAction(FALSE);
+         break;
+      }
+
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;
       if (s_iFrame & 1)
       {
