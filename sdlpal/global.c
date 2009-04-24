@@ -1098,7 +1098,8 @@ PAL_CurePoisonByKind(
    {
       if (gpGlobals->rgPoisonStatus[i][index].wPoisonID != wPoisonID)
       {
-         gpGlobals->rgPoisonStatus[j][index] = gpGlobals->rgPoisonStatus[i][index];
+         gpGlobals->rgPoisonStatus[j][index].wPoisonID = gpGlobals->rgPoisonStatus[i][index].wPoisonID;
+         gpGlobals->rgPoisonStatus[j][index].wPoisonScript = gpGlobals->rgPoisonStatus[i][index].wPoisonScript;
          j++;
       }
    }

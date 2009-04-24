@@ -3606,3 +3606,85 @@ PAL_BattleStealFromEnemy(
    PAL_BattleUpdateFighters();
    PAL_BattleDelay(1, 0, TRUE);
 }
+
+VOID
+PAL_BattleSimulateMagic(
+   SHORT      sTarget,
+   WORD       wMagicObjectID,
+   WORD       wBaseDamage
+)
+/*++
+  Purpose:
+
+    Simulate a magic for players.
+
+  Parameters:
+
+    [IN]  sTarget - the target enemy index. -1 = all enemies.
+
+    [IN]  wMagicObjectID - the object ID of the magic to be simulated.
+
+    [IN]  wBaseDamage - the base damage of the simulation.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   SHORT   sDamage;
+   int     i;
+
+   //
+   // Show the magic animation
+   //
+   PAL_BattleShowPlayerOffMagicAnim(0xFFFF, wMagicObjectID, sTarget);
+
+   if (gpGlobals->g.rgObject[wMagicObjectID].magic.wFlags & kMagicFlagApplyToAll)
+   {
+      sTarget = -1;
+   }
+   else if (sTarget == -1)
+   {
+      sTarget = PAL_BattleSelectAutoTarget();
+   }
+
+   if (sTarget == -1)
+   {
+      //
+      // Apply to all enemies
+      //
+      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      {
+         if (g_Battle.rgEnemy[i].wObjectID == 0)
+         {
+            continue;
+         }
+
+         sDamage = PAL_CalcMagicDamage(0, 0, g_Battle.rgEnemy[i].e.wElemResistance,
+            g_Battle.rgEnemy[i].e.wPoisonResistance, wMagicObjectID);
+
+         if (sDamage <= 0)
+         {
+            sDamage = 1;
+         }
+
+         g_Battle.rgEnemy[i].e.wHealth -= sDamage;
+      }
+   }
+   else
+   {
+      //
+      // Apply to one enemy
+      //
+      sDamage = PAL_CalcMagicDamage(0, 0, g_Battle.rgEnemy[sTarget].e.wElemResistance,
+         g_Battle.rgEnemy[sTarget].e.wPoisonResistance, wMagicObjectID);
+
+      if (sDamage <= 0)
+      {
+         sDamage = 1;
+      }
+
+      g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
+   }
+}

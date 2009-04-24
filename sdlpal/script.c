@@ -1284,7 +1284,15 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0042:
-      // TODO
+      //
+      // Simulate a magic for player
+      //
+      i = (SHORT)(pScript->rgwOperand[2]) - 1;
+      if (i < 0)
+      {
+         i = wEventObjectID;
+      }
+      PAL_BattleSimulateMagic(i, pScript->rgwOperand[0], pScript->rgwOperand[1]);
       break;
 
    case 0x0043:
@@ -1712,7 +1720,13 @@ PAL_InterpretInstruction(
       break;
 
    case 0x0066:
-      // TODO
+      //
+      // Throw weapon to enemy
+      //
+      w = pScript->rgwOperand[1];
+      w += gpGlobals->g.PlayerRoles.rgwAttackStrength[gpGlobals->rgParty[g_Battle.wMovingPlayerIndex].wPlayerRole];
+      w += RandomLong(0, 4);
+      PAL_BattleSimulateMagic((SHORT)wEventObjectID, pScript->rgwOperand[0], w);
       break;
 
    case 0x0067:
@@ -2253,7 +2267,7 @@ PAL_InterpretInstruction(
 
    case 0x008A:
       //
-      // Enable Auto-Battle
+      // Enable Auto-Battle for next battle
       //
       gpGlobals->fAutoBattle = TRUE;
       break;

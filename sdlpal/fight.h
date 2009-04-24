@@ -85,6 +85,13 @@ PAL_BattleStealFromEnemy(
    WORD           wStealRate
 );
 
+VOID
+PAL_BattleSimulateMagic(
+   SHORT      sTarget,
+   WORD       wMagicObjectID,
+   WORD       wBaseDamage
+);
+
 #ifdef __cplusplus
 }
 #endif

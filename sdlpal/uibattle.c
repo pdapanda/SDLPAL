@@ -682,6 +682,11 @@ PAL_BattleUIPickAutoMagic(
    WORD             wMagic = 0, w, wMagicNum;
    int              i, iMaxPower = 0, iPower;
 
+   if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] != 0)
+   {
+      return 0;
+   }
+
    for (i = 0; i < MAX_PLAYER_MAGICS; i++)
    {
       w = gpGlobals->g.PlayerRoles.rgwMagic[i][wPlayerRole];
