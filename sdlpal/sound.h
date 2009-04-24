@@ -39,9 +39,12 @@ SOUND_CloseAudio(
 );
 
 VOID
-SOUND_Play(
-   INT    iSoundNum
+SOUND_PlayChannel(
+   INT    iSoundNum,
+   INT    iChannel
 );
+
+#define SOUND_Play(i) SOUND_PlayChannel((i), 0)
 
 extern BOOL       g_fNoSound;
 extern BOOL       g_fNoMusic;

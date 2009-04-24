@@ -1088,14 +1088,12 @@ PAL_InterpretInstruction(
       // Set the status for enemy
       //
       w = g_Battle.rgEnemy[wEventObjectID].wObjectID;
+      i = ((pScript->rgwOperand[0] == kStatusSlow) ? 14 : 9);
 
-      if (RandomLong(0, ((pScript->rgwOperand[0] == kStatusSlow) ? 12 : 9)) >=
-         gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery)
+      if (RandomLong(0, i) >= gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery &&
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] == 0)
       {
-         if (g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] == 0)
-         {
-            g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] = pScript->rgwOperand[1];
-         }
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] = pScript->rgwOperand[1];
       }
       else
       {
@@ -1723,7 +1721,7 @@ PAL_InterpretInstruction(
       //
       // Throw weapon to enemy
       //
-      w = pScript->rgwOperand[1];
+      w = pScript->rgwOperand[1] * 5;
       w += gpGlobals->g.PlayerRoles.rgwAttackStrength[gpGlobals->rgParty[g_Battle.wMovingPlayerIndex].wPlayerRole];
       w += RandomLong(0, 4);
       PAL_BattleSimulateMagic((SHORT)wEventObjectID, pScript->rgwOperand[0], w);

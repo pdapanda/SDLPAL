@@ -561,7 +561,7 @@ PAL_BattleUIPlayerReady(
       gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0 &&
       !g_Battle.UI.fAutoAttack && !gpGlobals->fAutoBattle)
    {
-      SOUND_Play(78);
+      SOUND_PlayChannel(78, 1);
    }
 }
 
@@ -921,6 +921,16 @@ PAL_BattleUIUpdate(
    switch (g_Battle.UI.state)
    {
    case kBattleUIWait:
+      PAL_BattlePlayerCheckReady();
+
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         if (g_Battle.rgPlayer[i].state == kFighterCom)
+         {
+            PAL_BattleUIPlayerReady(i);
+            break;
+         }
+      }
       break;
 
    case kBattleUISelectMove:
@@ -1122,9 +1132,31 @@ PAL_BattleUIUpdate(
             }
             else if (g_InputState.dwKeyPress & kKeyMenu && g_fActiveTime)
             {
-               g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].flTimeMeter = 100;
-               g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
-               g_Battle.UI.state = kBattleUIWait;
+               float flMin = -1;
+               j = -1;
+
+               for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+               {
+                  if (g_Battle.rgPlayer[i].flTimeMeter >= 100)
+                  {
+                     g_Battle.rgPlayer[i].flTimeMeter += 100; // HACKHACK: Prevent the time meter from going below 100
+
+                     if ((g_Battle.rgPlayer[i].flTimeMeter < flMin || flMin < 0) &&
+                        i != (int)g_Battle.UI.wCurPlayerIndex &&
+                        g_Battle.rgPlayer[i].state == kFighterWait)
+                     {
+                        flMin = g_Battle.rgPlayer[i].flTimeMeter;
+                        j = i;
+                     }
+                  }
+               }
+
+               if (j != -1)
+               {
+                  g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].flTimeMeter = flMin - 99;
+                  g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
+                  g_Battle.UI.state = kBattleUIWait;
+               }
             }
             break;
 

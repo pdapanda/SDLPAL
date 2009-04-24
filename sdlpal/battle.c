@@ -1001,6 +1001,7 @@ PAL_StartBattle(
 
    g_Battle.fIsBoss = fIsBoss;
    g_Battle.fEnemyMoving = FALSE;
+   g_Battle.fActionPerforming = FALSE;
    g_Battle.iHidingTime = 0;
 
    g_Battle.UI.szMsg[0] = '\0';

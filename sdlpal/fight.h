@@ -47,6 +47,11 @@ PAL_BattleUpdateFighters(
 );
 
 VOID
+PAL_BattlePlayerCheckReady(
+   VOID
+);
+
+VOID
 PAL_BattleStartFrame(
    VOID
 );

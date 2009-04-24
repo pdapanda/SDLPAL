@@ -31,8 +31,8 @@ typedef struct tagSNDPLAYER
 {
    FILE                     *mkf;
    SDL_AudioSpec             spec;
-   LPBYTE                    buf, pos;
-   INT                       audio_len;
+   LPBYTE                    buf[2], pos[2];
+   INT                       audio_len[2];
 } SNDPLAYER;
 
 static SNDPLAYER gSndPlayer;
@@ -163,6 +163,8 @@ SOUND_FillAudio(
 
 --*/
 {
+   int        i;
+
    //
    // Play music
    //
@@ -174,31 +176,39 @@ SOUND_FillAudio(
    //
    // No current playing sound
    //
-   if (g_fNoSound || gSndPlayer.buf == NULL)
+   if (g_fNoSound)
    {
       return;
    }
 
-   //
-   // Only play if we have data left
-   //
-   if (gSndPlayer.audio_len == 0)
+   for (i = 0; i < 2; i++)
    {
       //
-      // Delete the audio buffer from memory
+      // Only play if we have data left
       //
-      free(gSndPlayer.buf);
-      gSndPlayer.buf = NULL;
-      return;
-   }
+      if (gSndPlayer.buf[i] == NULL)
+      {
+         continue;
+      }
 
-   //
-   // Mix as much data as possible
-   //
-   len = (len > gSndPlayer.audio_len) ? gSndPlayer.audio_len : len;
-   SDL_MixAudio(stream, gSndPlayer.pos, len, SDL_MIX_MAXVOLUME);
-   gSndPlayer.pos += len;
-   gSndPlayer.audio_len -= len;
+      if (gSndPlayer.audio_len[i] == 0)
+      {
+         //
+         // Delete the audio buffer from memory
+         //
+         free(gSndPlayer.buf[i]);
+         gSndPlayer.buf[i] = NULL;
+         continue;
+      }
+
+      //
+      // Mix as much data as possible
+      //
+      len = (len > gSndPlayer.audio_len[i]) ? gSndPlayer.audio_len[i] : len;
+      SDL_MixAudio(stream, gSndPlayer.pos[i], len, SDL_MIX_MAXVOLUME);
+      gSndPlayer.pos[i] += len;
+      gSndPlayer.audio_len[i] -= len;
+   }
 }
 
 INT
@@ -260,9 +270,14 @@ SOUND_OpenAudio(
 
    memcpy(&gSndPlayer.spec, &spec, sizeof(SDL_AudioSpec));
 
-   gSndPlayer.buf = NULL;
-   gSndPlayer.pos = NULL;
-   gSndPlayer.audio_len = 0;
+   gSndPlayer.buf[0] = NULL;
+   gSndPlayer.pos[0] = NULL;
+   gSndPlayer.audio_len[0] = 0;
+
+   gSndPlayer.buf[1] = NULL;
+   gSndPlayer.pos[1] = NULL;
+   gSndPlayer.audio_len[1] = 0;
+
    gSndOpened = TRUE;
 
    //
@@ -299,10 +314,16 @@ SOUND_CloseAudio(
 {
    SDL_CloseAudio();
 
-   if (gSndPlayer.buf != NULL)
+   if (gSndPlayer.buf[0] != NULL)
    {
-      free(gSndPlayer.buf);
-      gSndPlayer.buf = NULL;
+      free(gSndPlayer.buf[0]);
+      gSndPlayer.buf[0] = NULL;
+   }
+
+   if (gSndPlayer.buf[1] != NULL)
+   {
+      free(gSndPlayer.buf[1]);
+      gSndPlayer.buf[1] = NULL;
    }
 
    if (gSndPlayer.mkf != NULL)
@@ -315,8 +336,9 @@ SOUND_CloseAudio(
 }
 
 VOID
-SOUND_Play(
-   INT    iSoundNum
+SOUND_PlayChannel(
+   INT    iSoundNum,
+   INT    iChannel
 )
 /*++
   Purpose:
@@ -326,6 +348,8 @@ SOUND_Play(
   Parameters:
 
     [IN]  iSoundNum - number of the sound.
+
+    [IN]  iChannel - the number of channel (0 or 1).
 
   Return value:
 
@@ -347,10 +371,10 @@ SOUND_Play(
    //
    // Stop playing current sound.
    //
-   if (gSndPlayer.buf != NULL)
+   if (gSndPlayer.buf[iChannel] != NULL)
    {
-      LPBYTE p = gSndPlayer.buf;
-      gSndPlayer.buf = NULL;
+      LPBYTE p = gSndPlayer.buf[iChannel];
+      gSndPlayer.buf[iChannel] = NULL;
       free(p);
    }
 
@@ -411,7 +435,7 @@ SOUND_Play(
       return;
    }
 
-   gSndPlayer.buf = wavecvt.buf;
-   gSndPlayer.audio_len = wavecvt.len * wavecvt.len_mult;
-   gSndPlayer.pos = wavecvt.buf;
+   gSndPlayer.buf[iChannel] = wavecvt.buf;
+   gSndPlayer.audio_len[iChannel] = wavecvt.len * wavecvt.len_mult;
+   gSndPlayer.pos[iChannel] = wavecvt.buf;
 }

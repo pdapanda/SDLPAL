@@ -899,6 +899,56 @@ PAL_BattleUpdateFighters(
 }
 
 VOID
+PAL_BattlePlayerCheckReady(
+   VOID
+)
+/*++
+  Purpose:
+
+    Check if there are player who is ready.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   float   flMax = 0;
+   int     iMax = 0, i;
+
+   //
+   // Start the UI for the fastest and ready player
+   //
+   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+   {
+      if (g_Battle.rgPlayer[i].state == kFighterCom ||
+         (g_Battle.rgPlayer[i].state == kFighterAct && g_Battle.rgPlayer[i].action.ActionType == kBattleActionCoopMagic))
+      {
+         flMax = 0;
+         break;
+      }
+      else if (g_Battle.rgPlayer[i].state == kFighterWait)
+      {
+         if (g_Battle.rgPlayer[i].flTimeMeter > flMax)
+         {
+            iMax = i;
+            flMax = g_Battle.rgPlayer[i].flTimeMeter;
+         }
+      }
+   }
+
+   if (flMax >= 100.0f)
+   {
+      g_Battle.rgPlayer[iMax].state = kFighterCom;
+      g_Battle.rgPlayer[iMax].fDefending = FALSE;
+   }
+}
+
+VOID
 PAL_BattleStartFrame(
    VOID
 )
@@ -1066,7 +1116,9 @@ PAL_BattleStartFrame(
                   (g_Battle.rgEnemy[i].e.wDualMove >= 2 ||
                      (g_Battle.rgEnemy[i].e.wDualMove != 0 && RandomLong(0, 1))));
 
+            g_Battle.fActionPerforming = TRUE;
             PAL_BattleEnemyPerformAction(i);
+            g_Battle.fActionPerforming = FALSE;
 
             g_Battle.rgEnemy[i].flTimeMeter = 0;
             g_Battle.rgEnemy[i].state = kFighterWait;
@@ -1119,10 +1171,6 @@ PAL_BattleStartFrame(
          break;
 
       case kFighterCom:
-         if (g_Battle.UI.state == kBattleUIWait)
-         {
-            PAL_BattleUIPlayerReady(i);
-         }
          break;
 
       case kFighterAct:
@@ -1141,7 +1189,9 @@ PAL_BattleStartFrame(
             //
             // Perform the action for this player.
             //
+            g_Battle.fActionPerforming = TRUE;
             PAL_BattlePlayerPerformAction(i);
+            g_Battle.fActionPerforming = FALSE;
 
             fMoved = TRUE;
 
@@ -1165,36 +1215,6 @@ PAL_BattleStartFrame(
          }
          break;
       }
-   }
-
-   //
-   // Start the UI for the fastest and ready player
-   //
-   flMax = 0;
-   iMax = 0;
-
-   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
-   {
-      if (g_Battle.rgPlayer[i].state == kFighterCom ||
-         (g_Battle.rgPlayer[i].state == kFighterAct && g_Battle.rgPlayer[i].action.ActionType == kBattleActionCoopMagic))
-      {
-         flMax = 0;
-         break;
-      }
-      else if (g_Battle.rgPlayer[i].state == kFighterWait)
-      {
-         if (g_Battle.rgPlayer[i].flTimeMeter > flMax)
-         {
-            iMax = i;
-            flMax = g_Battle.rgPlayer[i].flTimeMeter;
-         }
-      }
-   }
-
-   if (flMax > 100.0f)
-   {
-      g_Battle.rgPlayer[iMax].state = kFighterCom;
-      g_Battle.rgPlayer[iMax].fDefending = FALSE;
    }
 }
 
