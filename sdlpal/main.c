@@ -56,7 +56,7 @@ PAL_Init(
 
 --*/
 {
-   int e;
+   int           e;
 
 #ifdef NDS
    fatInitDefault();
@@ -429,9 +429,9 @@ main(
 
 --*/
 {
-   WORD wScreenWidth = 0, wScreenHeight = 0;
-   int c;
-   BOOL fFullScreen = FALSE;
+   WORD          wScreenWidth = 0, wScreenHeight = 0;
+   int           c;
+   BOOL          fFullScreen = FALSE;
 
 #ifdef _WIN32
    putenv("SDL_VIDEODRIVER=directx");
@@ -477,7 +477,7 @@ main(
          //
          // Toggle active time battle mode
          //
-         gpGlobals->fActiveTimeBattle = !gpGlobals->fActiveTimeBattle;
+         g_fActiveTime = !g_fActiveTime;
       }
    }
 

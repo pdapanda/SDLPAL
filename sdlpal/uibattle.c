@@ -1129,7 +1129,7 @@ PAL_BattleUIUpdate(
             {
                PAL_BattleCommitAction(TRUE);
             }
-            else if (g_InputState.dwKeyPress & kKeyMenu && gpGlobals->fActiveTimeBattle)
+            else if (g_InputState.dwKeyPress & kKeyMenu && g_fActiveTime)
             {
                float flMin = -1;
                j = -1;
@@ -1299,7 +1299,7 @@ PAL_BattleUIUpdate(
       // Don't bother selecting when only 1 enemy left unless
       // in Active-Time Battle mode
       //
-      if (!gpGlobals->fActiveTimeBattle && y == 1)
+      if (!g_fActiveTime && y == 1)
       {
          g_Battle.UI.wPrevEnemyTarget = (WORD)x;
          PAL_BattleCommitAction(FALSE);
@@ -1413,7 +1413,7 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetEnemyAll:
-      if (!gpGlobals->fActiveTimeBattle)
+      if (!g_fActiveTime)
       {
          //
          // Don't bother selecting unless using Active-Time Battle
@@ -1466,7 +1466,7 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetPlayerAll:
-      if (!gpGlobals->fActiveTimeBattle)
+      if (!g_fActiveTime)
       {
          //
          // Don't bother selecting unless using Active-Time Battle

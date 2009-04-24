@@ -138,8 +138,6 @@ PAL_InitGlobals(
 
    gpGlobals->bCurrentSaveSlot = 1;
 
-   gpGlobals->fActiveTimeBattle = TRUE;
-
    return 0;
 }
 
