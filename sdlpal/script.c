@@ -1241,14 +1241,14 @@ PAL_InterpretInstruction(
       //
       // Drain HP from enemy
       //
-      g_Battle.rgEnemy[wEventObjectID].e.wHealth -= pScript->rgwOperand[0];
-      gpGlobals->g.PlayerRoles.rgwHP[g_Battle.wMovingPlayerIndex] += pScript->rgwOperand[0];
+      w = gpGlobals->rgParty[g_Battle.wMovingPlayerIndex].wPlayerRole;
 
-      if (gpGlobals->g.PlayerRoles.rgwHP[g_Battle.wMovingPlayerIndex] >
-         gpGlobals->g.PlayerRoles.rgwMaxHP[g_Battle.wMovingPlayerIndex])
+      g_Battle.rgEnemy[wEventObjectID].e.wHealth -= pScript->rgwOperand[0];
+      gpGlobals->g.PlayerRoles.rgwHP[w] += pScript->rgwOperand[0];
+
+      if (gpGlobals->g.PlayerRoles.rgwHP[w] > gpGlobals->g.PlayerRoles.rgwMaxHP[w])
       {
-         gpGlobals->g.PlayerRoles.rgwHP[g_Battle.wMovingPlayerIndex] =
-            gpGlobals->g.PlayerRoles.rgwMaxHP[g_Battle.wMovingPlayerIndex];
+         gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
       }
       break;
 
