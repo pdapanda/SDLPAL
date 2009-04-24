@@ -1708,7 +1708,8 @@ PAL_BattleShowPlayerPreMagicAnim(
          //
          for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
          {
-            if (g_Battle.rgEnemy[j].wObjectID == 0)
+            if (g_Battle.rgEnemy[j].wObjectID == 0 ||
+               g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] != 0)
             {
                continue;
             }
