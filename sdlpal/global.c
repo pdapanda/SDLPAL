@@ -138,6 +138,8 @@ PAL_InitGlobals(
 
    gpGlobals->bCurrentSaveSlot = 1;
 
+   gpGlobals->fActiveTimeBattle = TRUE;
+
    return 0;
 }
 
@@ -401,9 +403,9 @@ PAL_LoadGame(
 
 --*/
 {
-   FILE           *fp;
-   SAVEDGAME       s;
-   UINT32          i;
+   FILE                     *fp;
+   PAL_LARGE SAVEDGAME       s;
+   UINT32                    i;
 
    //
    // Try to open the specified file
@@ -493,9 +495,9 @@ PAL_SaveGame(
 
 --*/
 {
-   FILE           *fp;
-   SAVEDGAME       s;
-   UINT32          i;
+   FILE                     *fp;
+   PAL_LARGE SAVEDGAME       s;
+   UINT32                    i;
 
    //
    // Put all the data to the saved game struct.

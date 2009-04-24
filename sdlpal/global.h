@@ -512,6 +512,7 @@ typedef struct tagGLOBALVARS
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
    BOOL             fInBattle;           // TRUE if in battle
    BOOL             fAutoBattle;         // TRUE if auto-battle
+   BOOL             fActiveTimeBattle;   // TRUE if using Active-Time Battle
    WORD             wLastUnequippedItem; // last unequipped item
 
    PLAYERROLES      rgEquipmentEffect[MAX_PLAYER_EQUIPMENTS + 1]; // equipment effects

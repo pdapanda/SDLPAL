@@ -477,10 +477,7 @@ main(
          //
          // Toggle active time battle mode
          //
-         {
-            extern BOOL g_fActiveTime;
-            g_fActiveTime = !g_fActiveTime;
-         }
+         gpGlobals->fActiveTimeBattle = !gpGlobals->fActiveTimeBattle;
       }
    }
 

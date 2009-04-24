@@ -21,9 +21,6 @@
 #include "main.h"
 #include <math.h>
 
-// Change this to FALSE to disable Active-Time Battle
-BOOL g_fActiveTime = TRUE;
-
 static BOOL
 PAL_IsPlayerDying(
    WORD        wPlayerRole
@@ -331,7 +328,7 @@ PAL_GetTimeChargingSpeed(
       return 0;
    }
 
-   if (!g_fActiveTime && g_Battle.UI.state != kBattleUIWait)
+   if (!gpGlobals->fActiveTimeBattle && g_Battle.UI.state != kBattleUIWait)
    {
       return 0;
    }
@@ -1332,7 +1329,7 @@ PAL_BattleCommitAction(
 
    default:
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime =
-         (g_fActiveTime ? 5 : 0);
+         (gpGlobals->fActiveTimeBattle ? 5 : 0);
       break;
    }
 
