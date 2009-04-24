@@ -737,6 +737,9 @@ PAL_BattleUIUpdate(
    int              i, j, x, y;
    WORD             wPlayerRole, w;
    extern BOOL      g_fActiveTime;
+   static int       s_iFrame = 0;
+
+   s_iFrame++;
 
    if (gpGlobals->fAutoBattle)
    {
@@ -899,7 +902,7 @@ PAL_BattleUIUpdate(
       // Draw the arrow on the player's head.
       //
       i = SPRITENUM_BATTLE_ARROW_CURRENTPLAYER_RED;
-      if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
+      if (s_iFrame & 1)
       {
          i = SPRITENUM_BATTLE_ARROW_CURRENTPLAYER;
       }
@@ -1272,7 +1275,7 @@ PAL_BattleUIUpdate(
       //
       // Highlight the selected enemy
       //
-      if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
+      if (s_iFrame & 1)
       {
          i = g_Battle.UI.wSelectedIndex;
 
@@ -1323,7 +1326,7 @@ PAL_BattleUIUpdate(
 
    case kBattleUISelectTargetPlayer:
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;
-      if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
+      if (s_iFrame & 1)
       {
          j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER_RED;
       }
@@ -1370,7 +1373,7 @@ PAL_BattleUIUpdate(
          }
       }
 
-      if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
+      if (s_iFrame & 1)
       {
          //
          // Highlight all enemies
@@ -1405,7 +1408,7 @@ PAL_BattleUIUpdate(
 
    case kBattleUISelectTargetPlayerAll:
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;
-      if ((SDL_GetTicks() / BATTLE_FRAME_TIME) & 1)
+      if (s_iFrame & 1)
       {
          j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER_RED;
       }
