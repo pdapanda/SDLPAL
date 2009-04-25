@@ -322,11 +322,12 @@ PAL_GetTimeChargingSpeed(
 
 --*/
 {
-   if (g_Battle.UI.state == kBattleUISelectMove &&
-      g_Battle.UI.MenuState != kBattleMenuMain)
+   if ((g_Battle.UI.state == kBattleUISelectMove &&
+      g_Battle.UI.MenuState != kBattleMenuMain) ||
+      SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
    {
       //
-      // Pause the time when there are submenus
+      // Pause the time when there are submenus or text messages
       //
       return 0;
    }

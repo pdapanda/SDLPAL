@@ -922,7 +922,7 @@ PAL_InterpretInstruction(
                      {
                         g_Battle.rgEnemy[i].rgPoisons[j].wPoisonID = pScript->rgwOperand[1];
                         g_Battle.rgEnemy[i].rgPoisons[j].wPoisonScript =
-                           gpGlobals->g.rgObject[pScript->rgwOperand[1]].poison.wEnemyScript;
+                           PAL_RunTriggerScript(gpGlobals->g.rgObject[pScript->rgwOperand[1]].poison.wEnemyScript, wEventObjectID);
                         break;
                      }
                   }
@@ -957,7 +957,7 @@ PAL_InterpretInstruction(
                   {
                      g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonID = pScript->rgwOperand[1];
                      g_Battle.rgEnemy[wEventObjectID].rgPoisons[j].wPoisonScript =
-                        gpGlobals->g.rgObject[pScript->rgwOperand[1]].poison.wEnemyScript;
+                        PAL_RunTriggerScript(gpGlobals->g.rgObject[pScript->rgwOperand[1]].poison.wEnemyScript, wEventObjectID);
                      break;
                   }
                }
