@@ -113,7 +113,7 @@ get_count(
 )
 {
    unsigned short temp;
-   if (temp = get_bits(src, bitptr, 2))
+   if ((temp = get_bits(src, bitptr, 2)) != 0)
    {
       if (get_bits(src, bitptr, 1))
          return get_bits(src, bitptr, header->LZSSRepeatCodeLengthTable[temp - 1]);

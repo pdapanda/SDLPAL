@@ -3626,6 +3626,11 @@ PAL_BattleStealFromEnemy(
    g_Battle.rgPlayer[iPlayerIndex].pos = PAL_XY(x, y);
    PAL_BattleDelay(3, 0, TRUE);
 
+   g_Battle.rgPlayer[iPlayerIndex].state = kFighterWait;
+   g_Battle.rgPlayer[iPlayerIndex].flTimeMeter = 0;
+   PAL_BattleUpdateFighters();
+   PAL_BattleDelay(1, 0, TRUE);
+
    if (g_Battle.rgEnemy[wTarget].e.nStealItem > 0 &&
       (RandomLong(0, 10) <= wStealRate || wStealRate == 0))
    {
@@ -3661,14 +3666,10 @@ PAL_BattleStealFromEnemy(
 
       if (s[0] != '\0')
       {
-         PAL_BattleUIShowText(s, 1000);
+         PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
+         PAL_ShowDialogText(s);
       }
    }
-
-   g_Battle.rgPlayer[iPlayerIndex].state = kFighterWait;
-   g_Battle.rgPlayer[iPlayerIndex].flTimeMeter = 0;
-   PAL_BattleUpdateFighters();
-   PAL_BattleDelay(1, 0, TRUE);
 }
 
 VOID
