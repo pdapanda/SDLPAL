@@ -968,7 +968,6 @@ PAL_BattleStartFrame(
 --*/
 {
    int                      i;
-   int                      iMax;
    BOOL                     fEnded;
    WORD                     wPlayerRole;
    WORD                     wDexterity;
@@ -1157,6 +1156,7 @@ PAL_BattleStartFrame(
       {
          g_Battle.rgPlayer[i].state = kFighterWait;
          g_Battle.rgPlayer[i].flTimeMeter = 0;
+         g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
          continue;
       }
 
@@ -1191,22 +1191,7 @@ PAL_BattleStartFrame(
 
             fMoved = TRUE;
 
-            //
-            // Reduce the time for other players when uses coopmagic
-            //
-            if (g_Battle.rgPlayer[i].action.ActionType == kBattleActionCoopMagic)
-            {
-               for (iMax = 0; iMax <= gpGlobals->wMaxPartyMemberIndex; iMax++)
-               {
-                  g_Battle.rgPlayer[iMax].flTimeMeter = 0;
-                  g_Battle.rgPlayer[iMax].flTimeSpeedModifier = 2.0f;
-               }
-            }
-            else
-            {
-               g_Battle.rgPlayer[i].flTimeMeter = 0;
-            }
-
+            g_Battle.rgPlayer[i].flTimeMeter = 0;
             g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
          }
          break;
@@ -2729,6 +2714,14 @@ PAL_BattlePlayerPerformAction(
       break;
 
    case kBattleActionCoopMagic:
+      //
+      // Reset the time meter for everyone when using coopmagic
+      //
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         g_Battle.rgPlayer[i].flTimeMeter = 0;
+         g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
+      }
       break;
 
    case kBattleActionDefend:
@@ -2919,9 +2912,10 @@ PAL_BattlePlayerPerformAction(
       //
       PAL_AddItemToInventory(wObject, -1);
 
-      PAL_BattleUpdateFighters();
       PAL_BattleDisplayStatChange();
-      PAL_BattleDelay(8, 0, TRUE);
+      PAL_BattleDelay(4, 0, TRUE);
+      PAL_BattleUpdateFighters();
+      PAL_BattleDelay(4, 0, TRUE);
 
       break;
 
@@ -3666,8 +3660,7 @@ PAL_BattleStealFromEnemy(
 
       if (s[0] != '\0')
       {
-         PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
-         PAL_ShowDialogText(s);
+         PAL_BattleUIShowText(s, 800);
       }
    }
 }

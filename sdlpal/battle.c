@@ -1004,6 +1004,7 @@ PAL_StartBattle(
    g_Battle.iHidingTime = 0;
 
    g_Battle.UI.szMsg[0] = '\0';
+   g_Battle.UI.szNextMsg[0] = '\0';
    g_Battle.UI.dwMsgShowTime = 0;
    g_Battle.UI.state = kBattleUIWait;
    g_Battle.UI.fAutoAttack = FALSE;

@@ -96,7 +96,9 @@ typedef struct tagBATTLEUI
    BATTLEMENUSTATE  MenuState;
 
    CHAR             szMsg[256];           // message to be shown on the screen
+   CHAR             szNextMsg[256];       // next message to be shown on the screen
    DWORD            dwMsgShowTime;        // the end time of showing the message
+   WORD             wNextMsgDuration;     // duration of the next message
 
    WORD             wCurPlayerIndex;      // index of the current player
    WORD             wSelectedAction;      // current selected action

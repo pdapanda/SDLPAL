@@ -523,8 +523,16 @@ PAL_BattleUIShowText(
 
 --*/
 {
-   strcpy(g_Battle.UI.szMsg, lpszText);
-   g_Battle.UI.dwMsgShowTime = SDL_GetTicks() + wDuration;
+   if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
+   {
+      strcpy(g_Battle.UI.szNextMsg, lpszText);
+      g_Battle.UI.wNextMsgDuration = wDuration;
+   }
+   else
+   {
+      strcpy(g_Battle.UI.szMsg, lpszText);
+      g_Battle.UI.dwMsgShowTime = SDL_GetTicks() + wDuration;
+   }
 }
 
 VOID
@@ -804,18 +812,6 @@ PAL_BattleUIUpdate(
 
       PAL_PlayerInfoBox(PAL_XY(91 + 77 * i, 165), wPlayerRole,
          w, j, FALSE);
-   }
-
-   //
-   // Show the text message if there is one.
-   //
-   if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
-   {
-      //
-      // Draw the text message.
-      //
-      PAL_DrawText(g_Battle.UI.szMsg, PAL_XY(160 - 4 * strlen(g_Battle.UI.szMsg), 65),
-         15, TRUE, FALSE);
    }
 
    if (g_InputState.dwKeyPress & kKeyAuto)
@@ -1516,6 +1512,36 @@ PAL_BattleUIUpdate(
    }
 
 end:
+   //
+   // Show the text message if there is one.
+   //
+   if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
+   {
+      //
+      // The text should be shown in a small window at the center of the screen
+      //
+      PAL_POS    pos;
+      int        len = strlen(g_Battle.UI.szMsg);
+
+      //
+      // Create the window box
+      //
+      pos = PAL_XY(160 - len * 4, 40);
+      PAL_CreateSingleLineBox(pos, (len + 1) / 2, FALSE);
+
+      //
+      // Show the text on the screen
+      //
+      pos = PAL_XY(PAL_X(pos) + 8 + ((len & 1) << 2), PAL_Y(pos) + 10);
+      PAL_DrawText(g_Battle.UI.szMsg, pos, 0, FALSE, FALSE);
+   }
+   else if (g_Battle.UI.szNextMsg[0] != '\0')
+   {
+      strcpy(g_Battle.UI.szMsg, g_Battle.UI.szNextMsg);
+      g_Battle.UI.dwMsgShowTime = SDL_GetTicks() + g_Battle.UI.wNextMsgDuration;
+      g_Battle.UI.szNextMsg[0] = '\0';
+   }
+
    //
    // Draw the numbers
    //
