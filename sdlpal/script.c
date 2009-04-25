@@ -2466,11 +2466,102 @@ PAL_InterpretInstruction(
       break;
 
    case 0x009E:
-      // TODO
+      //
+      // Enemy summons another monster
+      //
+      x = 0;
+      w = pScript->rgwOperand[0];
+      y = (((SHORT)(pScript->rgwOperand[1]) <= 0) ? 1 : (SHORT)pScript->rgwOperand[1]);
+
+      if (w == 0 || w == 0xFFFF)
+      {
+         w = g_Battle.rgEnemy[wEventObjectID].wObjectID;
+      }
+
+      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      {
+         if (g_Battle.rgEnemy[i].wObjectID == 0)
+         {
+            x++;
+         }
+      }
+
+      if (x < y || g_Battle.iHidingTime > 0)
+      {
+         wScriptEntry = pScript->rgwOperand[2] - 1;
+      }
+      else
+      {
+         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+         {
+            if (g_Battle.rgEnemy[i].wObjectID == 0)
+            {
+               memset(&(g_Battle.rgEnemy[i]), 0, sizeof(BATTLEENEMY));
+
+               g_Battle.rgEnemy[i].wObjectID = w;
+               g_Battle.rgEnemy[i].e = gpGlobals->g.lprgEnemy[gpGlobals->g.rgObject[w].enemy.wEnemyID];
+
+               g_Battle.rgEnemy[i].state = kFighterWait;
+               g_Battle.rgEnemy[i].wScriptOnTurnStart = gpGlobals->g.rgObject[w].enemy.wScriptOnTurnStart;
+               g_Battle.rgEnemy[i].wScriptOnBattleEnd = gpGlobals->g.rgObject[w].enemy.wScriptOnBattleEnd;
+               g_Battle.rgEnemy[i].wScriptOnReady = gpGlobals->g.rgObject[w].enemy.wScriptOnReady;
+               g_Battle.rgEnemy[i].flTimeMeter = 50;
+               g_Battle.rgEnemy[i].iColorShift = 8;
+
+               y--;
+               if (y <= 0)
+               {
+                  break;
+               }
+            }
+         }
+
+         PAL_BattleDelay(2, 0, TRUE);
+
+         PAL_BattleBackupScene();
+         PAL_LoadBattleSprites();
+         PAL_BattleMakeScene();
+         SOUND_Play(212);
+         PAL_BattleFadeScene();
+
+         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+         {
+            g_Battle.rgEnemy[i].iColorShift = 0;
+         }
+
+         PAL_BattleBackupScene();
+         PAL_BattleMakeScene();
+         PAL_BattleFadeScene();
+      }
       break;
 
    case 0x009F:
-      // TODO
+      //
+      // Enemy transforms into something else
+      //
+      if (g_Battle.iHidingTime <= 0)
+      {
+         w = g_Battle.rgEnemy[wEventObjectID].e.wHealth;
+
+         g_Battle.rgEnemy[wEventObjectID].wObjectID = pScript->rgwOperand[0];
+         g_Battle.rgEnemy[wEventObjectID].e =
+            gpGlobals->g.lprgEnemy[gpGlobals->g.rgObject[pScript->rgwOperand[0]].enemy.wEnemyID];
+
+         g_Battle.rgEnemy[wEventObjectID].e.wHealth = w;
+
+         for (i = 0; i < 6; i++)
+         {
+            g_Battle.rgEnemy[wEventObjectID].iColorShift = i;
+            PAL_BattleDelay(1, 0, FALSE);
+         }
+
+         g_Battle.rgEnemy[wEventObjectID].iColorShift = 0;
+
+         PAL_BattleBackupScene();
+         PAL_LoadBattleSprites();
+         PAL_BattleMakeScene();
+         PAL_BattleFadeScene();
+      }
       break;
 
    case 0x00A0:

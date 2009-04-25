@@ -21,6 +21,8 @@
 #include "main.h"
 #include <math.h>
 
+//#define INVINCIBLE 1
+
 // Set this to FALSE to disable Active-Time Battle
 BOOL g_fActiveTime = TRUE;
 
@@ -670,6 +672,9 @@ PAL_BattlePostActionCheck(
          //
          // This enemy is KO'ed
          //
+         g_Battle.iExpGained += g_Battle.rgEnemy[i].e.wExp;
+         g_Battle.iCashGained += g_Battle.rgEnemy[i].e.wCash;
+
          SOUND_Play(g_Battle.rgEnemy[i].e.wDeathSound);
          g_Battle.rgEnemy[i].wObjectID = 0;
          fFade = TRUE;
@@ -839,7 +844,8 @@ PAL_BattleUpdateFighters(
       }
       else
       {
-         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0)
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0 ||
+            PAL_IsPlayerDying(wPlayerRole))
          {
             g_Battle.rgPlayer[i].wCurrentFrame = 1;
          }
@@ -854,10 +860,6 @@ PAL_BattleUpdateFighters(
          else if (g_Battle.rgPlayer[i].fDefending)
          {
             g_Battle.rgPlayer[i].wCurrentFrame = 3;
-         }
-         else if (PAL_IsPlayerDying(wPlayerRole))
-         {
-            g_Battle.rgPlayer[i].wCurrentFrame = 1;
          }
          else
          {
@@ -1041,7 +1043,7 @@ PAL_BattleStartFrame(
    //
    if (g_Battle.iHidingTime > 0)
    {
-      if (PAL_GetTimeChargingSpeed(1000) > 0)
+      if (PAL_GetTimeChargingSpeed(9999) > 0)
       {
          g_Battle.iHidingTime--;
       }
@@ -2158,8 +2160,8 @@ PAL_BattleShowEnemyMagicAnim(
 
       for (k = 0; k <= gpGlobals->wMaxPartyMemberIndex; k++)
       {
-         x = PAL_X(g_Battle.rgPlayer[k].pos) - blow;
-         y = PAL_Y(g_Battle.rgPlayer[k].pos) - blow / 2;
+         x = PAL_X(g_Battle.rgPlayer[k].pos) + blow;
+         y = PAL_Y(g_Battle.rgPlayer[k].pos) + blow / 2;
 
          g_Battle.rgPlayer[k].pos = PAL_XY(x, y);
       }
@@ -3092,7 +3094,7 @@ PAL_BattleEnemyPerformAction(
          //
          // Do nothing
          //
-         return;
+         goto end;
       }
 
       wMagicNum = gpGlobals->g.rgObject[wMagic].magic.wMagicNumber;
@@ -3222,7 +3224,9 @@ PAL_BattleEnemyPerformAction(
                   sDamage = gpGlobals->g.PlayerRoles.rgwHP[w];
                }
 
+#ifndef INVINCIBLE
                gpGlobals->g.PlayerRoles.rgwHP[w] -= sDamage;
+#endif
 
                if (gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
                {
@@ -3255,7 +3259,9 @@ PAL_BattleEnemyPerformAction(
                sDamage = gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole];
             }
 
+#ifndef INVINCIBLE
             gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] -= sDamage;
+#endif
 
             if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0)
             {
@@ -3456,7 +3462,10 @@ PAL_BattleEnemyPerformAction(
             sDamage = 1;
          }
 
+#ifndef INVINCIBLE
          gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] -= sDamage;
+#endif
+
          PAL_BattleDisplayStatChange();
 
          g_Battle.rgPlayer[sTarget].iColorShift = 6;

@@ -924,7 +924,7 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].wScriptOnBattleEnd = gpGlobals->g.rgObject[w].enemy.wScriptOnBattleEnd;
          g_Battle.rgEnemy[i].wScriptOnReady = gpGlobals->g.rgObject[w].enemy.wScriptOnReady;
          g_Battle.rgEnemy[i].flTimeMeter = 50;
-         g_Battle.rgEnemy[i].iColorShift = FALSE;
+         g_Battle.rgEnemy[i].iColorShift = 0;
 
          //
          // HACK: Otherwise the black thief lady will be too hard to beat
@@ -989,15 +989,6 @@ PAL_StartBattle(
 
    g_Battle.iExpGained = 0;
    g_Battle.iCashGained = 0;
-
-   for (i = g_Battle.wMaxEnemyIndex; i >= 0; i--)
-   {
-      if (g_Battle.rgEnemy[i].wObjectID)
-      {
-         g_Battle.iExpGained += g_Battle.rgEnemy[i].e.wExp;
-         g_Battle.iCashGained += g_Battle.rgEnemy[i].e.wCash;
-      }
-   }
 
    g_Battle.fIsBoss = fIsBoss;
    g_Battle.fEnemyMoving = FALSE;
