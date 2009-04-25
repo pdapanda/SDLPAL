@@ -37,6 +37,11 @@ extern "C"
 #include "SDL.h"
 #include "SDL_endian.h"
 
+#define malloc       SDL_malloc
+#define calloc       SDL_calloc
+#define free         SDL_free
+#define realloc      SDL_realloc
+
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #define SWAP16(X)    (X)
 #define SWAP32(X)    (X)
