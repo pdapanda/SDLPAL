@@ -544,45 +544,33 @@ PAL_InterpretInstruction(
 
    case 0x001A:
       //
-      // Set player's attribute
+      // Set player's stat
       //
-      if (pScript->rgwOperand[2] & 0x8000)
+      WORD *p = (WORD *)(&gpGlobals->g.PlayerRoles); // HACKHACK
+
+      if (g_iCurEquipPart != -1)
       {
          //
-         // Set temporarily in battle (TODO)
+         // In the progress of equipping items
          //
+         p = (WORD *)&(gpGlobals->rgEquipmentEffect[g_iCurEquipPart]);
+      }
+
+      if (pScript->rgwOperand[2] == 0)
+      {
+         //
+         // Apply to the current player. The wEventObjectID should
+         // indicate the player role.
+         //
+         iPlayerRole = wEventObjectID;
       }
       else
       {
-         //
-         // Set permanently
-         //
-         WORD *p = (WORD *)(&gpGlobals->g.PlayerRoles); // HACKHACK
-
-         if (g_iCurEquipPart != -1)
-         {
-            //
-            // In the progress of equipping items
-            //
-            p = (WORD *)&(gpGlobals->rgEquipmentEffect[g_iCurEquipPart]);
-         }
-
-         if (pScript->rgwOperand[2] == 0)
-         {
-            //
-            // Apply to the current player. The wEventObjectID should
-            // indicate the player role.
-            //
-            iPlayerRole = wEventObjectID;
-         }
-         else
-         {
-            iPlayerRole = pScript->rgwOperand[2] - 1;
-         }
-
-         p[pScript->rgwOperand[0] * MAX_PLAYER_ROLES + iPlayerRole] =
-            (SHORT)pScript->rgwOperand[1];
+         iPlayerRole = pScript->rgwOperand[2] - 1;
       }
+
+      p[pScript->rgwOperand[0] * MAX_PLAYER_ROLES + iPlayerRole] =
+         (SHORT)pScript->rgwOperand[1];
       break;
 
    case 0x001B:
