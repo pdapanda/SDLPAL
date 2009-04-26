@@ -546,31 +546,33 @@ PAL_InterpretInstruction(
       //
       // Set player's stat
       //
-      WORD *p = (WORD *)(&gpGlobals->g.PlayerRoles); // HACKHACK
-
-      if (g_iCurEquipPart != -1)
       {
-         //
-         // In the progress of equipping items
-         //
-         p = (WORD *)&(gpGlobals->rgEquipmentEffect[g_iCurEquipPart]);
-      }
+         WORD *p = (WORD *)(&gpGlobals->g.PlayerRoles); // HACKHACK
 
-      if (pScript->rgwOperand[2] == 0)
-      {
-         //
-         // Apply to the current player. The wEventObjectID should
-         // indicate the player role.
-         //
-         iPlayerRole = wEventObjectID;
-      }
-      else
-      {
-         iPlayerRole = pScript->rgwOperand[2] - 1;
-      }
+         if (g_iCurEquipPart != -1)
+         {
+            //
+            // In the progress of equipping items
+            //
+            p = (WORD *)&(gpGlobals->rgEquipmentEffect[g_iCurEquipPart]);
+         }
 
-      p[pScript->rgwOperand[0] * MAX_PLAYER_ROLES + iPlayerRole] =
-         (SHORT)pScript->rgwOperand[1];
+         if (pScript->rgwOperand[2] == 0)
+         {
+            //
+            // Apply to the current player. The wEventObjectID should
+            // indicate the player role.
+            //
+            iPlayerRole = wEventObjectID;
+         }
+         else
+         {
+            iPlayerRole = pScript->rgwOperand[2] - 1;
+         }
+
+         p[pScript->rgwOperand[0] * MAX_PLAYER_ROLES + iPlayerRole] =
+            (SHORT)pScript->rgwOperand[1];
+      }
       break;
 
    case 0x001B:
