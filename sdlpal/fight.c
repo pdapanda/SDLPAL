@@ -1107,7 +1107,7 @@ PAL_BattleStartFrame(
          break;
 
       case kFighterAct:
-         if (!fMoved && PAL_GetTimeChargingSpeed(9999) > 0 && !fOnlyPuppet)
+         if (!fMoved && (PAL_GetTimeChargingSpeed(9999) > 0 || g_Battle.rgEnemy[i].fDualMove) && !fOnlyPuppet)
          {
             fMoved = TRUE;
 
@@ -1129,11 +1129,12 @@ PAL_BattleStartFrame(
                g_Battle.rgEnemy[i].flTimeMeter = 100;
                g_Battle.rgEnemy[i].state = kFighterCom;
                g_Battle.rgEnemy[i].fFirstMoveDone = TRUE;
-               break;
             }
-
-            g_Battle.rgEnemy[i].fFirstMoveDone = FALSE;
-            g_Battle.rgEnemy[i].fTurnStart = TRUE;
+            else
+            {
+               g_Battle.rgEnemy[i].fFirstMoveDone = FALSE;
+               g_Battle.rgEnemy[i].fTurnStart = TRUE;
+            }
          }
          break;
       }
@@ -3684,7 +3685,7 @@ PAL_BattleSimulateMagic(
 /*++
   Purpose:
 
-    Simulate a magic for players.
+    Simulate a magic for players. Mostly used in item throwing script.
 
   Parameters:
 

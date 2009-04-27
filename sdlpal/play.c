@@ -42,8 +42,9 @@ PAL_GameUpdate(
 
 --*/
 {
-   WORD          wEventObjectID, wDir;
-   int           i;
+   WORD            wEventObjectID, wDir;
+   int             i;
+   LPEVENTOBJECT   p;
 
    //
    // Check for trigger events
@@ -77,17 +78,29 @@ PAL_GameUpdate(
       }
 
       //
+      // Update the vanish time for all event objects
+      //
+      for (wEventObjectID = 0; wEventObjectID < gpGlobals->g.nEventObject; wEventObjectID++)
+      {
+         p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
+
+         if (p->sVanishTime != 0)
+         {
+            p->sVanishTime += ((p->sVanishTime < 0) ? 1 : -1);
+         }
+      }
+
+      //
       // Loop through all event objects in the current scene
       //
       for (wEventObjectID = gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex + 1;
          wEventObjectID <= gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex;
          wEventObjectID++)
       {
-         LPEVENTOBJECT p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
+         p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
 
          if (p->sVanishTime != 0)
          {
-            p->sVanishTime += ((p->sVanishTime < 0) ? 1 : -1);
             continue;
          }
 
@@ -171,7 +184,7 @@ PAL_GameUpdate(
       wEventObjectID <= gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex;
       wEventObjectID++)
    {
-      LPEVENTOBJECT p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
+      p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
 
       if (p->sState > 0 && p->sVanishTime == 0)
       {
