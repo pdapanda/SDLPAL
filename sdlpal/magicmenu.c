@@ -60,6 +60,41 @@ PAL_MagicSelectionMenuUpdate(
    PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE);
    PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
 
+   //
+   // Check for inputs
+   //
+   if (g_InputState.dwKeyPress & kKeyUp)
+   {
+      g_iCurrentItem -= 3;
+   }
+   else if (g_InputState.dwKeyPress & kKeyDown)
+   {
+      g_iCurrentItem += 3;
+   }
+   else if (g_InputState.dwKeyPress & kKeyLeft)
+   {
+      g_iCurrentItem--;
+   }
+   else if (g_InputState.dwKeyPress & kKeyRight)
+   {
+      g_iCurrentItem++;
+   }
+   else if (g_InputState.dwKeyPress & kKeyPgUp)
+   {
+      g_iCurrentItem -= 3 * 5;
+   }
+   else if (g_InputState.dwKeyPress & kKeyPgDn)
+   {
+      g_iCurrentItem += 3 * 5;
+   }
+   else if (g_InputState.dwKeyPress & kKeyMenu)
+   {
+      return 0;
+   }
+
+   //
+   // Make sure the current menu item index is in bound
+   //
    if (g_iCurrentItem < 0)
    {
       g_iCurrentItem = 0;
@@ -143,34 +178,7 @@ PAL_MagicSelectionMenuUpdate(
       }
    }
 
-   //
-   // Check for inputs
-   //
-   if (g_InputState.dwKeyPress & kKeyUp)
-   {
-      g_iCurrentItem -= 3;
-   }
-   else if (g_InputState.dwKeyPress & kKeyDown)
-   {
-      g_iCurrentItem += 3;
-   }
-   else if (g_InputState.dwKeyPress & kKeyLeft)
-   {
-      g_iCurrentItem--;
-   }
-   else if (g_InputState.dwKeyPress & kKeyRight)
-   {
-      g_iCurrentItem++;
-   }
-   else if (g_InputState.dwKeyPress & kKeyPgUp)
-   {
-      g_iCurrentItem -= 3 * 5;
-   }
-   else if (g_InputState.dwKeyPress & kKeyPgDn)
-   {
-      g_iCurrentItem += 3 * 5;
-   }
-   else if (g_InputState.dwKeyPress & kKeySearch)
+   if (g_InputState.dwKeyPress & kKeySearch)
    {
       if (rgMagicItem[g_iCurrentItem].fEnabled)
       {
@@ -185,10 +193,6 @@ PAL_MagicSelectionMenuUpdate(
 
          return rgMagicItem[g_iCurrentItem].wMagic;
       }
-   }
-   else if (g_InputState.dwKeyPress & kKeyMenu)
-   {
-      return 0;
    }
 
    return 0xFFFF;

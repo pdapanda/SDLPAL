@@ -48,6 +48,41 @@ PAL_ItemSelectMenuUpdate(
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
 
+   //
+   // Process input
+   //
+   if (g_InputState.dwKeyPress & kKeyUp)
+   {
+      gpGlobals->iCurInvMenuItem -= 3;
+   }
+   else if (g_InputState.dwKeyPress & kKeyDown)
+   {
+      gpGlobals->iCurInvMenuItem += 3;
+   }
+   else if (g_InputState.dwKeyPress & kKeyLeft)
+   {
+      gpGlobals->iCurInvMenuItem--;
+   }
+   else if (g_InputState.dwKeyPress & kKeyRight)
+   {
+      gpGlobals->iCurInvMenuItem++;
+   }
+   else if (g_InputState.dwKeyPress & kKeyPgUp)
+   {
+      gpGlobals->iCurInvMenuItem -= 3 * 7;
+   }
+   else if (g_InputState.dwKeyPress & kKeyPgDn)
+   {
+      gpGlobals->iCurInvMenuItem += 3 * 7;
+   }
+   else if (g_InputState.dwKeyPress & kKeyMenu)
+   {
+      return 0;
+   }
+
+   //
+   // Make sure the current menu item index is in bound
+   //
    if (gpGlobals->iCurInvMenuItem < 0)
    {
       gpGlobals->iCurInvMenuItem = 0;
@@ -168,38 +203,7 @@ PAL_ItemSelectMenuUpdate(
       PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(12, 148));
    }
 
-   //
-   // Process input
-   //
-   if (g_InputState.dwKeyPress & kKeyUp)
-   {
-      gpGlobals->iCurInvMenuItem -= 3;
-   }
-   else if (g_InputState.dwKeyPress & kKeyDown)
-   {
-      gpGlobals->iCurInvMenuItem += 3;
-   }
-   else if (g_InputState.dwKeyPress & kKeyLeft)
-   {
-      gpGlobals->iCurInvMenuItem--;
-   }
-   else if (g_InputState.dwKeyPress & kKeyRight)
-   {
-      gpGlobals->iCurInvMenuItem++;
-   }
-   else if (g_InputState.dwKeyPress & kKeyPgUp)
-   {
-      gpGlobals->iCurInvMenuItem -= 3 * 7;
-   }
-   else if (g_InputState.dwKeyPress & kKeyPgDn)
-   {
-      gpGlobals->iCurInvMenuItem += 3 * 7;
-   }
-   else if (g_InputState.dwKeyPress & kKeyMenu)
-   {
-      return 0;
-   }
-   else if (g_InputState.dwKeyPress & kKeySearch)
+   if (g_InputState.dwKeyPress & kKeySearch)
    {
       if ((gpGlobals->g.rgObject[wObject].item.wFlags & g_wItemFlags) &&
          gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount >
