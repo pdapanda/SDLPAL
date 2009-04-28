@@ -3156,6 +3156,7 @@ PAL_BattleEnemyPerformAction(
 
             if (gpGlobals->rgPlayerStatus[w][kStatusSleep] == 0 &&
                gpGlobals->rgPlayerStatus[w][kStatusSlow] == 0 &&
+               gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0 &&
                RandomLong(0, 2) == 0 &&
                gpGlobals->g.PlayerRoles.rgwHP[w] != 0)
             {
@@ -3170,6 +3171,7 @@ PAL_BattleEnemyPerformAction(
       }
       else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] == 0 &&
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] == 0 &&
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] == 0 &&
          RandomLong(0, 2) == 0)
       {
          fAutoDefend = TRUE;
@@ -3376,6 +3378,12 @@ PAL_BattleEnemyPerformAction(
                iCoverIndex = -1;
             }
          }
+      }
+      else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] > 0)
+      {
+         fAutoDefend = FALSE;
       }
 
       for (i = 0; i < g_Battle.rgEnemy[wEnemyIndex].e.wMagicFrames; i++)

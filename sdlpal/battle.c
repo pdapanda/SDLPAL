@@ -782,6 +782,26 @@ PAL_BattleWon(
    {
       PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnBattleEnd, i);
    }
+
+   //
+   // Recover automatically after each battle
+   //
+   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+   {
+      w = gpGlobals->rgParty[i].wPlayerRole;
+
+#if 0
+      gpGlobals->g.PlayerRoles.rgwHP[w] +=
+         (gpGlobals->g.PlayerRoles.rgwMaxHP[w] - gpGlobals->g.PlayerRoles.rgwHP[w]) / 2;
+      gpGlobals->g.PlayerRoles.rgwMP[w] +=
+         (gpGlobals->g.PlayerRoles.rgwMaxMP[w] - gpGlobals->g.PlayerRoles.rgwMP[w]) / 2;
+#else
+      if (gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
+      {
+         gpGlobals->g.PlayerRoles.rgwHP[w] = 1;
+      }
+#endif
+   }
 }
 
 VOID
