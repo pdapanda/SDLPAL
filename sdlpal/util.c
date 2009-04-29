@@ -288,7 +288,7 @@ TerminateOnError(
 #endif
 
 #ifdef __linux__
-   system(va("xmessage \"FATAL ERROR: %s\"", string));
+   system(va("beep; xmessage \"FATAL ERROR: %s\"", string));
 #endif
 
 #ifdef _DEBUG

@@ -59,6 +59,11 @@ PAL_DrawText(
 );
 
 VOID
+PAL_DialogSetDelayTime(
+   INT          iDelayTime
+);
+
+VOID
 PAL_StartDialog(
    BYTE         bDialogLocation,
    BYTE         bFontColor,

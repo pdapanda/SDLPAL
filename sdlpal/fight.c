@@ -3382,9 +3382,15 @@ PAL_BattleEnemyPerformAction(
             }
          }
       }
-      else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
+
+      //
+      // If no one can cover the inflictor and inflictor is in a
+      // bad status, don't evade
+      //
+      if (iCoverIndex == -1 &&
+         (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] > 0)
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] > 0))
       {
          fAutoDefend = FALSE;
       }

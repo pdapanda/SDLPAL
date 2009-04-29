@@ -2690,6 +2690,11 @@ PAL_RunTriggerScript(
 
    g_fScriptSuccess = TRUE;
 
+   //
+   // Set the default dialog speed.
+   //
+   PAL_DialogSetDelayTime(3);
+
    while (wScriptEntry != 0 && !fEnded)
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);

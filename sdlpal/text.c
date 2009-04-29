@@ -56,7 +56,7 @@ typedef struct tagTEXTLIB
    BYTE            bufDialogIcons[282];
 } TEXTLIB, *LPTEXTLIB;
 
-TEXTLIB         g_TextLib;
+static TEXTLIB         g_TextLib;
 
 INT
 PAL_InitText(
@@ -388,6 +388,28 @@ PAL_DrawText(
 }
 
 VOID
+PAL_DialogSetDelayTime(
+   INT          iDelayTime
+)
+/*++
+  Purpose:
+
+    Set the delay time for dialog.
+
+  Parameters:
+
+    [IN]  iDelayTime - the delay time to be set.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   g_TextLib.iDelayTime = iDelayTime;
+}
+
+VOID
 PAL_StartDialog(
    BYTE         bDialogLocation,
    BYTE         bFontColor,
@@ -430,7 +452,6 @@ PAL_StartDialog(
    g_TextLib.bIcon = 0;
    g_TextLib.posIcon = 0;
    g_TextLib.nCurrentDialogLine = 0;
-   g_TextLib.iDelayTime = 3;
    g_TextLib.posDialogTitle = PAL_XY(12, 8);
    g_TextLib.fUserSkip = FALSE;
 
