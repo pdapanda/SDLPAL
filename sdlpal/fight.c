@@ -658,7 +658,7 @@ PAL_BattlePostActionCheck(
 --*/
 {
    int      i, j;
-   BOOL     fFade = FALSE;
+   BOOL     fFade = FALSE, fEnemyRemaining = FALSE;
 
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
    {
@@ -678,6 +678,19 @@ PAL_BattlePostActionCheck(
          SOUND_Play(g_Battle.rgEnemy[i].e.wDeathSound);
          g_Battle.rgEnemy[i].wObjectID = 0;
          fFade = TRUE;
+
+         continue;
+      }
+
+      fEnemyRemaining = TRUE;
+   }
+
+   if (!fEnemyRemaining)
+   {
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         g_Battle.rgPlayer[i].state = kFighterAct;
+         g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
       }
    }
 
@@ -1944,7 +1957,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
    n = PAL_SpriteGetNumFrames(lpSpriteEffect);
 
-   if (wPlayerIndex != 0xFFFF)
+   if (wPlayerIndex != (WORD)-1)
    {
       g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
    }
@@ -2461,8 +2474,12 @@ PAL_BattlePlayerValidateAction(
       {
          wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
 
-         if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0)
+         if (PAL_IsPlayerDying(wPlayerRole) ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
+            g_Battle.rgPlayer[i].flTimeMeter < 100 ||
+            (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
          {
             g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
             break;
@@ -2490,6 +2507,14 @@ PAL_BattlePlayerValidateAction(
       break;
 
    case kBattleActionAttackMate:
+      if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] == 0)
+      {
+         //
+         // Attack enemies instead if player is not confused
+         //
+         fToEnemy = TRUE;
+         g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+      }
       break;
    }
 
@@ -2544,9 +2569,10 @@ PAL_BattlePlayerPerformAction(
    WORD     wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
    SHORT    sTarget;
    int      x, y;
-   int      i, t;
+   int      i, j, t;
    WORD     str, def, res, wObject, wMagicNum;
    BOOL     fCritical, fPoisoned;
+   WORD     rgwCoopPos[3][2] = {{208, 157}, {234, 170}, {260, 183}};
 
    g_Battle.wMovingPlayerIndex = wPlayerIndex;
    g_Battle.iBlow = 0;
@@ -2718,13 +2744,219 @@ PAL_BattlePlayerPerformAction(
       break;
 
    case kBattleActionCoopMagic:
-      //
-      // Reset the time meter for everyone when using coopmagic
-      //
+      wObject = PAL_GetPlayerCooperativeMagic(gpGlobals->rgParty[wPlayerIndex].wPlayerRole);
+      wMagicNum = gpGlobals->g.rgObject[wObject].magic.wMagicNumber;
+
+      if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon)
+      {
+         PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex, TRUE);
+         PAL_BattleShowPlayerSummonMagicAnim((WORD)-1, wObject, sTarget);
+      }
+      else
+      {
+         for (i = 1; i <= 6; i++)
+         {
+            //
+            // Update the position for the player who invoked the action
+            //
+            x = PAL_X(g_Battle.rgPlayer[wPlayerIndex].posOriginal) * (6 - i);
+            y = PAL_Y(g_Battle.rgPlayer[wPlayerIndex].posOriginal) * (6 - i);
+
+            x += rgwCoopPos[0][0] * i;
+            y += rgwCoopPos[0][1] * i;
+
+            x /= 6;
+            y /= 6;
+
+            g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+
+            //
+            // Update the position for other players
+            //
+            t = 0;
+
+            for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+            {
+               if ((WORD)j == wPlayerIndex)
+               {
+                  continue;
+               }
+
+               t++;
+
+               x = PAL_X(g_Battle.rgPlayer[j].posOriginal) * (6 - i);
+               y = PAL_Y(g_Battle.rgPlayer[j].posOriginal) * (6 - i);
+
+               x += rgwCoopPos[t][0] * i;
+               y += rgwCoopPos[t][1] * i;
+
+               x /= 6;
+               y /= 6;
+
+               g_Battle.rgPlayer[j].pos = PAL_XY(x, y);
+            }
+
+            PAL_BattleDelay(1, 0, TRUE);
+         }
+
+         for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
+         {
+            if ((WORD)i == wPlayerIndex)
+            {
+               continue;
+            }
+
+            g_Battle.rgPlayer[i].wCurrentFrame = 5;
+
+            PAL_BattleDelay(3, 0, TRUE);
+         }
+
+         g_Battle.rgPlayer[wPlayerIndex].iColorShift = 6;
+         g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
+         SOUND_Play(157);
+         PAL_BattleDelay(5, 0, TRUE);
+
+         g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+         g_Battle.rgPlayer[wPlayerIndex].iColorShift = 0;
+         PAL_BattleDelay(3, 0, TRUE);
+
+         PAL_BattleShowPlayerOffMagicAnim((WORD)-1, wObject, sTarget);
+      }
+
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
+         gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] -=
+            gpGlobals->g.lprgMagic[wMagicNum].wCostMP;
+
+         if ((SHORT)(gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole]) <= 0)
+         {
+            gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] = 1;
+         }
+
+         //
+         // Reset the time meter for everyone when using coopmagic
+         //
          g_Battle.rgPlayer[i].flTimeMeter = 0;
          g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
+      }
+
+      PAL_BattleBackupStat(); // so that "damages" to players won't be shown
+
+      str = 0;
+
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         str += PAL_GetPlayerAttackStrength(gpGlobals->rgParty[i].wPlayerRole);
+         str += PAL_GetPlayerMagicStrength(gpGlobals->rgParty[i].wPlayerRole);
+      }
+
+      str /= 4;
+
+      //
+      // Inflict damage to enemies
+      //
+      if (sTarget == -1)
+      {
+         //
+         // Attack all enemies
+         //
+         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+         {
+            if (g_Battle.rgEnemy[i].wObjectID == 0)
+            {
+               continue;
+            }
+
+            def = g_Battle.rgEnemy[i].e.wDefense;
+            def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 4;
+
+            sDamage = PAL_CalcMagicDamage(str, def,
+               g_Battle.rgEnemy[i].e.wElemResistance, g_Battle.rgEnemy[i].e.wPoisonResistance, wObject);
+
+            if (sDamage <= 0)
+            {
+               sDamage = 1;
+            }
+
+            g_Battle.rgEnemy[i].e.wHealth -= sDamage;
+         }
+      }
+      else
+      {
+         //
+         // Attack one enemy
+         //
+         def = g_Battle.rgEnemy[sTarget].e.wDefense;
+         def += (g_Battle.rgEnemy[sTarget].e.wLevel + 6) * 4;
+
+         sDamage = PAL_CalcMagicDamage(str, def,
+            g_Battle.rgEnemy[sTarget].e.wElemResistance, g_Battle.rgEnemy[sTarget].e.wPoisonResistance, wObject);
+
+         if (sDamage <= 0)
+         {
+            sDamage = 1;
+         }
+
+         g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
+      }
+
+      PAL_BattleDisplayStatChange();
+      PAL_BattleShowPostMagicAnim();
+      PAL_BattleDelay(5, 0, TRUE);
+
+      if (gpGlobals->g.lprgMagic[wMagicNum].wType != kMagicTypeSummon)
+      {
+         PAL_BattlePostActionCheck(FALSE);
+
+         //
+         // Move all players back to the original position
+         //
+         for (i = 1; i <= 6; i++)
+         {
+            //
+            // Update the position for the player who invoked the action
+            //
+            x = PAL_X(g_Battle.rgPlayer[wPlayerIndex].posOriginal) * i;
+            y = PAL_Y(g_Battle.rgPlayer[wPlayerIndex].posOriginal) * i;
+
+            x += rgwCoopPos[0][0] * (6 - i);
+            y += rgwCoopPos[0][1] * (6 - i);
+
+            x /= 6;
+            y /= 6;
+
+            g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+
+            //
+            // Update the position for other players
+            //
+            t = 0;
+
+            for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+            {
+               g_Battle.rgPlayer[j].wCurrentFrame = 0;
+
+               if ((WORD)j == wPlayerIndex)
+               {
+                  continue;
+               }
+
+               t++;
+
+               x = PAL_X(g_Battle.rgPlayer[j].posOriginal) * i;
+               y = PAL_Y(g_Battle.rgPlayer[j].posOriginal) * i;
+
+               x += rgwCoopPos[t][0] * (6 - i);
+               y += rgwCoopPos[t][1] * (6 - i);
+
+               x /= 6;
+               y /= 6;
+
+               g_Battle.rgPlayer[j].pos = PAL_XY(x, y);
+            }
+
+            PAL_BattleDelay(1, 0, TRUE);
+         }
       }
       break;
 
