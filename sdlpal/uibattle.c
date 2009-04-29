@@ -755,6 +755,17 @@ PAL_BattleUIUpdate(
 
    if (gpGlobals->fAutoBattle)
    {
+      PAL_BattlePlayerCheckReady();
+
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         if (g_Battle.rgPlayer[i].state == kFighterCom)
+         {
+            PAL_BattleUIPlayerReady(i);
+            break;
+         }
+      }
+
       if (g_Battle.UI.state != kBattleUIWait)
       {
          w = PAL_BattleUIPickAutoMagic(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole, 9999);
@@ -782,7 +793,7 @@ PAL_BattleUIUpdate(
          PAL_BattleCommitAction(FALSE);
       }
 
-      return;
+      goto end;
    }
 
    //
@@ -822,7 +833,7 @@ PAL_BattleUIUpdate(
    else if (g_InputState.dwKeyPress & kKeyStatus)
    {
       PAL_PlayerStatus();
-      return;
+      goto end;
    }
 
    //

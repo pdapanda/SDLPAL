@@ -3273,7 +3273,10 @@ PAL_BattleEnemyPerformAction(
          }
       }
 
-      PAL_BattleDisplayStatChange();
+      if (!gpGlobals->fAutoBattle)
+      {
+         PAL_BattleDisplayStatChange();
+      }
 
       for (i = 0; i < 5; i++)
       {
