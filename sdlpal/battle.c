@@ -50,17 +50,36 @@ PAL_BattleMakeScene(
 {
    int          i;
    PAL_POS      pos;
+   LPBYTE       pSrc, pDst;
+   BYTE         b;
 
    //
    // Draw the background
    //
-   SDL_BlitSurface(g_Battle.lpBackground, NULL, g_Battle.lpSceneBuf, NULL);
-   PAL_ApplyWave(g_Battle.lpSceneBuf);
+   pSrc = g_Battle.lpBackground->pixels;
+   pDst = g_Battle.lpSceneBuf->pixels;
 
-   //
-   // Darken/Brighten the background when there are summons
-   //
-   // TODO
+   for (i = 0; i < g_Battle.lpSceneBuf->pitch * g_Battle.lpSceneBuf->h; i++)
+   {
+      b = (*pSrc & 0x0F);
+      b += g_Battle.sBackgroundColorShift;
+
+      if (b & 0x80)
+      {
+         b = 0;
+      }
+      else if (b & 0x70)
+      {
+         b = 0x0F;
+      }
+
+      *pDst = (b | (*pSrc & 0xF0));
+
+      ++pSrc;
+      ++pDst;
+   }
+
+   PAL_ApplyWave(g_Battle.lpSceneBuf);
 
    //
    // Draw the enemies
@@ -96,14 +115,22 @@ PAL_BattleMakeScene(
       }
    }
 
-   //
-   // Draw the players
-   //
-   if (FALSE) // TODO: summon
+   if (g_Battle.lpSummonSprite != NULL)
    {
+      //
+      // Draw the summoned god
+      //
+      pos = PAL_XY(PAL_X(g_Battle.posSummon) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame)) / 2,
+         PAL_Y(g_Battle.posSummon) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame)));
+
+      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame),
+         g_Battle.lpSceneBuf, pos);
    }
    else
    {
+      //
+      // Draw the players
+      //
       for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
       {
          pos = g_Battle.rgPlayer[i].pos;
@@ -404,6 +431,12 @@ PAL_FreeBattleSprites(
       }
       g_Battle.rgEnemy[i].lpSprite = NULL;
    }
+
+   if (g_Battle.lpSummonSprite != NULL)
+   {
+      free(g_Battle.lpSummonSprite);
+   }
+   g_Battle.lpSummonSprite = NULL;
 }
 
 VOID
@@ -1023,6 +1056,9 @@ PAL_StartBattle(
    g_Battle.UI.wPrevEnemyTarget = 0;
 
    memset(g_Battle.UI.rgShowNum, 0, sizeof(g_Battle.UI.rgShowNum));
+
+   g_Battle.lpSummonSprite = NULL;
+   g_Battle.sBackgroundColorShift = 0;
 
    gpGlobals->fInBattle = TRUE;
    g_Battle.BattleResult = kBattleResultPreBattle;

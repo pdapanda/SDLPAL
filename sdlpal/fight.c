@@ -810,6 +810,22 @@ end:
       PAL_BattleMakeScene();
       PAL_BattleFadeScene();
    }
+
+   //
+   // Fade out the summoned god
+   //
+   if (g_Battle.lpSummonSprite != NULL)
+   {
+      free(g_Battle.lpSummonSprite);
+      g_Battle.lpSummonSprite = NULL;
+
+      g_Battle.sBackgroundColorShift = 0;
+
+      PAL_BattleBackupScene();
+      PAL_BattleUpdateFighters();
+      PAL_BattleMakeScene();
+      PAL_BattleFadeScene();
+   }
 }
 
 VOID
@@ -2309,8 +2325,7 @@ PAL_BattleShowEnemyMagicAnim(
 static VOID
 PAL_BattleShowPlayerSummonMagicAnim(
    WORD         wPlayerIndex,
-   WORD         wObjectID,
-   SHORT        sTarget
+   WORD         wObjectID
 )
 /*++
   Purpose:
@@ -2323,14 +2338,99 @@ PAL_BattleShowPlayerSummonMagicAnim(
 
     [IN]  wObjectID - the object ID of the magic to be used.
 
-    [IN]  sTarget - the target enemy of the action.
-
   Return value:
 
     None.
 
 --*/
 {
+   int           i, j;
+   WORD          wMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
+   WORD          wEffectMagicID = 0;
+   DWORD         dwTime = SDL_GetTicks();
+
+   for (wEffectMagicID = 0; wEffectMagicID < MAX_OBJECTS; wEffectMagicID++)
+   {
+      if (gpGlobals->g.rgObject[wEffectMagicID].magic.wMagicNumber ==
+         gpGlobals->g.lprgMagic[wMagicNum].wEffect)
+      {
+         break;
+      }
+   }
+
+   assert(wEffectMagicID < MAX_OBJECTS);
+
+   //
+   // Brighten the players
+   //
+   for (i = 1; i <= 10; i++)
+   {
+      for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+      {
+         g_Battle.rgPlayer[j].iColorShift = i;
+      }
+
+      PAL_BattleDelay(1, wObjectID, TRUE);
+   }
+
+   PAL_BattleBackupScene();
+
+   //
+   // Load the sprite of the summoned god
+   //
+   j = gpGlobals->g.lprgMagic[wMagicNum].wSummonEffect + 10;
+   i = PAL_MKFGetDecompressedSize(j, gpGlobals->f.fpF);
+
+   g_Battle.lpSummonSprite = UTIL_malloc(i);
+
+   PAL_MKFDecompressChunk(g_Battle.lpSummonSprite, i, j, gpGlobals->f.fpF);
+
+   g_Battle.iSummonFrame = 0;
+   g_Battle.posSummon = PAL_XY(230 + (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wXOffset),
+      155 + (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wYOffset));
+   g_Battle.sBackgroundColorShift = (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wEffectTimes);
+
+   //
+   // Fade in the summoned god
+   //
+   PAL_BattleMakeScene();
+   PAL_BattleFadeScene();
+
+   //
+   // Show the animation of the summoned god
+   //
+   while (g_Battle.iSummonFrame < PAL_SpriteGetNumFrames(g_Battle.lpSummonSprite) - 1)
+   {
+      //
+      // Wait for the time of one frame. Accept input here.
+      //
+      PAL_ProcessEvent();
+      while (SDL_GetTicks() <= dwTime)
+      {
+         PAL_ProcessEvent();
+         SDL_Delay(1);
+      }
+
+      //
+      // Set the time of the next frame.
+      //
+      dwTime = SDL_GetTicks() +
+         ((SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wSpeed) + 5) * 10;
+
+      PAL_BattleMakeScene();
+      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+
+      PAL_BattleUIUpdate();
+
+      VIDEO_UpdateScreen(NULL);
+
+      g_Battle.iSummonFrame++;
+   }
+
+   //
+   // Show the actual magic effect
+   //
+   PAL_BattleShowPlayerOffMagicAnim((WORD)-1, wEffectMagicID, -1);
 }
 
 static VOID
@@ -2750,7 +2850,7 @@ PAL_BattlePlayerPerformAction(
       if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon)
       {
          PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex, TRUE);
-         PAL_BattleShowPlayerSummonMagicAnim((WORD)-1, wObject, sTarget);
+         PAL_BattleShowPlayerSummonMagicAnim((WORD)-1, wObject);
       }
       else
       {
@@ -3044,7 +3144,7 @@ PAL_BattlePlayerPerformAction(
          {
             if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon)
             {
-               PAL_BattleShowPlayerSummonMagicAnim(wPlayerIndex, wObject, sTarget);
+               PAL_BattleShowPlayerSummonMagicAnim(wPlayerIndex, wObject);
             }
             else
             {

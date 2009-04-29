@@ -134,6 +134,12 @@ typedef struct tagBATTLE
    SDL_Surface     *lpSceneBuf;
    SDL_Surface     *lpBackground;
 
+   SHORT            sBackgroundColorShift;
+
+   LPSPRITE         lpSummonSprite;       // sprite of summoned god
+   PAL_POS          posSummon;
+   INT              iSummonFrame;         // current frame of the summoned god
+
    INT              iExpGained;           // total experience value gained
    INT              iCashGained;          // total cash gained
 
