@@ -2452,41 +2452,83 @@ PAL_InterpretInstruction(
       break;
 
    case 0x009C:
-      // TODO
-/*      if(thebattle->get_enemy_alive()==1 && battle_enemy_data[object].HP>1){
-              int splitter=(param1?param1:1),s2=splitter;
-              for(int i=0;i<5;i++)
-                      if(splitter>0 && battle_enemy_data[i].HP<=0){
-                              splitter--;
-                              battle_enemy_data[i]=battle_enemy_data[object];
-                              thebattle->enemy_data[i]=thebattle->enemy_data[object];
-                              thebattle->enemy_money+=thebattle->enemy_data[object].coins;
-                              thebattle->enemy_exps+=thebattle->enemy_data[object].exp;
-                      }
-              for(int i=0;i<5;i++)
-                      if(battle_enemy_data[i].HP>0){
-                              thebattle->enemy_poses_count=i+1;
-                              battle_enemy_data[i].HP=(battle_enemy_data[i].HP+s2)/(s2+1);
-                      }
-              for(int i=0;i<thebattle->enemy_poses_count;i++)
-              {
-                      battle_enemy_data[i].pos_x_bak=enemyposes.pos[i][thebattle->enemy_poses_count-1].x;
-                      battle_enemy_data[i].pos_y_bak=enemyposes.pos[i][thebattle->enemy_poses_count-1].y+thebattle->get_monster(i).pos_y_offset;
-              }
-              for(int i=1;i<=10;i++){
-                      for(int j=0;j<thebattle->enemy_poses_count;j++){
-                              battle_enemy_data[j].pos_x=(battle_enemy_data[j].pos_x+battle_enemy_data[j].pos_x_bak)/2;
-                              battle_enemy_data[j].pos_y=(battle_enemy_data[j].pos_y+battle_enemy_data[j].pos_y_bak)/2;
-                      }
-                      thebattle->draw_battle_scene(0,1);
-              }
-              thebattle->load_enemy_pos();
-      }else if(param2){
-              id=param2-1;
-              prelimit_OK=false;
+      //
+      // Enemy duplicate itself
+      //
+      w = 0;
+
+      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      {
+         if (g_Battle.rgEnemy[i].wObjectID != 0)
+         {
+            w++;
+         }
       }
-      break;
-*/
+
+      if (w != 1)
+      {
+         //
+         // Duplication is only possible when only 1 enemy left
+         //
+         if (pScript->rgwOperand[1] != 0)
+         {
+            wScriptEntry = pScript->rgwOperand[1] - 1;
+         }
+         break;
+      }
+
+      w = pScript->rgwOperand[0];
+      if (w == 0)
+      {
+         w = 1;
+      }
+
+      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      {
+         if (w > 0 && g_Battle.rgEnemy[i].wObjectID == 0)
+         {
+            w--;
+
+            memset(&(g_Battle.rgEnemy[i]), 0, sizeof(BATTLEENEMY));
+
+            g_Battle.rgEnemy[i].wObjectID = g_Battle.rgEnemy[wEventObjectID].wObjectID;
+            g_Battle.rgEnemy[i].e = g_Battle.rgEnemy[wEventObjectID].e;
+            g_Battle.rgEnemy[i].wScriptOnTurnStart = g_Battle.rgEnemy[wEventObjectID].wScriptOnTurnStart;
+            g_Battle.rgEnemy[i].wScriptOnBattleEnd = g_Battle.rgEnemy[wEventObjectID].wScriptOnBattleEnd;
+            g_Battle.rgEnemy[i].wScriptOnReady = g_Battle.rgEnemy[wEventObjectID].wScriptOnReady;
+
+            g_Battle.rgEnemy[i].state = kFighterWait;
+            g_Battle.rgEnemy[i].flTimeMeter = 50;
+            g_Battle.rgEnemy[i].iColorShift = 0;
+         }
+      }
+
+      PAL_LoadBattleSprites();
+
+      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      {
+         if (g_Battle.rgEnemy[i].wObjectID == 0)
+         {
+            continue;
+         }
+         g_Battle.rgEnemy[i].pos = g_Battle.rgEnemy[wEventObjectID].pos;
+      }
+
+      for (i = 0; i < 10; i++)
+      {
+         for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
+         {
+            x = (PAL_X(g_Battle.rgEnemy[j].pos) + PAL_X(g_Battle.rgEnemy[j].posOriginal)) / 2;
+            y = (PAL_Y(g_Battle.rgEnemy[j].pos) + PAL_Y(g_Battle.rgEnemy[j].posOriginal)) / 2;
+
+            g_Battle.rgEnemy[j].pos = PAL_XY(x, y);
+         }
+
+         PAL_BattleDelay(1, 0, TRUE);
+      }
+
+      PAL_BattleUpdateFighters();
+      PAL_BattleDelay(1, 0, TRUE);
       break;
 
    case 0x009E:
@@ -2512,7 +2554,10 @@ PAL_InterpretInstruction(
 
       if (x < y || g_Battle.iHidingTime > 0)
       {
-         wScriptEntry = pScript->rgwOperand[2] - 1;
+         if (pScript->rgwOperand[2] != 0)
+         {
+            wScriptEntry = pScript->rgwOperand[2] - 1;
+         }
       }
       else
       {
