@@ -105,6 +105,8 @@ extern "C"
 #define BATTLEWIN_LEVELUP_LABEL_COLOR      0x39
 #define SPRITENUM_ARROW                    47
 
+#define BATTLE_LABEL_ESCAPEFAIL            31
+
 typedef struct tagBOX
 {
    PAL_POS        pos;

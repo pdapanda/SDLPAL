@@ -220,7 +220,7 @@ PAL_BattleFadeScene(
             SDL_PollEvent(NULL);
             SDL_Delay(1);
          }
-         time = SDL_GetTicks() + 35;
+         time = SDL_GetTicks() + 20;
 
          //
          // Blend the pixels in the 2 buffers, and put the result into the
@@ -844,7 +844,7 @@ PAL_BattleEnemyEscape(
 /*++
   Purpose:
 
-    Enemy escape in battle.
+    Enemy flee the battle.
 
   Parameters:
 
@@ -897,6 +897,83 @@ PAL_BattleEnemyEscape(
 
    UTIL_Delay(500);
    g_Battle.BattleResult = kBattleResultTerminated;
+}
+
+VOID
+PAL_BattlePlayerEscape(
+   VOID
+)
+/*++
+  Purpose:
+
+    Player flee the battle.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int         i, j;
+   WORD        wPlayerRole;
+
+   SOUND_Play(45);
+
+   PAL_BattleUpdateFighters();
+
+   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+   {
+      wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+
+      if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] > 0)
+      {
+         g_Battle.rgPlayer[i].wCurrentFrame = 0;
+      }
+   }
+
+   for (i = 0; i < 16; i++)
+   {
+      for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+      {
+         wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+
+         if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] > 0)
+         {
+            switch (j)
+            {
+            case 0:
+               g_Battle.rgPlayer[j].pos =
+                  PAL_XY(PAL_X(g_Battle.rgPlayer[j].pos) + 4,
+                         PAL_Y(g_Battle.rgPlayer[j].pos) + 6);
+               break;
+
+            case 1:
+               g_Battle.rgPlayer[j].pos =
+                  PAL_XY(PAL_X(g_Battle.rgPlayer[j].pos) + 4,
+                         PAL_Y(g_Battle.rgPlayer[j].pos) + 4);
+               break;
+
+            case 2:
+               g_Battle.rgPlayer[j].pos =
+                  PAL_XY(PAL_X(g_Battle.rgPlayer[j].pos) + 6,
+                         PAL_Y(g_Battle.rgPlayer[j].pos) + 3);
+               break;
+
+            default:
+               assert(FALSE); // Not possible
+               break;
+            }
+         }
+      }
+
+      PAL_BattleDelay(1, 0, FALSE);
+   }
+
+   g_Battle.BattleResult = kBattleResultFleed;
 }
 
 BATTLERESULT

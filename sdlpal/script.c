@@ -1243,7 +1243,20 @@ PAL_InterpretInstruction(
       break;
 
    case 0x003A:
-      // TODO
+      //
+      // Player flee from the battle
+      //
+      if (g_Battle.fIsBoss)
+      {
+         //
+         // Cannot flee from bosses
+         //
+         wScriptEntry = pScript->rgwOperand[0] - 1;
+      }
+      else
+      {
+         PAL_BattlePlayerEscape();
+      }
       break;
 
    case 0x003F:

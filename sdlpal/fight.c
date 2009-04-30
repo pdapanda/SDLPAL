@@ -472,8 +472,16 @@ PAL_BattleDelay(
 
       if (wObjectID != 0)
       {
-         PAL_DrawText(PAL_GetWord(wObjectID), PAL_XY(210, 50),
-            15, TRUE, FALSE);
+         if (wObjectID == BATTLE_LABEL_ESCAPEFAIL) // HACKHACK
+         {
+            PAL_DrawText(PAL_GetWord(wObjectID), PAL_XY(130, 75),
+               15, TRUE, FALSE);
+         }
+         else
+         {
+            PAL_DrawText(PAL_GetWord(wObjectID), PAL_XY(210, 50),
+               15, TRUE, FALSE);
+         }
       }
 
       VIDEO_UpdateScreen(NULL);
@@ -1207,10 +1215,19 @@ PAL_BattleStartFrame(
          break;
 
       case kFighterAct:
-         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0)
          {
             g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
+            g_Battle.rgPlayer[i].action.flRemainingTime = 0;
+         }
+         else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
+         {
+            g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttackMate;
+            g_Battle.rgPlayer[i].action.flRemainingTime = 0;
+         }
+         else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 &&
+            g_Battle.rgPlayer[i].action.ActionType == kBattleActionMagic)
+         {
             g_Battle.rgPlayer[i].action.flRemainingTime = 0;
          }
 
@@ -1335,15 +1352,16 @@ PAL_BattleCommitAction(
       }
       break;
 
+   case kBattleActionAttack:
    case kBattleActionFlee:
-      //
-      // Fleeing should take a fairly long time
-      //
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = RandomFloat(25, 75);
-      break;
+   case kBattleActionUseItem:
+   case kBattleActionThrowItem:
+      if (g_fActiveTime)
+      {
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 5;
+         break;
+      }
 
-   case kBattleActionDefend:
-   case kBattleActionCoopMagic:
    default:
       //
       // Other actions take no time
@@ -2020,10 +2038,21 @@ PAL_BattleShowPlayerOffMagicAnim(
 
          b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
+#if 0
          if ((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
          {
             SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
          }
+#else
+         //
+         // HACKHACK: Some of the sound effects in the original game are rather broken
+         //
+         if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay ||
+            (((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0) && iMagicNum == 89))
+         {
+            SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+         }
+#endif
       }
       else
       {
@@ -2220,7 +2249,7 @@ PAL_BattleShowEnemyMagicAnim(
 
          b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
-         if ((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
+         if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
          {
             SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
          }
@@ -2691,7 +2720,7 @@ PAL_BattlePlayerPerformAction(
    int      x, y;
    int      i, j, t;
    WORD     str, def, res, wObject, wMagicNum;
-   BOOL     fCritical, fPoisoned;
+   BOOL     fCritical, fPoisoned, fCheckPoison;
    WORD     rgwCoopPos[3][2] = {{208, 157}, {234, 170}, {260, 183}};
 
    g_Battle.wMovingPlayerIndex = wPlayerIndex;
@@ -3085,6 +3114,52 @@ PAL_BattlePlayerPerformAction(
       break;
 
    case kBattleActionFlee:
+      str = PAL_GetPlayerFleeRate(wPlayerRole);
+      def = 0;
+
+      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      {
+         if (g_Battle.rgEnemy[i].wObjectID == 0)
+         {
+            continue;
+         }
+
+         def += (SHORT)(g_Battle.rgEnemy[i].e.wFleeRate);
+         def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 2;
+      }
+
+      if (def < 0)
+      {
+         def = 0;
+      }
+
+      if (RandomLong(0, str) >= RandomLong(0, def) && !g_Battle.fIsBoss)
+      {
+         //
+         // Successful escape
+         //
+         PAL_BattlePlayerEscape();
+      }
+      else
+      {
+         //
+         // Failed escape
+         //
+         g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 0;
+
+         for (i = 0; i < 3; i++)
+         {
+            x = PAL_X(g_Battle.rgPlayer[wPlayerIndex].pos) + 4;
+            y = PAL_Y(g_Battle.rgPlayer[wPlayerIndex].pos) + 2;
+
+            g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+
+            PAL_BattleDelay(1, 0, TRUE);
+         }
+
+         g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 1;
+         PAL_BattleDelay(8, BATTLE_LABEL_ESCAPEFAIL, TRUE);
+      }
       break;
 
    case kBattleActionMagic:
@@ -3321,30 +3396,50 @@ PAL_BattlePlayerPerformAction(
    PAL_BattlePostActionCheck(FALSE);
 
    //
-   // Check for poisons
+   // Only check for poisons when the battle is not ended
    //
-   fPoisoned = FALSE;
-   PAL_BattleBackupStat();
+   fCheckPoison = FALSE;
 
-   for (i = 0; i < MAX_POISONS; i++)
+   if (g_Battle.BattleResult == kBattleResultOnGoing)
    {
-      wObject = gpGlobals->rgPoisonStatus[i][wPlayerIndex].wPoisonID;
-
-      if (wObject != 0)
+      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
       {
-         fPoisoned = TRUE;
-         gpGlobals->rgPoisonStatus[i][wPlayerIndex].wPoisonScript =
-            PAL_RunTriggerScript(gpGlobals->rgPoisonStatus[i][wPlayerIndex].wPoisonScript, wPlayerRole);
+         if (g_Battle.rgEnemy[i].wObjectID != 0)
+         {
+            fCheckPoison = TRUE;
+            break;
+         }
       }
    }
 
-   if (fPoisoned)
+   //
+   // Check for poisons
+   //
+   if (fCheckPoison)
    {
-      PAL_BattleDelay(3, 0, TRUE);
-      PAL_BattleUpdateFighters();
-      if (PAL_BattleDisplayStatChange())
+      fPoisoned = FALSE;
+      PAL_BattleBackupStat();
+
+      for (i = 0; i < MAX_POISONS; i++)
       {
-         PAL_BattleDelay(12, 0, TRUE);
+         wObject = gpGlobals->rgPoisonStatus[i][wPlayerIndex].wPoisonID;
+
+         if (wObject != 0)
+         {
+            fPoisoned = TRUE;
+            gpGlobals->rgPoisonStatus[i][wPlayerIndex].wPoisonScript =
+               PAL_RunTriggerScript(gpGlobals->rgPoisonStatus[i][wPlayerIndex].wPoisonScript, wPlayerRole);
+         }
+      }
+
+      if (fPoisoned)
+      {
+         PAL_BattleDelay(3, 0, TRUE);
+         PAL_BattleUpdateFighters();
+         if (PAL_BattleDisplayStatChange())
+         {
+            PAL_BattleDelay(12, 0, TRUE);
+         }
       }
    }
 

@@ -188,6 +188,11 @@ PAL_BattleEnemyEscape(
    VOID
 );
 
+VOID
+PAL_BattlePlayerEscape(
+   VOID
+);
+
 BATTLERESULT
 PAL_StartBattle(
    WORD        wEnemyTeam,
