@@ -63,7 +63,11 @@ extern "C"
 #ifdef _WIN32
 
 #include <windows.h>
+
+#ifndef __BORLANDC__
 #include <io.h>
+#endif
+
 #define vsnprintf _vsnprintf
 
 #ifdef _MSC_VER
