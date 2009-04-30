@@ -699,6 +699,7 @@ PAL_BattlePostActionCheck(
       {
          g_Battle.rgPlayer[i].state = kFighterAct;
          g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
+         g_Battle.rgPlayer[i].fDefending = FALSE;
       }
 
       g_Battle.UI.state = kBattleUIWait;
@@ -2045,7 +2046,7 @@ PAL_BattleShowPlayerOffMagicAnim(
          }
 #else
          //
-         // HACKHACK: Some of the sound effects in the original game are rather broken
+         // HACKHACK: Some of the sound effects in the original game are rather screwed
          //
          if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay ||
             (((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0) && iMagicNum == 89))
@@ -2537,6 +2538,7 @@ PAL_BattleShowPostMagicAnim(
    {
       g_Battle.rgEnemy[i].pos = rgEnemyPosBak[i];
    }
+
    PAL_BattleDelay(1, 0, TRUE);
 }
 
@@ -2749,12 +2751,8 @@ PAL_BattlePlayerPerformAction(
 
             sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
 
-            if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0)
-            {
-               sDamage *= 3;
-            }
-
-            if (RandomLong(0, 5) == 0)
+            if (RandomLong(0, 5) == 0 ||
+               gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0)
             {
                //
                // Critical Hit
@@ -2813,7 +2811,8 @@ PAL_BattlePlayerPerformAction(
             int division = 1;
             const int index[MAX_ENEMIES_IN_TEAM] = {2, 1, 0, 4, 3};
 
-            fCritical = (RandomLong(0, 5) == 0);
+            fCritical =
+               (RandomLong(0, 5) == 0 || gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0);
 
             if (t == 0)
             {
@@ -2837,11 +2836,6 @@ PAL_BattlePlayerPerformAction(
                res = g_Battle.rgEnemy[index[i]].e.wPhysicalResistance;
 
                sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
-
-               if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0)
-               {
-                  sDamage *= 3;
-               }
 
                if (fCritical)
                {
