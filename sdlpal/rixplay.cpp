@@ -184,7 +184,7 @@ RIX_FillBuffer(
       // Put audio data into buffer and adjust volume
       // WARNING: for signed 16-bit little-endian only
       //
-      for (i = 0; i < l / sizeof(SHORT); i++)
+      for (i = 0; i < (int)(l / sizeof(SHORT)); i++)
       {
          SHORT s = SWAP16(*(SHORT *)(gpRixPlayer->pos));
          *(SHORT *)(stream) = SWAP16(s * volume / SDL_MIX_MAXVOLUME);

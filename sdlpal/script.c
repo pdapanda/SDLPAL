@@ -2453,6 +2453,40 @@ PAL_InterpretInstruction(
 
    case 0x009C:
       // TODO
+/*      if(thebattle->get_enemy_alive()==1 && battle_enemy_data[object].HP>1){
+              int splitter=(param1?param1:1),s2=splitter;
+              for(int i=0;i<5;i++)
+                      if(splitter>0 && battle_enemy_data[i].HP<=0){
+                              splitter--;
+                              battle_enemy_data[i]=battle_enemy_data[object];
+                              thebattle->enemy_data[i]=thebattle->enemy_data[object];
+                              thebattle->enemy_money+=thebattle->enemy_data[object].coins;
+                              thebattle->enemy_exps+=thebattle->enemy_data[object].exp;
+                      }
+              for(int i=0;i<5;i++)
+                      if(battle_enemy_data[i].HP>0){
+                              thebattle->enemy_poses_count=i+1;
+                              battle_enemy_data[i].HP=(battle_enemy_data[i].HP+s2)/(s2+1);
+                      }
+              for(int i=0;i<thebattle->enemy_poses_count;i++)
+              {
+                      battle_enemy_data[i].pos_x_bak=enemyposes.pos[i][thebattle->enemy_poses_count-1].x;
+                      battle_enemy_data[i].pos_y_bak=enemyposes.pos[i][thebattle->enemy_poses_count-1].y+thebattle->get_monster(i).pos_y_offset;
+              }
+              for(int i=1;i<=10;i++){
+                      for(int j=0;j<thebattle->enemy_poses_count;j++){
+                              battle_enemy_data[j].pos_x=(battle_enemy_data[j].pos_x+battle_enemy_data[j].pos_x_bak)/2;
+                              battle_enemy_data[j].pos_y=(battle_enemy_data[j].pos_y+battle_enemy_data[j].pos_y_bak)/2;
+                      }
+                      thebattle->draw_battle_scene(0,1);
+              }
+              thebattle->load_enemy_pos();
+      }else if(param2){
+              id=param2-1;
+              prelimit_OK=false;
+      }
+      break;
+*/
       break;
 
    case 0x009E:

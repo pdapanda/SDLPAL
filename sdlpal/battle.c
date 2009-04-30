@@ -886,13 +886,13 @@ PAL_BattleEnemyEscape(
    	  	 {
    	  	 	f = TRUE;
    	  	 }
-
-         PAL_BattleMakeScene();
-         SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
-         VIDEO_UpdateScreen(NULL);
-
-   	  	 UTIL_Delay(5);
    	  }
+
+   	  PAL_BattleMakeScene();
+      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_UpdateScreen(NULL);
+
+      UTIL_Delay(10);
    }
 
    UTIL_Delay(500);
