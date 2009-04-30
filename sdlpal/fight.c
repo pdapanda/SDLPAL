@@ -692,6 +692,8 @@ PAL_BattlePostActionCheck(
          g_Battle.rgPlayer[i].state = kFighterAct;
          g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
       }
+
+      g_Battle.UI.state = kBattleUIWait;
    }
 
    if (fCheckPlayers && !gpGlobals->fAutoBattle)
