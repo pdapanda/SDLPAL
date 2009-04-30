@@ -1344,15 +1344,11 @@ PAL_BattleCommitAction(
 
    case kBattleActionDefend:
    case kBattleActionCoopMagic:
+   default:
       //
-      // Defend takes no time
+      // Other actions take no time
       //
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 0;
-      break;
-
-   default:
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime =
-         (g_fActiveTime ? 5 : 0);
       break;
    }
 
@@ -2011,17 +2007,28 @@ PAL_BattleShowPlayerOffMagicAnim(
 
       if (l - i > gpGlobals->g.lprgMagic[iMagicNum].wShake)
       {
-         b = PAL_SpriteGetFrame(lpSpriteEffect, i % n);
+         if (i < n)
+         {
+            k = i;
+         }
+         else
+         {
+            k = i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+            k %= n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+            k += gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+         }
+
+         b = PAL_SpriteGetFrame(lpSpriteEffect, k);
+
+         if ((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
+         {
+            SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+         }
       }
       else
       {
          VIDEO_ShakeScreen(i, 3);
          b = PAL_SpriteGetFrame(lpSpriteEffect, (l - gpGlobals->g.lprgMagic[iMagicNum].wShake - 1) % n);
-      }
-
-      if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
-      {
-         SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
       }
 
       //
@@ -2200,17 +2207,28 @@ PAL_BattleShowEnemyMagicAnim(
 
       if (l - i > gpGlobals->g.lprgMagic[iMagicNum].wShake)
       {
-         b = PAL_SpriteGetFrame(lpSpriteEffect, i % n);
+         if (i < n)
+         {
+            k = i;
+         }
+         else
+         {
+            k = i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+            k %= n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+            k += gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+         }
+
+         b = PAL_SpriteGetFrame(lpSpriteEffect, k);
+
+         if ((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
+         {
+            SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+         }
       }
       else
       {
          VIDEO_ShakeScreen(i, 3);
          b = PAL_SpriteGetFrame(lpSpriteEffect, (l - gpGlobals->g.lprgMagic[iMagicNum].wShake - 1) % n);
-      }
-
-      if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
-      {
-         SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
       }
 
       //
