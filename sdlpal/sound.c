@@ -21,6 +21,7 @@
 #include "palcommon.h"
 #include "sound.h"
 #include "rixplay.h"
+#include "util.h"
 
 static BOOL gSndOpened = FALSE;
 
@@ -245,7 +246,7 @@ SOUND_OpenAudio(
    //
    // Load the MKF file.
    //
-   gSndPlayer.mkf = fopen("voc.mkf", "rb");
+   gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "voc.mkf"), "rb");
    if (gSndPlayer.mkf == NULL)
    {
       return -2;
@@ -283,7 +284,7 @@ SOUND_OpenAudio(
    //
    // Initialize the music subsystem.
    //
-   RIX_Init("mus.mkf");
+   RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf"));
 
    //
    // Let the callback function run so that musics will be played.

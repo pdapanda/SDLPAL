@@ -72,6 +72,16 @@ UTIL_calloc(
    size_t               size
 );
 
+FILE *
+UTIL_OpenRequiredFile(
+   LPCSTR               lpszFileName
+);
+
+VOID
+UTIL_CloseFile(
+   FILE                *fp
+);
+
 #ifdef __cplusplus
 }
 #endif

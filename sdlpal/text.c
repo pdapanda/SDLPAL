@@ -75,7 +75,6 @@ PAL_InitText(
 
     0 = success.
     -1 = memory allocation error.
-    -2 = cannot open file m.msg or word.dat.
 
 --*/
 {
@@ -85,17 +84,8 @@ PAL_InitText(
    //
    // Open the message and word data files.
    //
-   fpMsg = PAL_OpenRequiredFile("m.msg");
-   if (fpMsg == NULL)
-   {
-      return -2;
-   }
-   fpWord = PAL_OpenRequiredFile("word.dat");
-   if (fpWord == NULL)
-   {
-      fclose(fpMsg);
-      return -2;
-   }
+   fpMsg = UTIL_OpenRequiredFile("m.msg");
+   fpWord = UTIL_OpenRequiredFile("word.dat");
 
    //
    // See how many words we have

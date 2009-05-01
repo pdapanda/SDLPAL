@@ -34,67 +34,6 @@ LPGLOBALVARS gpGlobals = NULL;
       DO_BYTESWAP(buf, size);                                    \
    }
 
-FILE *
-PAL_OpenRequiredFile(
-   LPCSTR       lpszFileName
-)
-/*++
-  Purpose:
-
-    Open a required file. If fails, quit the program.
-
-  Parameters:
-
-    [IN]  lpszFileName - file name to open.
-
-  Return value:
-
-    Pointer to the file.
-
---*/
-{
-   FILE         *fp;
-#ifdef __SYMBIAN32__   
-   char lpszNewFileName[255];
-   sprintf(lpszNewFileName,"%s%s",PAL_RESOURCE,lpszFileName);
-   fp = fopen(lpszNewFileName, "rb");
-#else   
-   fp = fopen(lpszFileName, "rb");
-#endif   
-
-   if (fp == NULL)
-   {
-      TerminateOnError("File not found: %s!\n", lpszFileName);
-   }
-
-   return fp;
-}
-
-static VOID
-PAL_CloseFile(
-   FILE             *fp
-)
-/*++
-  Purpose:
-
-    Close a file.
-
-  Parameters:
-
-    [IN]  fp - file handle to be closed.
-
-  Return value:
-
-    None.
-
---*/
-{
-   if (fp != NULL)
-   {
-      fclose(fp);
-   }
-}
-
 INT
 PAL_InitGlobals(
    VOID
@@ -126,20 +65,20 @@ PAL_InitGlobals(
    //
    // Open files
    //
-   gpGlobals->f.fpFBP = PAL_OpenRequiredFile("fbp.mkf");
-   gpGlobals->f.fpMAP = PAL_OpenRequiredFile("map.mkf");
-   gpGlobals->f.fpGOP = PAL_OpenRequiredFile("gop.mkf");
-   gpGlobals->f.fpRNG = PAL_OpenRequiredFile("rng.mkf");
-   gpGlobals->f.fpPAT = PAL_OpenRequiredFile("pat.mkf");
-   gpGlobals->f.fpMGO = PAL_OpenRequiredFile("mgo.mkf");
-   gpGlobals->f.fpABC = PAL_OpenRequiredFile("abc.mkf");
-   gpGlobals->f.fpBALL = PAL_OpenRequiredFile("ball.mkf");
-   gpGlobals->f.fpDATA = PAL_OpenRequiredFile("data.mkf");
-   gpGlobals->f.fpF = PAL_OpenRequiredFile("f.mkf");
-   gpGlobals->f.fpFIRE = PAL_OpenRequiredFile("fire.mkf");
-   gpGlobals->f.fpRGM = PAL_OpenRequiredFile("rgm.mkf");
-   gpGlobals->f.fpSSS = PAL_OpenRequiredFile("sss.mkf");
-   gpGlobals->f.fpVOC = PAL_OpenRequiredFile("voc.mkf");
+   gpGlobals->f.fpFBP = UTIL_OpenRequiredFile("fbp.mkf");
+   gpGlobals->f.fpMAP = UTIL_OpenRequiredFile("map.mkf");
+   gpGlobals->f.fpGOP = UTIL_OpenRequiredFile("gop.mkf");
+   gpGlobals->f.fpRNG = UTIL_OpenRequiredFile("rng.mkf");
+   gpGlobals->f.fpPAT = UTIL_OpenRequiredFile("pat.mkf");
+   gpGlobals->f.fpMGO = UTIL_OpenRequiredFile("mgo.mkf");
+   gpGlobals->f.fpABC = UTIL_OpenRequiredFile("abc.mkf");
+   gpGlobals->f.fpBALL = UTIL_OpenRequiredFile("ball.mkf");
+   gpGlobals->f.fpDATA = UTIL_OpenRequiredFile("data.mkf");
+   gpGlobals->f.fpF = UTIL_OpenRequiredFile("f.mkf");
+   gpGlobals->f.fpFIRE = UTIL_OpenRequiredFile("fire.mkf");
+   gpGlobals->f.fpRGM = UTIL_OpenRequiredFile("rgm.mkf");
+   gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
+   gpGlobals->f.fpVOC = UTIL_OpenRequiredFile("voc.mkf");
 
    gpGlobals->bCurrentSaveSlot = 1;
 
@@ -170,20 +109,20 @@ PAL_FreeGlobals(
       //
       // Close all opened files
       //
-      PAL_CloseFile(gpGlobals->f.fpFBP);
-      PAL_CloseFile(gpGlobals->f.fpGOP);
-      PAL_CloseFile(gpGlobals->f.fpMAP);
-      PAL_CloseFile(gpGlobals->f.fpRNG);
-      PAL_CloseFile(gpGlobals->f.fpPAT);
-      PAL_CloseFile(gpGlobals->f.fpMGO);
-      PAL_CloseFile(gpGlobals->f.fpABC);
-      PAL_CloseFile(gpGlobals->f.fpBALL);
-      PAL_CloseFile(gpGlobals->f.fpDATA);
-      PAL_CloseFile(gpGlobals->f.fpF);
-      PAL_CloseFile(gpGlobals->f.fpFIRE);
-      PAL_CloseFile(gpGlobals->f.fpRGM);
-      PAL_CloseFile(gpGlobals->f.fpSSS);
-      PAL_CloseFile(gpGlobals->f.fpVOC);
+      UTIL_CloseFile(gpGlobals->f.fpFBP);
+      UTIL_CloseFile(gpGlobals->f.fpGOP);
+      UTIL_CloseFile(gpGlobals->f.fpMAP);
+      UTIL_CloseFile(gpGlobals->f.fpRNG);
+      UTIL_CloseFile(gpGlobals->f.fpPAT);
+      UTIL_CloseFile(gpGlobals->f.fpMGO);
+      UTIL_CloseFile(gpGlobals->f.fpABC);
+      UTIL_CloseFile(gpGlobals->f.fpBALL);
+      UTIL_CloseFile(gpGlobals->f.fpDATA);
+      UTIL_CloseFile(gpGlobals->f.fpF);
+      UTIL_CloseFile(gpGlobals->f.fpFIRE);
+      UTIL_CloseFile(gpGlobals->f.fpRGM);
+      UTIL_CloseFile(gpGlobals->f.fpSSS);
+      UTIL_CloseFile(gpGlobals->f.fpVOC);
 
       //
       // Free the game data

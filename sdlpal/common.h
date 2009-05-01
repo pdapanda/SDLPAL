@@ -61,14 +61,22 @@ extern "C"
 #endif
 
 #ifdef __SYMBIAN32__
-	#undef _WIN32
-	#define PAL_HAS_JOYSTICKS 0
-	#define SDL_INIT_JOYSTICK 0
-	#define PAL_HAS_MOUSE 1
-	#define PAL_RESOURCE "e:\\data\\pal\\"
+
+#undef  _WIN32
+#undef  SDL_INIT_JOYSTICK
+#define SDL_INIT_JOYSTICK     0
+#define PAL_HAS_JOYSTICKS     0
+#define PAL_HAS_MOUSE         1
+#define PAL_PREFIX            "e:\\data\\pal\\"
+
 #else
-	#define PAL_HAS_JOYSTICKS 1
-	#define PAL_HAS_MOUSE 0
+
+#define PAL_HAS_JOYSTICKS     1
+#define PAL_HAS_MOUSE         0
+#ifndef PAL_PREFIX
+#define PAL_PREFIX            "./"
+#endif
+
 #endif
 
 #ifdef _WIN32

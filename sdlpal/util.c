@@ -347,3 +347,59 @@ UTIL_calloc(
 
    return buffer; // nothing went wrong, so return buffer pointer
 }
+
+FILE *
+UTIL_OpenRequiredFile(
+   LPCSTR            lpszFileName
+)
+/*++
+  Purpose:
+
+    Open a required file. If fails, quit the program.
+
+  Parameters:
+
+    [IN]  lpszFileName - file name to open.
+
+  Return value:
+
+    Pointer to the file.
+
+--*/
+{
+   FILE         *fp;
+
+   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+
+   if (fp == NULL)
+   {
+      TerminateOnError("File not found: %s!\n", lpszFileName);
+   }
+
+   return fp;
+}
+
+VOID
+UTIL_CloseFile(
+   FILE             *fp
+)
+/*++
+  Purpose:
+
+    Close a file.
+
+  Parameters:
+
+    [IN]  fp - file handle to be closed.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   if (fp != NULL)
+   {
+      fclose(fp);
+   }
+}
