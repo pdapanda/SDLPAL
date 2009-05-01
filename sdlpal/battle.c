@@ -142,7 +142,7 @@ PAL_BattleMakeScene(
             //
             // Player is confused
             //
-            pos = PAL_XY(PAL_X(pos) + RandomLong(-3, 3), PAL_Y(pos) + RandomLong(-3, 3));
+            continue;
          }
 
          pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)) / 2,
@@ -157,6 +157,35 @@ PAL_BattleMakeScene(
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
                g_Battle.lpSceneBuf, pos);
+         }
+      }
+
+      //
+      // Confused players should be on top of normal players
+      //
+      for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
+      {
+         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
+            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
+            gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
+         {
+            //
+            // Player is confused
+            //
+            pos = PAL_XY(PAL_X(g_Battle.rgPlayer[i].pos), PAL_Y(g_Battle.rgPlayer[i].pos) + RandomLong(-1, 1));
+            pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)) / 2,
+               PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)));
+
+            if (g_Battle.rgPlayer[i].iColorShift != 0)
+            {
+               PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
+                  g_Battle.lpSceneBuf, pos, g_Battle.rgPlayer[i].iColorShift);
+            }
+            else if (g_Battle.iHidingTime == 0)
+            {
+               PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
+                  g_Battle.lpSceneBuf, pos);
+            }
          }
       }
    }

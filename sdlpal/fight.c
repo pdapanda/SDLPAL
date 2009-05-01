@@ -2888,7 +2888,95 @@ PAL_BattlePlayerPerformAction(
       break;
 
    case kBattleActionAttackMate:
-      // TODO
+      //
+      // Check if there is someone else who is alive
+      //
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         if (i == wPlayerIndex)
+         {
+            continue;
+         }
+
+         if (gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
+         {
+            break;
+         }
+      }
+
+      if (i <= gpGlobals->wMaxPartyMemberIndex)
+      {
+         //
+         // Pick a target randomly
+         //
+         do
+         {
+            sTarget = RandomLong(0, gpGlobals->wMaxPartyMemberIndex);
+         } while (sTarget == wPlayerIndex || gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[sTarget].wPlayerRole] == 0);
+
+         for (j = 0; j < 2; j++)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 8;
+            PAL_BattleDelay(1, 0, TRUE);
+
+            g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 0;
+            PAL_BattleDelay(1, 0, TRUE);
+         }
+
+         PAL_BattleDelay(2, 0, TRUE);
+
+         x = PAL_X(g_Battle.rgPlayer[sTarget].pos) + 30;
+         y = PAL_Y(g_Battle.rgPlayer[sTarget].pos) + 12;
+
+         g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+         g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 8;
+         PAL_BattleDelay(5, 0, TRUE);
+
+         g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 9;
+         SOUND_Play(gpGlobals->g.PlayerRoles.rgwWeaponSound[wPlayerRole]);
+
+         str = PAL_GetPlayerAttackStrength(wPlayerRole);
+         def = PAL_GetPlayerDefense(gpGlobals->rgParty[sTarget].wPlayerRole);
+         if (g_Battle.rgPlayer[sTarget].fDefending)
+         {
+            def *= 2;
+         }
+
+         sDamage = PAL_CalcPhysicalAttackDamage(str, def, 2);
+         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[sTarget].wPlayerRole][kStatusProtect] > 0)
+         {
+            sDamage /= 2;
+         }
+
+         if (sDamage <= 0)
+         {
+            sDamage = 1;
+         }
+
+         if (sDamage > (SHORT)gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[sTarget].wPlayerRole])
+         {
+            sDamage = gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[sTarget].wPlayerRole];
+         }
+
+         gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[sTarget].wPlayerRole] -= sDamage;
+
+         g_Battle.rgPlayer[sTarget].pos =
+            PAL_XY(PAL_X(g_Battle.rgPlayer[sTarget].pos) - 12,
+                   PAL_Y(g_Battle.rgPlayer[sTarget].pos) - 6);
+         PAL_BattleDelay(1, 0, TRUE);
+
+         g_Battle.rgPlayer[sTarget].iColorShift = 6;
+         PAL_BattleDelay(1, 0, TRUE);
+
+         PAL_BattleDisplayStatChange();
+
+         g_Battle.rgPlayer[sTarget].iColorShift = 0;
+         PAL_BattleDelay(4, 0, TRUE);
+
+         PAL_BattleUpdateFighters();
+         PAL_BattleDelay(4, 0, TRUE);
+      }
+
       break;
 
    case kBattleActionCoopMagic:
