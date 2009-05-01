@@ -20,7 +20,7 @@
 
 #include "font.h"
 #include "ascii.h"
-
+#include "global.h"
 typedef struct tagFont
 {
    LPWORD           lpBufChar;
@@ -68,7 +68,8 @@ PAL_InitFont(
    //
    // Load the wor16.asc file.
    //
-   fp = fopen("wor16.asc", "rb");
+   fp = PAL_OpenRequiredFile("wor16.asc");
+   
    if (fp == NULL)
    {
       free(gpFont);
@@ -104,7 +105,7 @@ PAL_InitFont(
    //
    // Read all bitmaps from wor16.fon file.
    //
-   fp = fopen("wor16.fon", "rb");
+   fp = PAL_OpenRequiredFile("wor16.fon");
    if (fp == NULL)
    {
       free(gpFont->lpBufChar);

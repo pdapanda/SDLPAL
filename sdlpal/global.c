@@ -34,7 +34,7 @@ LPGLOBALVARS gpGlobals = NULL;
       DO_BYTESWAP(buf, size);                                    \
    }
 
-static FILE *
+FILE *
 PAL_OpenRequiredFile(
    LPCSTR       lpszFileName
 )
@@ -54,8 +54,13 @@ PAL_OpenRequiredFile(
 --*/
 {
    FILE         *fp;
-
+#ifdef __SYMBIAN32__   
+   char lpszNewFileName[255];
+   sprintf(lpszNewFileName,"%s%s",PAL_RESOURCE,lpszFileName);
+   fp = fopen(lpszNewFileName, "rb");
+#else   
    fp = fopen(lpszFileName, "rb");
+#endif   
 
    if (fp == NULL)
    {

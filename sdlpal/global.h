@@ -579,6 +579,11 @@ typedef struct tagSAVEDGAME
 
 extern LPGLOBALVARS gpGlobals;
 
+FILE *
+PAL_OpenRequiredFile(
+   LPCSTR       lpszFileName
+);
+
 INT
 PAL_InitGlobals(
    VOID

@@ -22,8 +22,12 @@
 #include "rix.h"
 #include <string.h>
 
-#ifndef _WIN32
-#define stricmp strcasecmp
+#ifdef __SYMBIAN32__
+	#define stricmp strcasecmp
+#else 
+	#ifndef _WIN32
+		#define stricmp strcasecmp
+	#endif
 #endif
 
 const unsigned char CrixPlayer::adflag[] = {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1};

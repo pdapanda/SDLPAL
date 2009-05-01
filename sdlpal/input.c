@@ -420,6 +420,7 @@ PAL_InitInput(
    //
    // Check for joystick
    //
+#if PAL_HAS_JOYSTICKS
    if (SDL_NumJoysticks() > 0)
    {
       g_pJoy = SDL_JoystickOpen(0);
@@ -428,6 +429,7 @@ PAL_InitInput(
          SDL_JoystickEventState(SDL_ENABLE);
       }
    }
+#endif   
 }
 
 VOID
@@ -449,12 +451,14 @@ PAL_ShutdownInput(
 
 --*/
 {
+#if PAL_HAS_JOYSTICKS
    if (SDL_JoystickOpened(0))
    {
       assert(g_pJoy != NULL);
       SDL_JoystickClose(g_pJoy);
       g_pJoy = NULL;
    }
+#endif   
 }
 
 VOID

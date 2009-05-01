@@ -85,12 +85,12 @@ PAL_InitText(
    //
    // Open the message and word data files.
    //
-   fpMsg = fopen("m.msg", "rb");
+   fpMsg = PAL_OpenRequiredFile("m.msg");
    if (fpMsg == NULL)
    {
       return -2;
    }
-   fpWord = fopen("word.dat", "rb");
+   fpWord = PAL_OpenRequiredFile("word.dat");
    if (fpWord == NULL)
    {
       fclose(fpMsg);
