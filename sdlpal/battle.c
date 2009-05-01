@@ -801,7 +801,10 @@ PAL_BattleWon(
    {                                                        \
       dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.expname[w].wLevel]; \
       gpGlobals->g.PlayerRoles.statname[w] += RandomLong(1, 2); \
-      gpGlobals->Exp.expname[w].wLevel++;                   \
+      if (gpGlobals->Exp.expname[w].wLevel < 99)            \
+      {                                                     \
+         gpGlobals->Exp.expname[w].wLevel++;                \
+      }                                                     \
    }                                                        \
                                                             \
    gpGlobals->Exp.expname[w].wExp = (WORD)dwExp;            \
