@@ -94,7 +94,7 @@ PAL_BattleMakeScene(
          //
          // Enemy is confused
          //
-         pos = PAL_XY(PAL_X(pos) + RandomLong(-3, 3), PAL_Y(pos) + RandomLong(-3, 3));
+         pos = PAL_XY(PAL_X(pos) + RandomLong(-1, 1), PAL_Y(pos));
       }
 
       pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)) / 2,
@@ -161,7 +161,7 @@ PAL_BattleMakeScene(
       }
 
       //
-      // Confused players should be on top of normal players
+      // Confused players should be drawn on top of normal players
       //
       for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
       {
