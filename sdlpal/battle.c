@@ -818,7 +818,7 @@ PAL_BattleWon(
          0, FALSE, FALSE);                                  \
       PAL_DrawNumber(gpGlobals->g.PlayerRoles.statname[w] - \
          OrigPlayerRoles.statname[w],                       \
-         5, PAL_XY(192, 119), kNumColorYellow, kNumAlignRight); \
+         5, PAL_XY(200, 119), kNumColorYellow, kNumAlignRight); \
       VIDEO_UpdateScreen(&rect);                            \
       PAL_WaitForKey();                                     \
    }                                                        \
