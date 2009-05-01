@@ -19,6 +19,7 @@
 //
 
 #include "main.h"
+#include <math.h>
 
 PALINPUTSTATE            g_InputState;
 static SDL_Joystick     *g_pJoy = NULL;
@@ -70,6 +71,17 @@ PAL_KeyboardEventFilter(
 
       switch (lpEvent->key.keysym.sym)
       {
+	  case SDLK_0:
+#ifdef __SYMBIAN32__
+		VIDEO_ToggleScaleScreen();
+#endif		
+		break;
+	  case SDLK_1:
+		SOUND_AdjustVolume(0);
+		break;
+	  case SDLK_3:
+		SOUND_AdjustVolume(1);
+		break;
       case SDLK_UP:
       case SDLK_KP8:
          g_InputState.prevdir = g_InputState.dir;
@@ -122,10 +134,12 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyPgDn;
          break;
 
+      case SDLK_7: //7 for mobile device  
       case SDLK_r:
          g_InputState.dwKeyPress |= kKeyRepeat;
          break;
 
+      case SDLK_2: //2 for mobile device    
       case SDLK_a:
          g_InputState.dwKeyPress |= kKeyAuto;
          break;
@@ -154,6 +168,7 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyForce;
          break;
 
+      case SDLK_HASH: //# for mobile device   
       case SDLK_p:
          VIDEO_SaveScreenshot();
          break;
@@ -210,6 +225,125 @@ PAL_KeyboardEventFilter(
       }
       break;
    }
+}
+
+static VOID PAL_MouseEventFilter(const SDL_Event *lpEvent)
+/*++
+ Purpose:
+
+ Handle mouse events.
+
+ Parameters:
+
+ [IN]  lpEvent - pointer to the event.
+
+ Return value:
+
+ None.
+
+ --*/
+{
+
+	const SDL_VideoInfo *vi;
+	
+	double screenWidth,gridWidth;
+	double screenHeight,gridHeight;
+	double mx,my;
+	int state = 0;
+	double thumbx;
+	double thumby;
+	INT gridIndex;
+	static INT lastReleaseButtonTime, lastPressButtonTime;
+	static INT lastPressx = 0;
+	static INT lastPressy = 0;
+	static INT lastReleasex = 0;
+	static INT lastReleasey = 0;
+	if(lpEvent->type!= SDL_MOUSEBUTTONDOWN && lpEvent->type != SDL_MOUSEBUTTONUP)
+			return;
+	vi = SDL_GetVideoInfo();
+	screenWidth = vi->current_w;
+	screenHeight = vi->current_h;
+	gridWidth = screenWidth / 3;
+	gridHeight = screenHeight / 3;
+	mx = lpEvent->button.x;
+	my = lpEvent->button.y;
+	thumbx = ceil(mx / gridWidth);
+	thumby = floor(my / gridHeight);
+	gridIndex = thumbx + thumby * 3 -1; 
+	switch (lpEvent->type)
+	{
+
+	case SDL_MOUSEBUTTONDOWN:
+		lastPressButtonTime = SDL_GetTicks();
+		lastPressx = lpEvent->button.x;
+		lastPressy = lpEvent->button.y;
+		switch (gridIndex)
+			{
+			case 2:
+				g_InputState.prevdir = g_InputState.dir;
+				g_InputState.dir = kDirNorth;
+				break;
+			case 6:
+				g_InputState.prevdir = g_InputState.dir;
+				g_InputState.dir = kDirSouth;
+				break;
+			case 0:
+				g_InputState.prevdir = g_InputState.dir;
+				g_InputState.dir = kDirWest;
+				break;
+			case 8:
+				g_InputState.prevdir = g_InputState.dir;
+				g_InputState.dir = kDirEast;
+				break;
+			case 1:
+				g_InputState.dwKeyPress |= kKeyUp;
+				break;
+			case 7:
+				g_InputState.dwKeyPress |= kKeyDown;
+				break;
+			case 3:
+				g_InputState.dwKeyPress |= kKeyLeft;
+				break;
+			case 5:
+				g_InputState.dwKeyPress |= kKeyRight;
+				break;
+			}
+
+		break;
+	case SDL_MOUSEBUTTONUP:
+		//
+		// Pressed the joystick button
+		//
+		lastReleaseButtonTime = SDL_GetTicks();
+		lastReleasex = lpEvent->button.x;
+		lastReleasey = lpEvent->button.y;
+		switch (gridIndex)
+		{
+		case 2:
+		case 6:
+		case 0:
+		case 8:
+			g_InputState.dir  = kDirUnknown;
+			g_InputState.prevdir = kDirUnknown;
+			break;
+		case 4:
+			if (abs(lastPressx - lastReleasex) < 25 && 
+					abs(lastPressy - lastReleasey) < 25)
+			{
+				if ((lastReleaseButtonTime - lastPressButtonTime) >500)
+				{
+					g_InputState.dwKeyPress |= kKeyMenu;
+				}
+				else
+				{
+					g_InputState.dwKeyPress |= kKeySearch;
+				}
+			}
+			break;
+		}
+		break;
+	}
+
 }
 
 static VOID
@@ -363,6 +497,9 @@ PAL_EventFilter(
    }
 
    PAL_KeyboardEventFilter(lpEvent);
+#ifdef PAL_HAS_MOUSE
+   PAL_MouseEventFilter(lpEvent);
+#endif   
    PAL_JoystickEventFilter(lpEvent);
 
    //

@@ -486,8 +486,18 @@ main(
    //
    if (wScreenWidth == 0)
    {
+#ifdef __SYMBIAN32__
+#ifdef __S60_5X__
+      wScreenWidth = 640;
+      wScreenHeight = 360;
+#else
+      wScreenWidth = 320;
+      wScreenHeight = 240;
+#endif
+#else		
       wScreenWidth = 640;
       wScreenHeight = 400;
+#endif      
    }
 
    //

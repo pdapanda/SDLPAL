@@ -38,6 +38,11 @@ SOUND_CloseAudio(
    VOID
 );
 
+VOID 
+SOUND_AdjustVolume(
+		INT iDirectory
+);
+
 VOID
 SOUND_PlayChannel(
    INT    iSoundNum,
