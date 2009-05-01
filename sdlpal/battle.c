@@ -809,16 +809,16 @@ PAL_BattleWon(
    if (gpGlobals->g.PlayerRoles.statname[w] !=              \
       OrigPlayerRoles.statname[w])                          \
    {                                                        \
-      PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);  \
-      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(77, 115), \
+      PAL_CreateSingleLineBox(PAL_XY(83, 60), 8, FALSE);    \
+      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(95, 70), \
          0, FALSE, FALSE);                                  \
-      PAL_DrawText(PAL_GetWord(label), PAL_XY(125, 115),    \
+      PAL_DrawText(PAL_GetWord(label), PAL_XY(143, 70),     \
          0, FALSE, FALSE);                                  \
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(157, 115),  \
+      PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(175, 70),  \
          0, FALSE, FALSE);                                  \
       PAL_DrawNumber(gpGlobals->g.PlayerRoles.statname[w] - \
          OrigPlayerRoles.statname[w],                       \
-         5, PAL_XY(200, 119), kNumColorYellow, kNumAlignRight); \
+         5, PAL_XY(188, 74), kNumColorYellow, kNumAlignRight); \
       VIDEO_UpdateScreen(&rect);                            \
       PAL_WaitForKey();                                     \
    }                                                        \
