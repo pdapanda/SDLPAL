@@ -2448,6 +2448,7 @@ PAL_BattleShowPlayerSummonMagicAnim(
 
    //
    // Show the animation of the summoned god
+   // TODO: There is still something missing here compared to the original game.
    //
    while (g_Battle.iSummonFrame < PAL_SpriteGetNumFrames(g_Battle.lpSummonSprite) - 1)
    {
@@ -2881,9 +2882,13 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleUpdateFighters();
       PAL_BattleMakeScene();
       PAL_BattleDelay(5, 0, TRUE);
+
+      gpGlobals->Exp.rgAttackExp[wPlayerRole].wCount++;
+      gpGlobals->Exp.rgHealthExp[wPlayerRole].wCount += RandomLong(2, 3);
       break;
 
    case kBattleActionAttackMate:
+      // TODO
       break;
 
    case kBattleActionCoopMagic:
@@ -3105,6 +3110,7 @@ PAL_BattlePlayerPerformAction(
 
    case kBattleActionDefend:
       g_Battle.rgPlayer[wPlayerIndex].fDefending = TRUE;
+      gpGlobals->Exp.rgDefenseExp[wPlayerRole].wCount += 2;
       break;
 
    case kBattleActionFlee:
@@ -3153,6 +3159,8 @@ PAL_BattlePlayerPerformAction(
 
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 1;
          PAL_BattleDelay(8, BATTLE_LABEL_ESCAPEFAIL, TRUE);
+
+         gpGlobals->Exp.rgFleeExp[wPlayerRole].wCount += 2;
       }
       break;
 
@@ -3302,6 +3310,8 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleShowPostMagicAnim();
       PAL_BattleDelay(5, 0, TRUE);
 
+      gpGlobals->Exp.rgMagicExp[wPlayerRole].wCount += RandomLong(2, 3);
+      gpGlobals->Exp.rgMagicPowerExp[wPlayerRole].wCount++;
       break;
 
    case kBattleActionThrowItem:

@@ -596,7 +596,7 @@ PAL_BattleWon(
    const SDL_Rect   rect = {65, 60, 200, 100};
    const SDL_Rect   rect1 = {80, 0, 180, 200};
 
-   int              i, j;
+   int              i, j, iTotalCount;
    DWORD            dwExp;
    WORD             w;
    BOOL             fLevelUp;
@@ -769,11 +769,71 @@ PAL_BattleWon(
          //
          VIDEO_UpdateScreen(&rect1);
          PAL_WaitForKey();
+
+         OrigPlayerRoles = gpGlobals->g.PlayerRoles;
       }
 
       //
-      // TODO: increasing of other levels
+      // Increasing of other hidden levels
       //
+      iTotalCount = 0;
+
+      iTotalCount += gpGlobals->Exp.rgAttackExp[w].wCount;
+      iTotalCount += gpGlobals->Exp.rgDefenseExp[w].wCount;
+      iTotalCount += gpGlobals->Exp.rgDexterityExp[w].wCount;
+      iTotalCount += gpGlobals->Exp.rgFleeExp[w].wCount;
+      iTotalCount += gpGlobals->Exp.rgHealthExp[w].wCount;
+      iTotalCount += gpGlobals->Exp.rgMagicExp[w].wCount;
+      iTotalCount += gpGlobals->Exp.rgMagicPowerExp[w].wCount;
+
+      if (iTotalCount > 0)
+      {
+#define CHECK_HIDDEN_EXP(expname, statname, label)          \
+{                                                           \
+   dwExp = g_Battle.iExpGained;                             \
+   dwExp *= gpGlobals->Exp.expname[w].wCount;               \
+   dwExp /= iTotalCount;                                    \
+   dwExp *= 2;                                              \
+                                                            \
+   dwExp += gpGlobals->Exp.expname[w].wExp;                 \
+                                                            \
+   while (dwExp >= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.expname[w].wLevel]) \
+   {                                                        \
+      dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.expname[w].wLevel]; \
+      gpGlobals->g.PlayerRoles.statname[w] += RandomLong(1, 2); \
+      gpGlobals->Exp.expname[w].wLevel++;                   \
+   }                                                        \
+                                                            \
+   gpGlobals->Exp.expname[w].wExp = (WORD)dwExp;            \
+                                                            \
+   if (gpGlobals->g.PlayerRoles.statname[w] !=              \
+      OrigPlayerRoles.statname[w])                          \
+   {                                                        \
+      PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);  \
+      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(77, 115), \
+         0, FALSE, FALSE);                                  \
+      PAL_DrawText(PAL_GetWord(label), PAL_XY(125, 115),    \
+         0, FALSE, FALSE);                                  \
+      PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(157, 115),  \
+         0, FALSE, FALSE);                                  \
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.statname[w] - \
+         OrigPlayerRoles.statname[w],                       \
+         5, PAL_XY(192, 119), kNumColorYellow, kNumAlignRight); \
+      VIDEO_UpdateScreen(&rect);                            \
+      PAL_WaitForKey();                                     \
+   }                                                        \
+}
+
+         CHECK_HIDDEN_EXP(rgHealthExp, rgwMaxHP, STATUS_LABEL_HP);
+         CHECK_HIDDEN_EXP(rgMagicExp, rgwMaxMP, STATUS_LABEL_MP);
+         CHECK_HIDDEN_EXP(rgAttackExp, rgwAttackStrength, STATUS_LABEL_ATTACKPOWER);
+         CHECK_HIDDEN_EXP(rgMagicPowerExp, rgwMagicStrength, STATUS_LABEL_MAGICPOWER);
+         CHECK_HIDDEN_EXP(rgDefenseExp, rgwDefense, STATUS_LABEL_RESISTANCE);
+         CHECK_HIDDEN_EXP(rgDexterityExp, rgwDexterity, STATUS_LABEL_DEXTERITY);
+         CHECK_HIDDEN_EXP(rgFleeExp, rgwFleeRate, STATUS_LABEL_FLEERATE);
+
+#undef CHECK_HIDDEN_EXP
+      }
 
       //
       // Learn all magics at the current level
@@ -1012,16 +1072,26 @@ PAL_StartBattle(
    gpGlobals->wScreenWave = gpGlobals->g.lprgBattleField[gpGlobals->wNumBattleField].wScreenWave;
 
    //
-   // Make sure everyone in the party is alive
+   // Make sure everyone in the party is alive, also clear all hidden
+   // EXP count records
    //
    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
       w = gpGlobals->rgParty[i].wPlayerRole;
+
       if (gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
       {
          gpGlobals->g.PlayerRoles.rgwHP[w] = 1;
          gpGlobals->rgPlayerStatus[w][kStatusPuppet] = 0;
       }
+
+      gpGlobals->Exp.rgHealthExp[w].wCount = 0;
+      gpGlobals->Exp.rgMagicExp[w].wCount = 0;
+      gpGlobals->Exp.rgAttackExp[w].wCount = 0;
+      gpGlobals->Exp.rgMagicPowerExp[w].wCount = 0;
+      gpGlobals->Exp.rgDefenseExp[w].wCount = 0;
+      gpGlobals->Exp.rgDexterityExp[w].wCount = 0;
+      gpGlobals->Exp.rgFleeExp[w].wCount = 0;
    }
 
    //

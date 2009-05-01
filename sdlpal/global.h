@@ -474,9 +474,9 @@ typedef struct tagTRAIL
 typedef struct tagEXPERIENCE
 {
    WORD         wExp;                // current experience points
-   WORD         wReserved1;
+   WORD         wReserved;
    WORD         wLevel;              // current level
-   WORD         wReserved2;
+   WORD         wCount;
 } EXPERIENCE, *LPEXPERIENCE;
 
 typedef struct tagALLEXPERIENCE
