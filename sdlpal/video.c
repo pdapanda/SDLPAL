@@ -142,6 +142,11 @@ VIDEO_Init(
       return -2;
    }
 
+   if (fFullScreen)
+   {
+      SDL_ShowCursor(FALSE);
+   }
+
    return 0;
 }
 
@@ -446,6 +451,7 @@ VIDEO_ToggleFullscreen(
       //
       flags &= ~SDL_FULLSCREEN;
       flags |= SDL_RESIZABLE;
+      SDL_ShowCursor(TRUE);
    }
    else
    {
@@ -453,6 +459,7 @@ VIDEO_ToggleFullscreen(
       // Not in fullscreen mode. Set the fullscreen flag.
       //
       flags |= SDL_FULLSCREEN;
+      SDL_ShowCursor(FALSE);
    }
 
    //
