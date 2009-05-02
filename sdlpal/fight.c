@@ -1512,6 +1512,16 @@ PAL_BattleStartFrame(
                PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
          }
 
+         if (g_Battle.iHidingTime > 0)
+         {
+            if (--g_Battle.iHidingTime == 0)
+            {
+               PAL_BattleBackupScene();
+               PAL_BattleMakeScene();
+               PAL_BattleFadeScene();
+            }
+         }
+
          //
          // Proceed to next turn...
          //
@@ -4610,7 +4620,12 @@ PAL_BattleStealFromEnemy(
 
       if (s[0] != '\0')
       {
+#ifdef PAL_CLASSIC
+         PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
+         PAL_ShowDialogText(s);
+#else
          PAL_BattleUIShowText(s, 800);
+#endif
       }
    }
 }

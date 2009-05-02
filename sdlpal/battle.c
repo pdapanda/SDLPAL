@@ -373,17 +373,6 @@ PAL_BattleMain(
 
 #ifndef PAL_CLASSIC
    PAL_UpdateTimeChargingUnit();
-#else
-   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
-   {
-      if (g_Battle.rgEnemy[i].wObjectID == 0)
-      {
-         continue;
-      }
-
-      g_Battle.rgEnemy[i].wScriptOnTurnStart =
-         PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
-   }
 #endif
 
    dwTime = SDL_GetTicks();
