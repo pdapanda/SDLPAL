@@ -311,12 +311,20 @@ PAL_BattleUIIsActionValid(
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
          w = gpGlobals->rgParty[i].wPlayerRole;
+
+#ifndef PAL_CLASSIC
          if (gpGlobals->g.PlayerRoles.rgwHP[w] < gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5 ||
             gpGlobals->rgPlayerStatus[w][kStatusSleep] != 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusConfused] != 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusSilence] != 0 ||
             g_Battle.rgPlayer[i].flTimeMeter < 100 ||
             g_Battle.rgPlayer[i].state == kFighterAct)
+#else
+         if (gpGlobals->g.PlayerRoles.rgwHP[w] < gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5 ||
+            gpGlobals->rgPlayerStatus[w][kStatusSleep] != 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusConfused] != 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusSilence] != 0)
+#endif
          {
             return FALSE;
          }

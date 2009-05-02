@@ -139,6 +139,8 @@ typedef struct tagACTIONQUEUE
    WORD       wIndex;
 } ACTIONQUEUE;
 
+#define MAX_ACTIONQUEUE_ITEMS (MAX_PLAYERS_IN_PARTY + MAX_ENEMIES_IN_TEAM * 2)
+
 #endif
 
 typedef struct tagBATTLE
@@ -179,7 +181,7 @@ typedef struct tagBATTLE
 
 #ifdef PAL_CLASSIC
    BATTLEPHASE      Phase;
-   ACTIONQUEUE      ActionQueue[MAX_PLAYERS_IN_PARTY + MAX_ENEMIES_IN_TEAM];
+   ACTIONQUEUE      ActionQueue[MAX_ACTIONQUEUE_ITEMS];
    int              iCurAction;
    BOOL             fRepeat;              // TRUE if player pressed Repeat
    BOOL             fForce;               // TRUE if player pressed Force
