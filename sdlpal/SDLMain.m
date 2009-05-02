@@ -6,7 +6,7 @@
 */
 
 #import "SDL.h"
-#import "SDLMain.h"
+#import "SDLMain_Cocoa.h"
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
 
