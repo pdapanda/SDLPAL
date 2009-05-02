@@ -1034,10 +1034,12 @@ PAL_BattleStartFrame(
    BOOL                     fEnded;
    WORD                     wPlayerRole;
    WORD                     wDexterity;
-   FLOAT                    flMax;
-   BOOL                     fMoved = FALSE, fOnlyPuppet = TRUE;
+   BOOL                     fOnlyPuppet = TRUE;
 #ifdef PAL_CLASSIC
    int                      j;
+#else
+   FLOAT                    flMax;
+   BOOL                     fMoved = FALSE;
 #endif
 
    PAL_BattleUpdateFighters();
@@ -1323,6 +1325,7 @@ PAL_BattleStartFrame(
             //
             g_Battle.fRepeat = FALSE;
             g_Battle.fForce = FALSE;
+            g_Battle.fFlee = FALSE;
 
             g_Battle.iCurAction = 0;
 
@@ -1399,7 +1402,7 @@ PAL_BattleStartFrame(
                      break;
 
                   case kBattleActionMagic:
-                     if (gpGlobals->g.rgObject[g_Battle.rgPlayer[i].action.wActionID].magic.wFlags & kMagicFlagUsableToEnemy == 0)
+                     if ((gpGlobals->g.rgObject[g_Battle.rgPlayer[i].action.wActionID].magic.wFlags & kMagicFlagUsableToEnemy) == 0)
                      {
                         wDexterity *= 3;
                      }
@@ -1498,6 +1501,17 @@ PAL_BattleStartFrame(
             PAL_BattleDelay(8, 0, TRUE);
          }
 
+         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+         {
+            if (g_Battle.rgEnemy[i].wObjectID == 0)
+            {
+               continue;
+            }
+
+            g_Battle.rgEnemy[i].wScriptOnTurnStart =
+               PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
+         }
+
          //
          // Proceed to next turn...
          //
@@ -1509,12 +1523,15 @@ PAL_BattleStartFrame(
 
          if (g_Battle.ActionQueue[g_Battle.iCurAction].fIsEnemy)
          {
-            g_Battle.rgEnemy[i].wScriptOnReady =
-               PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnReady, i);
+            if (g_Battle.rgEnemy[i].wObjectID != 0)
+            {
+               g_Battle.rgEnemy[i].wScriptOnReady =
+                  PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnReady, i);
 
-            g_Battle.fEnemyMoving = TRUE;
-            PAL_BattleEnemyPerformAction(i);
-            g_Battle.fEnemyMoving = FALSE;
+               g_Battle.fEnemyMoving = TRUE;
+               PAL_BattleEnemyPerformAction(i);
+               g_Battle.fEnemyMoving = FALSE;
+            }
          }
          else if (g_Battle.rgPlayer[i].state == kFighterAct)
          {
@@ -1533,6 +1550,7 @@ PAL_BattleStartFrame(
             //
             // Perform the action for this player.
             //
+            g_Battle.wMovingPlayerIndex = i;
             PAL_BattlePlayerPerformAction(i);
          }
 
@@ -1559,6 +1577,10 @@ PAL_BattleStartFrame(
    else if (g_Battle.fForce)
    {
       g_InputState.dwKeyPress = kKeyForce;
+   }
+   else if (g_Battle.fFlee)
+   {
+      g_InputState.dwKeyPress = kKeyFlee;
    }
 
    //
@@ -1686,6 +1708,11 @@ PAL_BattleCommitAction(
       //
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 0;
       break;
+   }
+#else
+   if (g_Battle.UI.wActionType == kBattleActionFlee)
+   {
+      g_Battle.fFlee = TRUE;
    }
 #endif
 
@@ -2947,6 +2974,13 @@ PAL_BattlePlayerValidateAction(
       {
          wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
 
+#ifdef PAL_CLASSIC
+         if (PAL_IsPlayerDying(wPlayerRole) ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
+#else
          if (PAL_IsPlayerDying(wPlayerRole) ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
@@ -2954,6 +2988,7 @@ PAL_BattlePlayerValidateAction(
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
             g_Battle.rgPlayer[i].flTimeMeter < 100 ||
             (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
+#endif
          {
             g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
             break;
@@ -3045,8 +3080,11 @@ PAL_BattlePlayerPerformAction(
    int      x, y;
    int      i, j, t;
    WORD     str, def, res, wObject, wMagicNum;
-   BOOL     fCritical, fPoisoned, fCheckPoison;
+   BOOL     fCritical;
    WORD     rgwCoopPos[3][2] = {{208, 157}, {234, 170}, {260, 183}};
+#ifndef PAL_CLASSIC
+   BOOL     fPoisoned, fCheckPoison;
+#endif
 
    g_Battle.wMovingPlayerIndex = wPlayerIndex;
    g_Battle.iBlow = 0;
@@ -3813,6 +3851,7 @@ PAL_BattlePlayerPerformAction(
 
    PAL_BattlePostActionCheck(FALSE);
 
+#ifndef PAL_CLASSIC
    //
    // Only check for poisons when the battle is not ended
    //
@@ -3830,7 +3869,6 @@ PAL_BattlePlayerPerformAction(
       }
    }
 
-#ifndef PAL_CLASSIC
    //
    // Check for poisons
    //

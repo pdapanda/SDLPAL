@@ -185,6 +185,7 @@ typedef struct tagBATTLE
    int              iCurAction;
    BOOL             fRepeat;              // TRUE if player pressed Repeat
    BOOL             fForce;               // TRUE if player pressed Force
+   BOOL             fFlee;                // TRUE if player pressed Flee
 #endif
 } BATTLE;
 
