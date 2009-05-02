@@ -1259,6 +1259,10 @@ PAL_StartBattle(
 
    PAL_MKFReadChunk(g_Battle.lpEffectSprite, i, 10, gpGlobals->f.fpDATA);
 
+#ifdef PAL_CLASSIC
+   g_Battle.Phase = kBattlePhaseSelectAction;
+#endif
+
    //
    // Run the main battle routine.
    //

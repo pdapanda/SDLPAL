@@ -24,7 +24,9 @@
 //#define INVINCIBLE 1
 
 // Set this to FALSE to disable Active-Time Battle
+#ifndef PAL_CLASSIC
 BOOL g_fActiveTime = TRUE;
+#endif
 
 static BOOL
 PAL_IsPlayerDying(
@@ -1325,6 +1327,7 @@ PAL_BattleCommitAction(
       break;
    }
 
+#ifndef PAL_CLASSIC
    //
    // Calculate the waiting time for the action
    //
@@ -1381,6 +1384,7 @@ PAL_BattleCommitAction(
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 0;
       break;
    }
+#endif
 
    g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].state = kFighterAct;
    g_Battle.UI.state = kBattleUIWait;
@@ -3550,6 +3554,7 @@ PAL_BattlePlayerPerformAction(
          }
       }
    }
+#endif
 
    //
    // Update statuses
@@ -3561,7 +3566,6 @@ PAL_BattlePlayerPerformAction(
          gpGlobals->rgPlayerStatus[wPlayerRole][i]--;
       }
    }
-#endif
 }
 
 static INT
@@ -4151,6 +4155,7 @@ end:
    }
 
    PAL_BattlePostActionCheck(FALSE);
+#endif
 
    //
    // Update statuses
@@ -4162,7 +4167,6 @@ end:
          g_Battle.rgEnemy[wEnemyIndex].rgwStatus[i]--;
       }
    }
-#endif
 }
 
 VOID

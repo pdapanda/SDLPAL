@@ -1685,6 +1685,7 @@ PAL_SetPlayerStatus(
 
 --*/
 {
+#ifndef PAL_CLASSIC
    if (wStatusID == kStatusSlow &&
       gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] > 0)
    {
@@ -1704,13 +1705,18 @@ PAL_SetPlayerStatus(
       PAL_RemovePlayerStatus(wPlayerRole, kStatusSlow);
       return;
    }
+#endif
 
    switch (wStatusID)
    {
    case kStatusConfused:
    case kStatusSleep:
    case kStatusSilence:
+#ifdef PAL_CLASSIC
+   case kStatusParalyzed:
+#else
    case kStatusSlow:
+#endif
       //
       // for "bad" statuses, don't set the status when we already have it
       //

@@ -473,11 +473,13 @@ main(
          fFullScreen = TRUE;
          break;
 
+#ifndef PAL_CLASSIC
       case 'a':
          //
          // Toggle active time battle mode
          //
          g_fActiveTime = !g_fActiveTime;
+#endif
       }
    }
 

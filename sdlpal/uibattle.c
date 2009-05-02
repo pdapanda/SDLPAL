@@ -579,6 +579,7 @@ PAL_BattleUIPlayerReady(
    g_Battle.UI.wSelectedAction = 0;
    g_Battle.UI.MenuState = kBattleMenuMain;
 
+#ifndef PAL_CLASSIC
    //
    // Play a sound which indicates the player is ready
    //
@@ -589,6 +590,7 @@ PAL_BattleUIPlayerReady(
    {
       SOUND_PlayChannel(78, 1);
    }
+#endif
 }
 
 static VOID
@@ -852,6 +854,8 @@ PAL_BattleUIUpdate(
       w = (WORD)(g_Battle.rgPlayer[i].flTimeMeter);
 
       j = TIMEMETER_COLOR_DEFAULT;
+
+#ifndef PAL_CLASSIC
       if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] > 0)
       {
          j = TIMEMETER_COLOR_HASTE;
@@ -860,6 +864,7 @@ PAL_BattleUIUpdate(
       {
          j = TIMEMETER_COLOR_SLOW;
       }
+#endif
 
       if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0 ||
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0 ||
@@ -1165,11 +1170,9 @@ PAL_BattleUIUpdate(
             }
 #ifdef PAL_CLASSIC
             else if (g_InputState.dwKeyPress & kKeyMenu)
-            {
-               // TODO
-            }
 #else
             else if (g_InputState.dwKeyPress & kKeyMenu && g_fActiveTime)
+#endif
             {
                float flMin = -1;
                j = -1;
@@ -1197,7 +1200,6 @@ PAL_BattleUIUpdate(
                   g_Battle.UI.state = kBattleUIWait;
                }
             }
-#endif
             break;
 
          case kBattleMenuMagicSelect:
@@ -1340,7 +1342,11 @@ PAL_BattleUIUpdate(
       // Don't bother selecting when only 1 enemy left unless
       // in Active-Time Battle mode
       //
+#ifdef PAL_CLASSIC
+      if (y == 1)
+#else
       if (!g_fActiveTime && y == 1)
+#endif
       {
          g_Battle.UI.wPrevEnemyTarget = (WORD)x;
          PAL_BattleCommitAction(FALSE);
@@ -1454,7 +1460,9 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetEnemyAll:
+#ifndef PAL_CLASSIC
       if (!g_fActiveTime)
+#endif
       {
          //
          // Don't bother selecting unless using Active-Time Battle
@@ -1507,7 +1515,9 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetPlayerAll:
+#ifndef PAL_CLASSIC
       if (!g_fActiveTime)
+#endif
       {
          //
          // Don't bother selecting unless using Active-Time Battle
