@@ -499,7 +499,7 @@ VIDEO_SaveScreenshot(
    //
    for (iNumBMP = 0; iNumBMP <= 9999; iNumBMP++)
    {
-      fp = fopen(va("scrn%.4d.bmp", iNumBMP), "rb");
+      fp = fopen(va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP), "rb");
       if (fp == NULL)
       {
          break;
@@ -515,7 +515,7 @@ VIDEO_SaveScreenshot(
    //
    // Save the screenshot.
    //
-   SDL_SaveBMP(gpScreenReal, va("scrn%.4d.bmp", iNumBMP));
+   SDL_SaveBMP(gpScreenReal, va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP));
 }
 
 VOID
