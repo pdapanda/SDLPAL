@@ -580,7 +580,9 @@ PAL_BattleUIPlayerReady(
 
 --*/
 {
+#ifndef PAL_CLASSIC
    WORD w = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+#endif
 
    g_Battle.UI.wCurPlayerIndex = wPlayerIndex;
    g_Battle.UI.state = kBattleUISelectMove;
@@ -851,38 +853,41 @@ PAL_BattleUIUpdate(
    {
       goto end;
    }
+
+   if (!g_Battle.UI.fAutoAttack)
 #endif
-
-   //
-   // Draw the player info boxes.
-   //
-   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
-      wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
-      w = (WORD)(g_Battle.rgPlayer[i].flTimeMeter);
+      //
+      // Draw the player info boxes.
+      //
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+         w = (WORD)(g_Battle.rgPlayer[i].flTimeMeter);
 
-      j = TIMEMETER_COLOR_DEFAULT;
+         j = TIMEMETER_COLOR_DEFAULT;
 
 #ifndef PAL_CLASSIC
-      if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] > 0)
-      {
-         j = TIMEMETER_COLOR_HASTE;
-      }
-      else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] > 0)
-      {
-         j = TIMEMETER_COLOR_SLOW;
-      }
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] > 0)
+         {
+            j = TIMEMETER_COLOR_HASTE;
+         }
+         else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] > 0)
+         {
+            j = TIMEMETER_COLOR_SLOW;
+         }
 #endif
 
-      if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0 ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0 ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] != 0)
-      {
-         w = 0;
-      }
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] != 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] != 0)
+         {
+            w = 0;
+         }
 
-      PAL_PlayerInfoBox(PAL_XY(91 + 77 * i, 165), wPlayerRole,
-         w, j, FALSE);
+         PAL_PlayerInfoBox(PAL_XY(91 + 77 * i, 165), wPlayerRole,
+            w, j, FALSE);
+      }
    }
 
    if (g_InputState.dwKeyPress & kKeyStatus)
@@ -1187,7 +1192,16 @@ PAL_BattleUIUpdate(
                   //
                   // Revert to the previous player
                   //
-                  g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex - 1].state = kFighterWait;
+                  g_Battle.rgPlayer[--g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
+
+                  while (g_Battle.UI.wCurPlayerIndex > 0 &&
+                     (gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole] == 0 ||
+                      gpGlobals->rgPlayerStatus[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole][kStatusConfused] > 0 ||
+                      gpGlobals->rgPlayerStatus[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole][kStatusSleep] > 0 ||
+                      gpGlobals->rgPlayerStatus[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole][kStatusParalyzed] > 0))
+                  {
+                     g_Battle.rgPlayer[--g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
+                  }
                }
             }
 #else

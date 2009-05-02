@@ -1386,6 +1386,7 @@ PAL_BattleStartFrame(
                   //
                   g_Battle.ActionQueue[j].wDexterity = 0;
                   g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttack;
+                  g_Battle.rgPlayer[i].state = kFighterAct;
                }
                else
                {
@@ -1481,6 +1482,17 @@ PAL_BattleStartFrame(
                      PAL_RunTriggerScript(gpGlobals->rgPoisonStatus[j][i].wPoisonScript, wPlayerRole);
                }
             }
+
+            //
+            // Update statuses
+            //
+            for (j = 0; j < kStatusAll; j++)
+            {
+               if (gpGlobals->rgPlayerStatus[wPlayerRole][j] > 0)
+               {
+                  gpGlobals->rgPlayerStatus[wPlayerRole][j]--;
+               }
+            }
          }
 
          for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
@@ -1493,23 +1505,23 @@ PAL_BattleStartFrame(
                      PAL_RunTriggerScript(g_Battle.rgEnemy[i].rgPoisons[j].wPoisonScript, (WORD)i);
                }
             }
+
+            //
+            // Update statuses
+            //
+            for (j = 0; j < kStatusAll; j++)
+            {
+               if (g_Battle.rgEnemy[i].rgwStatus[j] > 0)
+               {
+                  g_Battle.rgEnemy[i].rgwStatus[j]--;
+               }
+            }
          }
 
          PAL_BattlePostActionCheck(FALSE);
          if (PAL_BattleDisplayStatChange())
          {
             PAL_BattleDelay(8, 0, TRUE);
-         }
-
-         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
-         {
-            if (g_Battle.rgEnemy[i].wObjectID == 0)
-            {
-               continue;
-            }
-
-            g_Battle.rgEnemy[i].wScriptOnTurnStart =
-               PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
          }
 
          if (g_Battle.iHidingTime > 0)
@@ -1519,6 +1531,20 @@ PAL_BattleStartFrame(
                PAL_BattleBackupScene();
                PAL_BattleMakeScene();
                PAL_BattleFadeScene();
+            }
+         }
+
+         if (g_Battle.iHidingTime == 0)
+         {
+            for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+            {
+               if (g_Battle.rgEnemy[i].wObjectID == 0)
+               {
+                  continue;
+               }
+
+               g_Battle.rgEnemy[i].wScriptOnTurnStart =
+                  PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
             }
          }
 
@@ -1533,7 +1559,8 @@ PAL_BattleStartFrame(
 
          if (g_Battle.ActionQueue[g_Battle.iCurAction].fIsEnemy)
          {
-            if (g_Battle.rgEnemy[i].wObjectID != 0)
+            if (g_Battle.iHidingTime == 0 &&
+               g_Battle.rgEnemy[i].wObjectID != 0)
             {
                g_Battle.rgEnemy[i].wScriptOnReady =
                   PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnReady, i);
@@ -1547,7 +1574,8 @@ PAL_BattleStartFrame(
          {
             wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
 
-            if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+            if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
+               gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
                gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0)
             {
                g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
@@ -1569,7 +1597,7 @@ PAL_BattleStartFrame(
    }
 
    //
-   // The R and F keys should affect all players
+   // The R and F keys and Fleeing should affect all players
    //
    if (g_InputState.dwKeyPress & kKeyRepeat)
    {
@@ -3909,7 +3937,6 @@ PAL_BattlePlayerPerformAction(
          }
       }
    }
-#endif
 
    //
    // Update statuses
@@ -3921,6 +3948,7 @@ PAL_BattlePlayerPerformAction(
          gpGlobals->rgPlayerStatus[wPlayerRole][i]--;
       }
    }
+#endif
 }
 
 static INT
@@ -4510,7 +4538,6 @@ end:
    }
 
    PAL_BattlePostActionCheck(FALSE);
-#endif
 
    //
    // Update statuses
@@ -4522,6 +4549,9 @@ end:
          g_Battle.rgEnemy[wEnemyIndex].rgwStatus[i]--;
       }
    }
+#else
+   i = 0; // do nothing
+#endif
 }
 
 VOID
