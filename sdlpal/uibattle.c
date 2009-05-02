@@ -1170,9 +1170,20 @@ PAL_BattleUIUpdate(
             }
 #ifdef PAL_CLASSIC
             else if (g_InputState.dwKeyPress & kKeyMenu)
+            {
+               g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
+               g_Battle.UI.state = kBattleUIWait;
+
+               if (g_Battle.UI.wCurPlayerIndex > 0)
+               {
+                  //
+                  // Revert to the previous player
+                  //
+                  g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex - 1].state = kFighterWait;
+               }
+            }
 #else
             else if (g_InputState.dwKeyPress & kKeyMenu && g_fActiveTime)
-#endif
             {
                float flMin = -1;
                j = -1;
@@ -1200,6 +1211,7 @@ PAL_BattleUIUpdate(
                   g_Battle.UI.state = kBattleUIWait;
                }
             }
+#endif
             break;
 
          case kBattleMenuMagicSelect:

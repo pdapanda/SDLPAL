@@ -1020,8 +1020,6 @@ PAL_BattleStartFrame(
 
 --*/
 {
-#ifdef PAL_CLASSIC
-#else
    int                      i;
    BOOL                     fEnded;
    WORD                     wPlayerRole;
@@ -1090,6 +1088,7 @@ PAL_BattleStartFrame(
       }
    }
 
+#ifndef PAL_CLASSIC
    //
    // Check for hiding status
    //
@@ -1262,6 +1261,76 @@ PAL_BattleStartFrame(
          break;
       }
    }
+#else
+   if (g_Battle.Phase == kBattlePhaseSelectAction)
+   {
+      if (g_Battle.UI.state == kBattleUIWait)
+      {
+         for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+         {
+            wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+
+            //
+            // Don't select action for this player if player is KO'ed,
+            // sleeped, confused or paralyzed
+            //
+            if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
+               gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] ||
+               gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] ||
+               gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed])
+            {
+               continue;
+            }
+
+            //
+            // Start the menu for the first player whose action is not
+            // yet selected
+            //
+            if (g_Battle.rgPlayer[i].state == kFighterWait)
+            {
+               g_Battle.wMovingPlayerIndex = i;
+               g_Battle.rgPlayer[i].state = kFighterCom;
+               PAL_BattleUIPlayerReady(i);
+               break;
+            }
+         }
+
+         if (i > gpGlobals->wMaxPartyMemberIndex)
+         {
+            //
+            // actions for all players are decided. fill in the action queue.
+            //
+            g_Battle.fRepeat = FALSE;
+            g_Battle.fForce = FALSE;
+         }
+      }
+   }
+   else
+   {
+   }
+
+   if (g_InputState.dwKeyPress & kKeyRepeat)
+   {
+      g_Battle.fRepeat = TRUE;
+   }
+   else if (g_InputState.dwKeyPress & kKeyForce)
+   {
+      g_Battle.fForce = TRUE;
+   }
+
+   if (g_Battle.fRepeat)
+   {
+      g_InputState.dwKeyPress = kKeyRepeat;
+   }
+   else if (g_Battle.fForce)
+   {
+      g_InputState.dwKeyPress = kKeyForce;
+   }
+
+   //
+   // Update the battle UI
+   //
+   PAL_BattleUIUpdate();
 #endif
 }
 
@@ -3483,7 +3552,11 @@ PAL_BattlePlayerPerformAction(
 
       if (g_Battle.iHidingTime < 0)
       {
+#ifdef PAL_CLASSIC
+         g_Battle.iHidingTime = -g_Battle.iHidingTime;
+#else
          g_Battle.iHidingTime = -g_Battle.iHidingTime * 75;
+#endif
          PAL_BattleBackupScene();
          PAL_BattleMakeScene();
          PAL_BattleFadeScene();

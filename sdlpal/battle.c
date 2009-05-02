@@ -1232,6 +1232,7 @@ PAL_StartBattle(
    g_Battle.fIsBoss = fIsBoss;
    g_Battle.fEnemyMoving = FALSE;
    g_Battle.iHidingTime = 0;
+   g_Battle.wMovingPlayerIndex = 0;
 
    g_Battle.UI.szMsg[0] = '\0';
    g_Battle.UI.szNextMsg[0] = '\0';
@@ -1261,6 +1262,8 @@ PAL_StartBattle(
 
 #ifdef PAL_CLASSIC
    g_Battle.Phase = kBattlePhaseSelectAction;
+   g_Battle.fRepeat = FALSE;
+   g_Battle.fForce = FALSE;
 #endif
 
    //
