@@ -63,10 +63,9 @@ VIDEO_Init(
 
 --*/
 {
-   UINT32 color;
    g_wInitialWidth = wScreenWidth;
    g_wInitialHeight = wScreenHeight;
-   
+
    //
    // Create the screen surface.
    //
@@ -79,27 +78,30 @@ VIDEO_Init(
 
    if (gpScreenReal == NULL)
    {
-      //
-      // Fall back to 640x480 software mode.
-      //
-#ifdef __SYMBIAN32__   
+#ifdef __SYMBIAN32__
 #ifdef __S60_5X__
       gpScreenReal = SDL_SetVideoMode(640, 360, 8,
       SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
 #else
       gpScreenReal = SDL_SetVideoMode(320, 240, 8,
             SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-      color = SDL_MapRGB (gpScreenReal->format, 0, 0, 0);
-      SDL_FillRect (gpScreenReal, NULL, color);//
-      SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
-      gpScreenReal = SDL_SetVideoMode(320, 200, 8,
+
+      {
+         UINT32 color = SDL_MapRGB (gpScreenReal->format, 0, 0, 0);
+         SDL_FillRect (gpScreenReal, NULL, color);//
+         SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+         gpScreenReal = SDL_SetVideoMode(320, 200, 8,
             SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-	
+      }
+
 #endif
-#else		   
+#else
+      //
+      // Fall back to 640x480 software mode.
+      //
       gpScreenReal = SDL_SetVideoMode(640, 480, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#endif      
+         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+#endif
    }
 
    //
@@ -250,7 +252,6 @@ VIDEO_UpdateScreen(
       dstrect.h = g_wShakeLevel * gpScreenReal->h / gpScreen->h;
 
       SDL_FillRect(gpScreenReal, &dstrect, 0);
-
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 
       g_wShakeTime--;
@@ -328,18 +329,18 @@ VIDEO_Resize(
 
    if (gpScreenReal == NULL)
    {
-      //
-      // Fall back to 640x480 software windowed mode.
-      //
-#ifdef __SYMBIAN32__   
+#ifdef __SYMBIAN32__
 #ifdef __S60_5X__
       gpScreenReal = SDL_SetVideoMode(640, 360, 8, SDL_SWSURFACE);
 #else
       gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE);
 #endif
-#else      
+#else
+      //
+      // Fall back to 640x480 software windowed mode.
+      //
       gpScreenReal = SDL_SetVideoMode(640, 480, 8, SDL_SWSURFACE);
-#endif      
+#endif
    }
 
    SDL_SetPalette(gpScreenReal, SDL_PHYSPAL | SDL_LOGPAL, palette, 0, i);
@@ -375,7 +376,7 @@ VIDEO_ToggleScaleScreen(
 /*++
   Purpose:
 
-    Toggle fullscreen mode.
+    Toggle scalescreen mode.
 
   Parameters:
 
@@ -387,22 +388,18 @@ VIDEO_ToggleScaleScreen(
 
 --*/
 {
-
    static BOOL bFullScreen = FALSE;
-   //
-   // ... and create a new one
-   //
-   bFullScreen = !bFullScreen ;
+
+   bFullScreen = !bFullScreen;
    if (bFullScreen)
    {
-	   g_wInitialHeight = 240;
-	   
+      g_wInitialHeight = 240;
    }
    else
    {
-	   g_wInitialHeight = 200;
+      g_wInitialHeight = 200;
    }
-   
+
    VIDEO_Resize(g_wInitialWidth, g_wInitialHeight);
 }
 

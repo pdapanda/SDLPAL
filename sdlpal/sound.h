@@ -38,16 +38,18 @@ SOUND_CloseAudio(
    VOID
 );
 
-VOID 
-SOUND_AdjustVolume(
-		INT iDirectory
-);
-
 VOID
 SOUND_PlayChannel(
    INT    iSoundNum,
    INT    iChannel
 );
+
+#ifdef __SYMBIAN32__
+VOID
+SOUND_AdjustVolume(
+   INT iDirectory
+);
+#endif
 
 #define SOUND_Play(i) SOUND_PlayChannel((i), 0)
 

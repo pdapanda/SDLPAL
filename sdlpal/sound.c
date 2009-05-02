@@ -28,7 +28,9 @@ static BOOL gSndOpened = FALSE;
 BOOL       g_fNoSound = FALSE;
 BOOL       g_fNoMusic = FALSE;
 
+#ifdef __SYMBIAN32__
 INT        g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
+#endif
 
 typedef struct tagSNDPLAYER
 {
@@ -208,11 +210,11 @@ SOUND_FillAudio(
       // Mix as much data as possible
       //
       len = (len > gSndPlayer.audio_len[i]) ? gSndPlayer.audio_len[i] : len;
-#ifdef __SYMBIAN32__      
+#ifdef __SYMBIAN32__
       SDL_MixAudio(stream, gSndPlayer.pos[i], len, g_iVolume);
 #else
       SDL_MixAudio(stream, gSndPlayer.pos[i], len, SDL_MIX_MAXVOLUME);
-#endif      
+#endif
       gSndPlayer.pos[i] += len;
       gSndPlayer.audio_len[i] -= len;
    }
@@ -342,8 +344,12 @@ SOUND_CloseAudio(
    RIX_Shutdown();
 }
 
-VOID SOUND_AdjustVolume(INT iDirectory)
-{
+#ifdef __SYMBIAN32__
+
+VOID
+SOUND_AdjustVolume(
+   INT iDirectory
+)
 /*++
   Purpose:
 
@@ -351,38 +357,39 @@ VOID SOUND_AdjustVolume(INT iDirectory)
 
   Parameters:
 
-    [IN]  iDirectory - value ,Increase(>0) or decrease(<=0) 3% volume.
+    [IN]  iDirectory - value, Increase (>0) or decrease (<=0) 3% volume.
 
   Return value:
 
     None.
 
 --*/
-if (iDirectory > 0)
-	{
-	if (g_iVolume <= SDL_MIX_MAXVOLUME)
-		{
-		g_iVolume += SDL_MIX_MAXVOLUME * 0.03;
-		}
-	else
-		{
-		g_iVolume = SDL_MIX_MAXVOLUME;
-		}
-	}
-else
-	{
-	if (g_iVolume > 0)
-		{
-		g_iVolume -= SDL_MIX_MAXVOLUME * 0.03;
-		}
-	else
-		{
-		g_iVolume = 0;
-		}
-
-	}
-
+{
+   if (iDirectory > 0)
+   {
+      if (g_iVolume <= SDL_MIX_MAXVOLUME)
+      {
+         g_iVolume += SDL_MIX_MAXVOLUME * 0.03;
+      }
+      else
+      {
+         g_iVolume = SDL_MIX_MAXVOLUME;
+      }
+   }
+   else
+   {
+      if (g_iVolume > 0)
+      {
+         g_iVolume -= SDL_MIX_MAXVOLUME * 0.03;
+      }
+      else
+      {
+         g_iVolume = 0;
+      }
+   }
 }
+
+#endif
 
 VOID
 SOUND_PlayChannel(

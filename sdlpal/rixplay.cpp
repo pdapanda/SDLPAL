@@ -22,7 +22,8 @@
 #include "adplug/rix.h"
 
 extern "C" BOOL g_fNoMusic;
-extern "C" INT  g_iVolume; 
+extern "C" INT  g_iVolume;
+
 typedef struct tagRIXPLAYER
 {
    tagRIXPLAYER() : opl(22050, true, false), rix(&opl), iCurrentMusic(-1) {}
@@ -65,9 +66,11 @@ RIX_FillBuffer(
 {
    INT       i, l, oldlen = len, volume = SDL_MIX_MAXVOLUME;
    UINT      t = SDL_GetTicks();
+
 #ifdef __SYMBIAN32__
    volume = g_iVolume;
-#endif   
+#endif
+
    if (gpRixPlayer == NULL)
    {
       //
