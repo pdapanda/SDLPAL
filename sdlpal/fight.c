@@ -3470,8 +3470,12 @@ PAL_BattlePlayerPerformAction(
          //
          // Reset the time meter for everyone when using coopmagic
          //
+#ifdef PAL_CLASSIC
+         g_Battle.rgPlayer[i].state = kFighterWait;
+#else
          g_Battle.rgPlayer[i].flTimeMeter = 0;
          g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
+#endif
       }
 
       PAL_BattleBackupStat(); // so that "damages" to players won't be shown
