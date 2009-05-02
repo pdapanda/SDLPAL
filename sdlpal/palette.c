@@ -163,9 +163,6 @@ PAL_FadeOut(
          newpalette[j].b = (palette[j].b * i) >> 6;
       }
       VIDEO_SetPalette(newpalette);
-#ifdef __SYMBIAN32__
-      VIDEO_UpdateScreen(NULL);
-#endif
       SDL_PollEvent(NULL);
       while (SDL_GetTicks() < time)
       {

@@ -510,7 +510,13 @@ main(
    //
    // Show the trademark screen and splash screen
    //
+#ifdef __SYMBIAN32__
+   VIDEO_ToggleScaleScreen();
+#endif
    PAL_TrademarkScreen();
+#ifdef __SYMBIAN32__
+   VIDEO_ToggleScaleScreen();
+#endif   
    PAL_SplashScreen();
 
    //

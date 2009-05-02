@@ -81,19 +81,10 @@ VIDEO_Init(
 #ifdef __SYMBIAN32__
 #ifdef __S60_5X__
       gpScreenReal = SDL_SetVideoMode(640, 360, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
 #else
       gpScreenReal = SDL_SetVideoMode(320, 240, 8,
-            SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-
-      {
-         UINT32 color = SDL_MapRGB (gpScreenReal->format, 0, 0, 0);
-         SDL_FillRect (gpScreenReal, NULL, color);//
-         SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
-         gpScreenReal = SDL_SetVideoMode(320, 200, 8,
-            SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-      }
-
+         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
 #endif
 #else
       //
@@ -288,6 +279,9 @@ VIDEO_SetPalette(
 --*/
 {
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
+#ifdef __SYMBIAN32__
+   VIDEO_UpdateScreen(NULL);
+#endif
 }
 
 VOID
@@ -393,9 +387,21 @@ VIDEO_ToggleScaleScreen(
 
 --*/
 {
+#ifdef __SYMBIAN32__
+
    static BOOL bFullScreen = FALSE;
 
    bFullScreen = !bFullScreen;
+#ifdef __S60_5X__
+   if (bFullScreen)
+   {
+      g_wInitialWidth = 640;
+   }
+   else
+   {
+      g_wInitialWidth = 576;
+   }
+#else
    if (bFullScreen)
    {
       g_wInitialHeight = 240;
@@ -404,8 +410,9 @@ VIDEO_ToggleScaleScreen(
    {
       g_wInitialHeight = 200;
    }
-
+#endif
    VIDEO_Resize(g_wInitialWidth, g_wInitialHeight);
+#endif   
 }
 
 VOID
