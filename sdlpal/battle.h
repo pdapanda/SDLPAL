@@ -124,6 +124,16 @@ typedef struct tagSUMMON
 #define MAX_BATTLE_ACTIONS    256
 #define MAX_KILLED_ENEMIES    256
 
+#ifdef PAL_CLASSIC
+
+typedef enum tabBATTLEPHASE
+{
+   kBattlePhaseSelectAction,
+   kBattlePhasePerformAction
+} BATTLEPHASE;
+
+#endif
+
 typedef struct tagBATTLE
 {
    BATTLEPLAYER     rgPlayer[MAX_PLAYERS_IN_PARTY];
@@ -159,6 +169,10 @@ typedef struct tagBATTLE
    WORD             wMovingPlayerIndex;   // current moving player index
 
    int              iBlow;
+
+#ifdef PAL_CLASSIC
+   BATTLEPHASE      Phase;
+#endif
 } BATTLE;
 
 extern BATTLE g_Battle;

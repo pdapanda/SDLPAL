@@ -242,6 +242,8 @@ PAL_CalcPhysicalAttackDamage(
    return sDamage;
 }
 
+#ifndef PAL_CLASSIC
+
 static SHORT
 PAL_GetEnemyDexterity(
    WORD          wEnemyIndex
@@ -394,6 +396,8 @@ PAL_GetPlayerActualDexterity(
    return wDexterity;
 }
 
+#endif
+
 VOID
 PAL_BattleDelay(
    WORD       wDuration,
@@ -432,7 +436,8 @@ PAL_BattleDelay(
          for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
          {
             if (g_Battle.rgEnemy[j].wObjectID == 0 ||
-               g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] != 0)
+               g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] != 0 ||
+               g_Battle.rgEnemy[j].rgwStatus[kStatusParalyzed] != 0)
             {
                continue;
             }
@@ -726,6 +731,7 @@ PAL_BattlePostActionCheck(
 
             if (gpGlobals->g.PlayerRoles.rgwHP[w] > 0 &&
                gpGlobals->rgPlayerStatus[w][kStatusSleep] == 0 &&
+               gpGlobals->rgPlayerStatus[w][kStatusParalyzed] == 0 &&
                gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0 &&
                j <= gpGlobals->wMaxPartyMemberIndex)
             {
@@ -770,6 +776,7 @@ PAL_BattlePostActionCheck(
                WORD wCover = gpGlobals->g.PlayerRoles.rgwCoveredBy[w];
 
                if (gpGlobals->rgPlayerStatus[wCover][kStatusSleep] != 0 ||
+                  gpGlobals->rgPlayerStatus[wCover][kStatusParalyzed] != 0 ||
                   gpGlobals->rgPlayerStatus[wCover][kStatusConfused] != 0)
                {
                   continue;
@@ -921,7 +928,8 @@ PAL_BattleUpdateFighters(
       g_Battle.rgEnemy[i].pos = g_Battle.rgEnemy[i].posOriginal;
       g_Battle.rgEnemy[i].iColorShift = 0;
 
-      if (g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] > 0)
+      if (g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] > 0 ||
+         g_Battle.rgEnemy[i].rgwStatus[kStatusParalyzed] > 0)
       {
          g_Battle.rgEnemy[i].wCurrentFrame = 0;
          continue;
@@ -1010,6 +1018,8 @@ PAL_BattleStartFrame(
 
 --*/
 {
+#ifdef PAL_CLASSIC
+#else
    int                      i;
    BOOL                     fEnded;
    WORD                     wPlayerRole;
@@ -1250,6 +1260,7 @@ PAL_BattleStartFrame(
          break;
       }
    }
+#endif
 }
 
 VOID
@@ -1494,7 +1505,8 @@ PAL_BattleShowPlayerAttackAnim(
       for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
       {
          if (g_Battle.rgEnemy[j].wObjectID == 0 ||
-            g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] > 0)
+            g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] > 0 ||
+            g_Battle.rgEnemy[j].rgwStatus[kStatusParalyzed] > 0)
          {
             continue;
          }
@@ -1534,7 +1546,7 @@ PAL_BattleShowPlayerAttackAnim(
          {
             g_Battle.rgEnemy[sTarget].iColorShift = 6;
          }
-
+#ifndef PAL_CLASSIC
          //
          // Flash the screen if it's a critical hit
          //
@@ -1542,6 +1554,7 @@ PAL_BattleShowPlayerAttackAnim(
          {
             SDL_FillRect(gpScreen, NULL, 15);
          }
+#endif
       }
 
       VIDEO_UpdateScreen(NULL);
@@ -1744,7 +1757,8 @@ PAL_BattleShowPlayerPreMagicAnim(
          for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
          {
             if (g_Battle.rgEnemy[j].wObjectID == 0 ||
-               g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] != 0)
+               g_Battle.rgEnemy[j].rgwStatus[kStatusSleep] != 0 ||
+               g_Battle.rgEnemy[j].rgwStatus[kStatusParalyzed] != 0)
             {
                continue;
             }
@@ -2629,6 +2643,7 @@ PAL_BattlePlayerValidateAction(
          if (PAL_IsPlayerDying(wPlayerRole) ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0 ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
             g_Battle.rgPlayer[i].flTimeMeter < 100 ||
             (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
@@ -3504,6 +3519,7 @@ PAL_BattlePlayerPerformAction(
       }
    }
 
+#ifndef PAL_CLASSIC
    //
    // Check for poisons
    //
@@ -3545,6 +3561,7 @@ PAL_BattlePlayerPerformAction(
          gpGlobals->rgPlayerStatus[wPlayerRole][i]--;
       }
    }
+#endif
 }
 
 static INT
@@ -3611,6 +3628,7 @@ PAL_BattleEnemyPerformAction(
    wMagic = g_Battle.rgEnemy[wEnemyIndex].e.wMagic;
 
    if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusSleep] > 0 ||
+      g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusParalyzed] > 0 ||
       g_Battle.iHidingTime > 0)
    {
       //
@@ -3694,7 +3712,11 @@ PAL_BattleEnemyPerformAction(
             w = gpGlobals->rgParty[i].wPlayerRole;
 
             if (gpGlobals->rgPlayerStatus[w][kStatusSleep] == 0 &&
+#ifdef PAL_CLASSIC
+               gpGlobals->rgPlayerStatus[w][kStatusParalyzed] == 0 &&
+#else
                gpGlobals->rgPlayerStatus[w][kStatusSlow] == 0 &&
+#endif
                gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0 &&
                RandomLong(0, 2) == 0 &&
                gpGlobals->g.PlayerRoles.rgwHP[w] != 0)
@@ -3709,7 +3731,11 @@ PAL_BattleEnemyPerformAction(
          }
       }
       else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] == 0 &&
+#ifdef PAL_CLASSIC
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] == 0 &&
+#else
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] == 0 &&
+#endif
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] == 0 &&
          RandomLong(0, 2) == 0)
       {
@@ -3898,7 +3924,8 @@ PAL_BattleEnemyPerformAction(
       //
       if ((PAL_IsPlayerDying(wPlayerRole) ||
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0) && fAutoDefend)
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0) && fAutoDefend)
       {
          w = gpGlobals->g.PlayerRoles.rgwCoveredBy[wPlayerRole];
 
@@ -3915,7 +3942,8 @@ PAL_BattleEnemyPerformAction(
          {
             if (PAL_IsPlayerDying(gpGlobals->rgParty[iCoverIndex].wPlayerRole) ||
                gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusConfused] > 0 ||
-               gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusSleep] > 0)
+               gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusSleep] > 0 ||
+               gpGlobals->rgPlayerStatus[gpGlobals->rgParty[iCoverIndex].wPlayerRole][kStatusParalyzed] > 0)
             {
                iCoverIndex = -1;
             }
@@ -3929,7 +3957,11 @@ PAL_BattleEnemyPerformAction(
       if (iCoverIndex == -1 &&
          (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+#ifdef PAL_CLASSIC
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0))
+#else
          gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] > 0))
+#endif
       {
          fAutoDefend = FALSE;
       }
@@ -4095,6 +4127,7 @@ PAL_BattleEnemyPerformAction(
    }
 
 end:
+#ifndef PAL_CLASSIC
    //
    // Check poisons
    //
@@ -4129,6 +4162,7 @@ end:
          g_Battle.rgEnemy[wEnemyIndex].rgwStatus[i]--;
       }
    }
+#endif
 }
 
 VOID

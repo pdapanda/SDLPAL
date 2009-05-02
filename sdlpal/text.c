@@ -693,11 +693,13 @@ PAL_ShowDialogText(
       //
       // The text should be shown in a small window at the center of the screen
       //
+#ifndef PAL_CLASSIC
       if (gpGlobals->fInBattle && g_Battle.BattleResult == kBattleResultOnGoing)
       {
          PAL_BattleUIShowText(lpszText, 1400);
       }
       else
+#endif
       {
          PAL_POS    pos;
          LPBOX      lpBox;

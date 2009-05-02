@@ -21,6 +21,8 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+//#define PAL_CLASSIC           1
+
 #ifdef __cplusplus
 extern "C"
 {

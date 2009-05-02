@@ -159,6 +159,7 @@ PAL_PlayerInfoBox(
          gpScreen, PAL_XY(PAL_X(pos) - 2, PAL_Y(pos) - 4), bPoisonColor, 0);
    }
 
+#ifndef PAL_CLASSIC
    //
    // Draw a border for the Time Meter
    //
@@ -199,10 +200,26 @@ PAL_PlayerInfoBox(
       rect.h = 4;
       SDL_FillRect(gpScreen, &rect, bTimeMeterColor);
    }
+#endif
 
    //
    // Draw the HP and MP value
    //
+#ifdef PAL_CLASSIC
+   PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
+      PAL_XY(PAL_X(pos) + 49, PAL_Y(pos) + 6));
+   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[wPlayerRole], 4,
+      PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 8), kNumColorYellow, kNumAlignRight);
+   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole], 4,
+      PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 5), kNumColorYellow, kNumAlignRight);
+
+   PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
+      PAL_XY(PAL_X(pos) + 49, PAL_Y(pos) + 22));
+   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[wPlayerRole], 4,
+      PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 24), kNumColorCyan, kNumAlignRight);
+   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole], 4,
+      PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 21), kNumColorCyan, kNumAlignRight);
+#else
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
       PAL_XY(PAL_X(pos) + 49, PAL_Y(pos) + 14));
    PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[wPlayerRole], 4,
@@ -216,6 +233,7 @@ PAL_PlayerInfoBox(
       PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 26), kNumColorCyan, kNumAlignRight);
    PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole], 4,
       PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 23), kNumColorCyan, kNumAlignRight);
+#endif
 
    //
    // Draw Statuses
@@ -753,6 +771,22 @@ PAL_BattleUIUpdate(
 
    s_iFrame++;
 
+   if (g_Battle.UI.fAutoAttack && !gpGlobals->fAutoBattle)
+   {
+      //
+      // Draw the "auto attack" message if in the autoattack mode.
+      //
+      if (g_InputState.dwKeyPress & kKeyMenu)
+      {
+         g_Battle.UI.fAutoAttack = FALSE;
+      }
+      else
+      {
+         PAL_DrawText(PAL_GetWord(BATTLEUI_LABEL_AUTO), PAL_XY(280, 10),
+            MENUITEM_COLOR_CONFIRMED, TRUE, FALSE);
+      }
+   }
+
    if (gpGlobals->fAutoBattle)
    {
       PAL_BattlePlayerCheckReady();
@@ -796,6 +830,19 @@ PAL_BattleUIUpdate(
       goto end;
    }
 
+   if (g_InputState.dwKeyPress & kKeyAuto)
+   {
+      g_Battle.UI.fAutoAttack = !g_Battle.UI.fAutoAttack;
+      g_Battle.UI.MenuState = kBattleMenuMain;
+   }
+
+#ifdef PAL_CLASSIC
+   if (g_Battle.Phase == kBattlePhasePerformAction)
+   {
+      goto end;
+   }
+#endif
+
    //
    // Draw the player info boxes.
    //
@@ -825,31 +872,10 @@ PAL_BattleUIUpdate(
          w, j, FALSE);
    }
 
-   if (g_InputState.dwKeyPress & kKeyAuto)
-   {
-      g_Battle.UI.fAutoAttack = !g_Battle.UI.fAutoAttack;
-      g_Battle.UI.MenuState = kBattleMenuMain;
-   }
-   else if (g_InputState.dwKeyPress & kKeyStatus)
+   if (g_InputState.dwKeyPress & kKeyStatus)
    {
       PAL_PlayerStatus();
       goto end;
-   }
-
-   //
-   // Draw the "auto attack" message if in the autoattack mode.
-   //
-   if (g_Battle.UI.fAutoAttack && !gpGlobals->fAutoBattle)
-   {
-      if (g_InputState.dwKeyPress & kKeyMenu)
-      {
-         g_Battle.UI.fAutoAttack = FALSE;
-      }
-      else
-      {
-         PAL_DrawText(PAL_GetWord(BATTLEUI_LABEL_AUTO), PAL_XY(280, 10),
-            MENUITEM_COLOR_CONFIRMED, TRUE, FALSE);
-      }
    }
 
    if (g_Battle.UI.state != kBattleUIWait)
@@ -878,7 +904,8 @@ PAL_BattleUIUpdate(
       // Cancel any actions if player is dead or sleeping.
       //
       if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
-         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0)
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] != 0 ||
+         gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] != 0)
       {
          g_Battle.UI.wActionType = kBattleActionPass;
          PAL_BattleCommitAction(FALSE);
@@ -1136,6 +1163,12 @@ PAL_BattleUIUpdate(
             {
                PAL_BattleCommitAction(TRUE);
             }
+#ifdef PAL_CLASSIC
+            else if (g_InputState.dwKeyPress & kKeyMenu)
+            {
+               // TODO
+            }
+#else
             else if (g_InputState.dwKeyPress & kKeyMenu && g_fActiveTime)
             {
                float flMin = -1;
@@ -1164,6 +1197,7 @@ PAL_BattleUIUpdate(
                   g_Battle.UI.state = kBattleUIWait;
                }
             }
+#endif
             break;
 
          case kBattleMenuMagicSelect:
@@ -1526,6 +1560,7 @@ end:
    //
    // Show the text message if there is one.
    //
+#ifndef PAL_CLASSIC
    if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
    {
       //
@@ -1552,6 +1587,7 @@ end:
       g_Battle.UI.dwMsgShowTime = SDL_GetTicks() + g_Battle.UI.wNextMsgDuration;
       g_Battle.UI.szNextMsg[0] = '\0';
    }
+#endif
 
    //
    // Draw the numbers

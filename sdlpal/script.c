@@ -1078,7 +1078,12 @@ PAL_InterpretInstruction(
       // Set the status for enemy
       //
       w = g_Battle.rgEnemy[wEventObjectID].wObjectID;
+
+#ifdef PAL_CLASSIC
+      i = 9;
+#else
       i = ((pScript->rgwOperand[0] == kStatusSlow) ? 14 : 9);
+#endif
 
       if (RandomLong(0, i) >= gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery &&
          g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] == 0)

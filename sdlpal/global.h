@@ -85,7 +85,11 @@ extern "C"
 typedef enum tagSTATUS
 {
    kStatusConfused = 0,  // attack friends randomly
-   kStatusSlow,          // slower (NOTE: in the original game this was "paralyzed")
+#ifdef PAL_CLASSIC
+   kStatusParalyzed,     // paralyzed
+#else
+   kStatusSlow,          // slower
+#endif
    kStatusSleep,         // not allowed to move
    kStatusSilence,       // cannot use magic
    kStatusPuppet,        // for dead players only, continue attacking
@@ -95,6 +99,10 @@ typedef enum tagSTATUS
    kStatusDualAttack,    // dual attack
    kStatusAll
 } STATUS;
+
+#ifndef PAL_CLASSIC
+#define kStatusParalyzed kStatusSleep
+#endif
 
 // body parts of equipments
 typedef enum tagBODYPART

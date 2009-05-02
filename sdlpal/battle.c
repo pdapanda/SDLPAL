@@ -89,7 +89,8 @@ PAL_BattleMakeScene(
       pos = g_Battle.rgEnemy[i].pos;
 
       if (g_Battle.rgEnemy[i].rgwStatus[kStatusConfused] > 0 &&
-         g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] == 0)
+         g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] == 0 &&
+         g_Battle.rgEnemy[i].rgwStatus[kStatusParalyzed] == 0)
       {
          //
          // Enemy is confused
@@ -137,6 +138,7 @@ PAL_BattleMakeScene(
 
          if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
             gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
+            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusParalyzed] == 0 &&
             gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
          {
             //
@@ -167,6 +169,7 @@ PAL_BattleMakeScene(
       {
          if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
             gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
+            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusParalyzed] == 0 &&
             gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
          {
             //
@@ -368,7 +371,9 @@ PAL_BattleMain(
       g_Battle.BattleResult = kBattleResultOnGoing;
    }
 
+#ifndef PAL_CLASSIC
    PAL_UpdateTimeChargingUnit();
+#endif
 
    dwTime = SDL_GetTicks();
 
@@ -1158,6 +1163,7 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].flTimeMeter = 50;
          g_Battle.rgEnemy[i].iColorShift = 0;
 
+#ifndef PAL_CLASSIC
          //
          // HACK: Otherwise the black thief lady will be too hard to beat
          //
@@ -1177,6 +1183,7 @@ PAL_StartBattle(
                gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
             }
          }
+#endif
       }
    }
 
