@@ -12,7 +12,7 @@
 ;
 ; UID is the app's UID
 ;
-#{"sdlpal"},(0x100039CE),1,0,0
+#{"sdlpal"},(0x100039CE),4,0,0
 
 ;Localised Vendor name
 %{"Vendor-EN"}
