@@ -1,5 +1,7 @@
 //
 // Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
+// Portions Copyright (c) 2009, netwan.
+//
 // All rights reserved.
 //
 // This file is part of SDLPAL.
