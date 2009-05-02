@@ -67,6 +67,10 @@ extern "C"
 #define SYSMENU_LABEL_MUSIC                13
 #define SYSMENU_LABEL_SOUND                14
 #define SYSMENU_LABEL_QUIT                 15
+#define SYSMENU_LABEL_BATTLEMODE           (PAL_ADDITIONAL_WORD_FIRST)
+
+#define BATTLEMODEMENU_LABEL_WAIT          (PAL_ADDITIONAL_WORD_FIRST + 1)
+#define BATTLEMODEMENU_LABEL_ACTIVE        (PAL_ADDITIONAL_WORD_FIRST + 2)
 
 #define INVMENU_LABEL_USE                  23
 #define INVMENU_LABEL_EQUIP                22

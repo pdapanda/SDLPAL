@@ -33,6 +33,12 @@
 
 BOOL      g_fUpdatedInBattle      = FALSE;
 
+static const char g_rgszAdditionalWords[][WORD_LENGTH + 1] = {
+   {0xBE, 0xD4, 0xB0, 0xAB, 0xA4, 0xE8, 0xA6, 0xA1, 0x00, 0x00, 0x00}, // Battle Mode
+   {0xB5, 0xA5, 0xAB, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // Wait
+   {0xAB, 0x44, 0xB5, 0xA5, 0xAB, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00}, // Active
+};
+
 typedef struct tagTEXTLIB
 {
    LPBYTE          lpWordBuf;
@@ -227,6 +233,11 @@ PAL_GetWord(
 {
    static char buf[WORD_LENGTH + 1];
    int l;
+
+   if (wNumWord >= PAL_ADDITIONAL_WORD_FIRST)
+   {
+      return g_rgszAdditionalWords[wNumWord - PAL_ADDITIONAL_WORD_FIRST];
+   }
 
    if (wNumWord >= g_TextLib.nWords)
    {

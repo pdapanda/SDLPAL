@@ -362,6 +362,80 @@ PAL_SwitchMenu(
    return (wReturnValue == 0) ? FALSE : TRUE;
 }
 
+#ifndef PAL_CLASSIC
+
+static VOID
+PAL_BattleModeMenu(
+   VOID
+)
+/*++
+  Purpose:
+
+    Show the Battle Mode selection box.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   LPBOX           rgpBox[2];
+   MENUITEM        rgMenuItem[2];
+   int             i;
+   WORD            wReturnValue;
+   const SDL_Rect  rect = {130, 100, 145, 50};
+
+   //
+   // Create menu items
+   //
+   rgMenuItem[0].fEnabled = TRUE;
+   rgMenuItem[0].pos = PAL_XY(145, 110);
+   rgMenuItem[0].wValue = 0;
+   rgMenuItem[0].wNumWord = BATTLEMODEMENU_LABEL_WAIT;
+
+   rgMenuItem[1].fEnabled = TRUE;
+   rgMenuItem[1].pos = PAL_XY(213, 110);
+   rgMenuItem[1].wValue = 1;
+   rgMenuItem[1].wNumWord = BATTLEMODEMENU_LABEL_ACTIVE;
+
+   //
+   // Create the boxes
+   //
+   for (i = 0; i < 2; i++)
+   {
+      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i, 100), 3, TRUE);
+   }
+
+   VIDEO_UpdateScreen(&rect);
+
+   //
+   // Activate the menu
+   //
+   wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, 2, g_fActiveTime ? 1 : 0,
+      MENUITEM_COLOR);
+
+   //
+   // Delete the boxes
+   //
+   for (i = 0; i < 2; i++)
+   {
+      PAL_DeleteBox(rgpBox[i]);
+   }
+
+   VIDEO_UpdateScreen(&rect);
+
+   if (wReturnValue != MENUITEM_VALUE_CANCELLED)
+   {
+      g_fActiveTime = ((wReturnValue == 0) ? FALSE : TRUE);
+   }
+}
+
+#endif
+
 LPBOX
 PAL_ShowCash(
    DWORD      dwCash
@@ -450,11 +524,12 @@ PAL_SystemMenu(
    WORD                wReturnValue;
    int                 iSlot, i, iSavedTimes;
    FILE               *fp;
-   const SDL_Rect      rect = {40, 60, 100, 120};
+   const SDL_Rect      rect = {40, 60, 100, 140};
 
    //
    // Create menu items
    //
+#ifdef PAL_CLASSIC
    MENUITEM        rgSystemMenuItem[5] =
    {
       // value  label                      enabled   pos
@@ -464,18 +539,39 @@ PAL_SystemMenu(
       { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
       { 5,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 72) },
    };
+#else
+   MENUITEM        rgSystemMenuItem[6] =
+   {
+      // value  label                      enabled   pos
+      { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 72) },
+      { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 72 + 18) },
+      { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
+      { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
+      { 5,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 72 + 72) },
+      { 6,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 90) },
+   };
+#endif
 
    //
    // Create the menu box.
    //
+#ifdef PAL_CLASSIC
    lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 4, 3, 0, TRUE);
+#else
+   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 5, 3, 0, TRUE);
+#endif
    VIDEO_UpdateScreen(&rect);
 
    //
    // Perform the menu.
    //
+#ifdef PAL_CLASSIC
    wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 5,
       gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
+#else
+   wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 6,
+      gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
+#endif
 
    if (wReturnValue == MENUITEM_VALUE_CANCELLED)
    {
@@ -546,7 +642,18 @@ PAL_SystemMenu(
       g_fNoSound = !PAL_SwitchMenu(!g_fNoSound);
       break;
 
+#ifndef PAL_CLASSIC
    case 5:
+      //
+      // Battle Mode
+      //
+      PAL_BattleModeMenu();
+      break;
+
+   case 6:
+#else
+   case 5:
+#endif
       //
       // Quit
       //

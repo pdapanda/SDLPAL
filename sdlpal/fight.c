@@ -1714,7 +1714,7 @@ PAL_BattleCommitAction(
                //
                // The Wine God is an ultimate move which should take long
                //
-               wCostMP = 200;
+               wCostMP = 135;
             }
          }
          else if (p->wType == kMagicTypeApplyToPlayer || p->wType == kMagicTypeApplyToParty ||
@@ -1918,15 +1918,6 @@ PAL_BattleShowPlayerAttackAnim(
          {
             g_Battle.rgEnemy[sTarget].iColorShift = 6;
          }
-#ifndef PAL_CLASSIC
-         //
-         // Flash the screen if it's a critical hit
-         //
-         if (fCritical)
-         {
-            SDL_FillRect(gpScreen, NULL, 15);
-         }
-#endif
       }
 
       VIDEO_UpdateScreen(NULL);
