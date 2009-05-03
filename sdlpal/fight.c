@@ -3643,7 +3643,7 @@ PAL_BattlePlayerPerformAction(
          def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 2;
       }
 
-      if (def < 0)
+      if ((SHORT)def < 0)
       {
          def = 0;
       }

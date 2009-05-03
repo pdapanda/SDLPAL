@@ -688,12 +688,16 @@ PAL_BattleWon(
 
       while (dwExp >= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel])
       {
-         fLevelUp = TRUE;
          dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel];
-         PAL_PlayerLevelUp(w, 1);
 
-         gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
-         gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
+		 if (gpGlobals->Exp.rgPrimaryExp[w].wLevel < MAX_LEVELS)
+		 {
+            fLevelUp = TRUE;
+            PAL_PlayerLevelUp(w, 1);
+
+            gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
+            gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
+	     }
       }
 
       gpGlobals->Exp.rgPrimaryExp[w].wExp = (WORD)dwExp;
