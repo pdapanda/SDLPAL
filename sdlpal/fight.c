@@ -3223,13 +3223,7 @@ PAL_BattlePlayerPerformAction(
             {
                sDamage = 1;
             }
-#ifdef __SYMBIAN32__
-            if(sDamage > g_Battle.rgEnemy[sTarget].e.wHealth)
-            {
-				g_Battle.rgEnemy[sTarget].e.wHealth = 0;
-            }
-            else
-#endif
+
             g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
 
             if (t == 0)
@@ -3306,13 +3300,7 @@ PAL_BattlePlayerPerformAction(
                {
                   sDamage = 1;
                }
-#ifdef __SYMBIAN32__
-				if(sDamage > g_Battle.rgEnemy[index[i]].e.wHealth)
-				{
-					g_Battle.rgEnemy[index[i]].e.wHealth = 0;
-				}
-				else
-#endif
+
                g_Battle.rgEnemy[index[i]].e.wHealth -= sDamage;
 
                //
@@ -3575,13 +3563,7 @@ PAL_BattlePlayerPerformAction(
             {
                sDamage = 1;
             }
-#ifdef __SYMBIAN32__
-            if(sDamage > g_Battle.rgEnemy[i].e.wHealth)
-            {
-				g_Battle.rgEnemy[i].e.wHealth = 0;
-            }
-            else
-#endif
+
             g_Battle.rgEnemy[i].e.wHealth -= sDamage;
          }
       }
@@ -3600,13 +3582,7 @@ PAL_BattlePlayerPerformAction(
          {
             sDamage = 1;
          }
-#ifdef __SYMBIAN32__
-         if(sDamage > g_Battle.rgEnemy[sTarget].e.wHealth)
-         {
-			 g_Battle.rgEnemy[sTarget].e.wHealth = 0;
-         }
-         else
-#endif
+
          g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
       }
 
@@ -3841,13 +3817,7 @@ PAL_BattlePlayerPerformAction(
                      {
                         sDamage = 1;
                      }
-#ifdef __SYMBIAN32__
-					 if(sDamage > g_Battle.rgEnemy[i].e.wHealth)
-					 {
-						 g_Battle.rgEnemy[i].e.wHealth = 0;
-					 }
-					 else
-#endif
+
                      g_Battle.rgEnemy[i].e.wHealth -= sDamage;
                   }
                }
@@ -3867,13 +3837,7 @@ PAL_BattlePlayerPerformAction(
                   {
                      sDamage = 1;
                   }
-#ifdef __SYMBIAN32__
-                  if(sDamage > g_Battle.rgEnemy[sTarget].e.wHealth)
-                  {
-					  g_Battle.rgEnemy[sTarget].e.wHealth = 0;
-                  }
-                  else
-#endif
+
                   g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
                }
             }
@@ -4820,13 +4784,7 @@ PAL_BattleSimulateMagic(
             {
                sDamage = 0;
             }
-#ifdef __SYMBIAN32__
-            if(sDamage > g_Battle.rgEnemy[i].e.wHealth)
-            {
-				g_Battle.rgEnemy[i].e.wHealth = 0;
-            }
-            else
-#endif
+
             g_Battle.rgEnemy[i].e.wHealth -= sDamage;
          }
       }
@@ -4850,13 +4808,7 @@ PAL_BattleSimulateMagic(
          {
             sDamage = 0;
          }
-#ifdef __SYMBIAN32__
-         if(sDamage > g_Battle.rgEnemy[sTarget].e.wHealth)
-         {
-			 g_Battle.rgEnemy[sTarget].e.wHealth = 0;
-         }
-         else
-#endif
+
          g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
       }
    }
