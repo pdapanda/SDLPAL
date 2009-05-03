@@ -1668,6 +1668,11 @@ PAL_BattleCommitAction(
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
          g_Battle.UI.wObjectID;
    }
+   else if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
+   {
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = -1;
+   }
 
    //
    // Check if the action is valid
@@ -2969,6 +2974,22 @@ PAL_BattlePlayerValidateAction(
       break;
 
    case kBattleActionMagic:
+      //
+      // Make sure player actually has the magic to be used
+      //
+      for (i = 0; i < MAX_PLAYER_MAGICS; i++)
+      {
+         if (gpGlobals->g.PlayerRoles.rgwMagic[i][wPlayerRole] == wObjectID)
+         {
+            break; // player has this magic
+         }
+      }
+
+      if (i >= MAX_PLAYER_MAGICS)
+      {
+         fValid = FALSE;
+      }
+
       w = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
 
       if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0)
