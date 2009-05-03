@@ -1377,7 +1377,6 @@ PAL_BattleStartFrame(
 
                if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
                   gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
-                  gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
                   gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0)
                {
                   //
@@ -1391,6 +1390,12 @@ PAL_BattleStartFrame(
                else
                {
                   wDexterity = PAL_GetPlayerActualDexterity(wPlayerRole);
+
+                  if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
+                  {
+                     g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttack;
+                     g_Battle.rgPlayer[i].state = kFighterAct;
+                  }
 
                   switch (g_Battle.rgPlayer[i].action.ActionType)
                   {
@@ -1411,6 +1416,9 @@ PAL_BattleStartFrame(
 
                   case kBattleActionFlee:
                      wDexterity /= 2;
+
+                  case kBattleActionUseItem:
+                     wDexterity *= 3;
 
                   default:
                      break;
@@ -3172,7 +3180,7 @@ PAL_BattlePlayerPerformAction(
 				g_Battle.rgEnemy[sTarget].e.wHealth = 0;
             }
             else
-#endif          
+#endif
             g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
 
             if (t == 0)
@@ -3255,7 +3263,7 @@ PAL_BattlePlayerPerformAction(
 					g_Battle.rgEnemy[index[i]].e.wHealth = 0;
 				}
 				else
-#endif 
+#endif
                g_Battle.rgEnemy[index[i]].e.wHealth -= sDamage;
 
                //
@@ -3524,7 +3532,7 @@ PAL_BattlePlayerPerformAction(
 				g_Battle.rgEnemy[i].e.wHealth = 0;
             }
             else
-#endif            	
+#endif
             g_Battle.rgEnemy[i].e.wHealth -= sDamage;
          }
       }
@@ -3549,7 +3557,7 @@ PAL_BattlePlayerPerformAction(
 			 g_Battle.rgEnemy[sTarget].e.wHealth = 0;
          }
          else
-#endif 
+#endif
          g_Battle.rgEnemy[sTarget].e.wHealth -= sDamage;
       }
 
