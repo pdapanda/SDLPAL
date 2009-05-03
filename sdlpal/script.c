@@ -2635,6 +2635,7 @@ PAL_InterpretInstruction(
             gpGlobals->g.lprgEnemy[gpGlobals->g.rgObject[pScript->rgwOperand[0]].enemy.wEnemyID];
 
          g_Battle.rgEnemy[wEventObjectID].e.wHealth = w;
+         g_Battle.rgEnemy[wEventObjectID].wCurrentFrame = 0;
 
          for (i = 0; i < 6; i++)
          {
