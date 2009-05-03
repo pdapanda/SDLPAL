@@ -1416,9 +1416,11 @@ PAL_BattleStartFrame(
 
                   case kBattleActionFlee:
                      wDexterity /= 2;
+                     break;
 
                   case kBattleActionUseItem:
                      wDexterity *= 3;
+                     break;
 
                   default:
                      break;
