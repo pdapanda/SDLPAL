@@ -1192,16 +1192,42 @@ PAL_BattleUIUpdate(
                   //
                   // Revert to the previous player
                   //
-                  g_Battle.rgPlayer[--g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
+                  do
+                  {
+                     g_Battle.rgPlayer[--g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
 
-                  while (g_Battle.UI.wCurPlayerIndex > 0 &&
+                     if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionThrowItem)
+                     {
+                        for (i = 0; i < MAX_INVENTORY; i++)
+                        {
+                           if (gpGlobals->rgInventory[i].wItem ==
+                              g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID)
+                           {
+                              gpGlobals->rgInventory[i].nAmountInUse--;
+                              break;
+                           }
+                        }
+                     }
+                     else if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionUseItem)
+                     {
+                        if (gpGlobals->g.rgObject[g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID].item.wFlags & kItemFlagConsuming)
+                        {
+                           for (i = 0; i < MAX_INVENTORY; i++)
+                           {
+                              if (gpGlobals->rgInventory[i].wItem ==
+                                 g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID)
+                              {
+                                 gpGlobals->rgInventory[i].nAmountInUse--;
+                                 break;
+                              }
+                           }
+                        }
+                     }
+                  } while (g_Battle.UI.wCurPlayerIndex > 0 &&
                      (gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole] == 0 ||
                       gpGlobals->rgPlayerStatus[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole][kStatusConfused] > 0 ||
                       gpGlobals->rgPlayerStatus[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole][kStatusSleep] > 0 ||
-                      gpGlobals->rgPlayerStatus[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole][kStatusParalyzed] > 0))
-                  {
-                     g_Battle.rgPlayer[--g_Battle.UI.wCurPlayerIndex].state = kFighterWait;
-                  }
+                      gpGlobals->rgPlayerStatus[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole][kStatusParalyzed] > 0));
                }
             }
 #else

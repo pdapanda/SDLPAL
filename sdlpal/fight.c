@@ -1559,6 +1559,14 @@ PAL_BattleStartFrame(
          }
 
          //
+         // Clear all item-using records
+         //
+         for (i = 0; i < MAX_INVENTORY; i++)
+         {
+            gpGlobals->rgInventory[i].nAmountInUse = 0;
+         }
+
+         //
          // Proceed to next turn...
          //
          g_Battle.Phase = kBattlePhaseSelectAction;
@@ -1700,8 +1708,26 @@ PAL_BattleCommitAction(
       }
       break;
 
-   case kBattleActionThrowItem:
+#ifdef PAL_CLASSIC
    case kBattleActionUseItem:
+      if ((gpGlobals->g.rgObject[g_Battle.UI.wObjectID].item.wFlags & kItemFlagConsuming) == 0)
+      {
+         break;
+      }
+
+   case kBattleActionThrowItem:
+      for (w = 0; w < MAX_INVENTORY; w++)
+      {
+         if (gpGlobals->rgInventory[w].wItem == g_Battle.UI.wObjectID)
+         {
+            gpGlobals->rgInventory[w].nAmountInUse++;
+            break;
+         }
+      }
+      break;
+#endif
+
+   default:
       break;
    }
 
@@ -1729,7 +1755,7 @@ PAL_BattleCommitAction(
                //
                // The Wine God is an ultimate move which should take long
                //
-               wCostMP = 135;
+               wCostMP = 175;
             }
          }
          else if (p->wType == kMagicTypeApplyToPlayer || p->wType == kMagicTypeApplyToParty ||

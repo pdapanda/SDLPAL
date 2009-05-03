@@ -689,7 +689,7 @@ PAL_GetItemAmount(
 
       if (gpGlobals->rgInventory[i].wItem == wItem)
       {
-         return gpGlobals->rgInventory[i].nAmount - gpGlobals->rgInventory[i].nAmountInUse;
+         return gpGlobals->rgInventory[i].nAmount;
       }
    }
 

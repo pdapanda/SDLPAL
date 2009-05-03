@@ -1285,6 +1285,14 @@ PAL_StartBattle(
    }
 
    //
+   // Clear all item-using records
+   //
+   for (w = 0; w < MAX_INVENTORY; w++)
+   {
+      gpGlobals->rgInventory[w].nAmountInUse = 0;
+   }
+
+   //
    // Clear all player status, poisons and temporary effects
    //
    PAL_ClearAllPlayerStatus();
