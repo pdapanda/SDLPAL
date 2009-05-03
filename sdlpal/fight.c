@@ -3072,7 +3072,7 @@ PAL_BattlePlayerValidateAction(
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0 ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
-            g_Battle.rgPlayer[i].flTimeMeter < 100 ||
+            (g_Battle.rgPlayer[i].flTimeMeter < 100 && g_fActiveTime) ||
             (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
 #endif
          {
