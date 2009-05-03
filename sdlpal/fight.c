@@ -3110,6 +3110,26 @@ PAL_BattlePlayerValidateAction(
          fToEnemy = TRUE;
          g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
       }
+      else
+      {
+         for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+         {
+            if (i != wPlayerIndex &&
+               gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] != 0)
+            {
+               break;
+            }
+         }
+
+         if (i > gpGlobals->wMaxPartyMemberIndex)
+         {
+            //
+            // Attack enemies if no one else is alive
+            //
+            fToEnemy = TRUE;
+            g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+         }
+      }
       break;
    }
 
