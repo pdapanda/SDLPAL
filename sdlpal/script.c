@@ -343,7 +343,7 @@ PAL_AdditionalCredits(
 #endif
       " ",
       "  (c) 2009, Wei Mingzhi",
-      "      <weimingzhi@gmail.com>.",
+      "      <whistler_wmz@users.sf.net>.",
 #ifdef __SYMBIAN32__
       "  Symbian S60 \xB2\xBE\xB4\xD3 (c) 2009, netwan.",
 #endif
@@ -352,7 +352,7 @@ PAL_AdditionalCredits(
       " GNU General",
       "Public License (GPLv3) \xB5\x6F\xA7\x47",
       " ",
-      "             ...Any key to exit",
+      "                 ...\xAB\xF6 Enter \xB5\xB2\xA7\xF4",
       ""
    };
 
@@ -2825,7 +2825,7 @@ PAL_RunTriggerScript(
    int               i;
 
    extern BOOL       g_fUpdatedInBattle; // HACKHACK
-
+PAL_AdditionalCredits();
    wNextScriptEntry = wScriptEntry;
    fEnded = FALSE;
    g_fUpdatedInBattle = FALSE;
