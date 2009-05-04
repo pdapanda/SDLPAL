@@ -2825,7 +2825,7 @@ PAL_RunTriggerScript(
    int               i;
 
    extern BOOL       g_fUpdatedInBattle; // HACKHACK
-PAL_AdditionalCredits();
+
    wNextScriptEntry = wScriptEntry;
    fEnded = FALSE;
    g_fUpdatedInBattle = FALSE;
