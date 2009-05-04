@@ -934,6 +934,21 @@ PAL_BattleWon(
       {
          gpGlobals->g.PlayerRoles.rgwHP[w] = 1;
       }
+      else if (g_Battle.iExpGained > 0)
+      {
+         FLOAT f =
+            (gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel] / 4.0f) / g_Battle.iExpGained;
+
+         if (f < 2)
+         {
+            f = 2;
+         }
+
+         gpGlobals->g.PlayerRoles.rgwHP[w] +=
+            (gpGlobals->g.PlayerRoles.rgwMaxHP[w] - gpGlobals->g.PlayerRoles.rgwHP[w]) / f;
+         gpGlobals->g.PlayerRoles.rgwMP[w] +=
+            (gpGlobals->g.PlayerRoles.rgwMaxMP[w] - gpGlobals->g.PlayerRoles.rgwMP[w]) / f / 1.5;
+      }
 #endif
    }
 }
