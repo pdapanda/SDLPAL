@@ -3566,11 +3566,7 @@ PAL_BattlePlayerPerformAction(
          g_Battle.rgPlayer[i].state = kFighterWait;
 #else
          g_Battle.rgPlayer[i].flTimeMeter = 0;
-
-         if (g_fActiveTime)
-         {
-            g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
-         }
+         g_Battle.rgPlayer[i].flTimeSpeedModifier = (g_fActiveTime ? 2 : 1);
 #endif
       }
 
