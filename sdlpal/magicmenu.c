@@ -54,13 +54,6 @@ PAL_MagicSelectionMenuUpdate(
    BYTE        bColor;
 
    //
-   // Draw the cash amount.
-   //
-   PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
-   PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE);
-   PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
-
-   //
    // Check for inputs
    //
    if (g_InputState.dwKeyPress & kKeyUp)
@@ -105,19 +98,74 @@ PAL_MagicSelectionMenuUpdate(
    }
 
    //
-   // Draw the box.
+   // Create the box.
    //
    PAL_CreateBox(PAL_XY(10, 42), 4, 16, 1, FALSE);
 
-   //
-   // Draw the MP of the selected magic.
-   //
-   PAL_CreateSingleLineBox(PAL_XY(215, 0), 5, FALSE);
-   PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
-      gpScreen, PAL_XY(260, 14));
-   PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(230, 14),
-      kNumColorYellow, kNumAlignRight);
-   PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(265, 14), kNumColorCyan, kNumAlignRight);
+   if (gpGlobals->lpObjectDesc == NULL)
+   {
+      //
+      // Draw the cash amount.
+      //
+      PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+      PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE);
+      PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
+
+      //
+      // Draw the MP of the selected magic.
+      //
+      PAL_CreateSingleLineBox(PAL_XY(215, 0), 5, FALSE);
+      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
+         gpScreen, PAL_XY(260, 14));
+      PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(230, 14),
+         kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(265, 14), kNumColorCyan, kNumAlignRight);
+   }
+   else
+   {
+      char szDesc[512], *d, *next;
+      d = (char *)PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
+
+      //
+      // Draw the magic description.
+      //
+      if (d != NULL)
+      {
+         k = 3;
+         strcpy(szDesc, d);
+         d = szDesc;
+
+         while (TRUE)
+         {
+            next = strchr(d, '*');
+            if (next != NULL)
+            {
+               *next = '\0';
+               next++;
+            }
+
+            PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE);
+            k += 16;
+
+            if (next == NULL)
+            {
+               break;
+            }
+
+            d = next;
+         }
+      }
+
+      //
+      // Draw the MP of the selected magic.
+      //
+      PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
+         gpScreen, PAL_XY(45, 14));
+      PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
+         kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
+   }
 
    //
    // Draw the texts of the current page
@@ -340,10 +388,20 @@ PAL_MagicSelectionMenu(
    PAL_MagicSelectionMenuInit(wPlayerRole, fInBattle, wDefaultMagic);
    PAL_ClearKeyState();
 
+   if (gpGlobals->lpObjectDesc != NULL)
+   {
+      VIDEO_BackupScreen();
+   }
+
    dwTime = SDL_GetTicks();
 
    while (TRUE)
    {
+      if (gpGlobals->lpObjectDesc != NULL)
+      {
+         VIDEO_RestoreScreen();
+      }
+
       w = PAL_MagicSelectionMenuUpdate();
       VIDEO_UpdateScreen(NULL);
 

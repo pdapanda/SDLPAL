@@ -663,3 +663,127 @@ PAL_DrawNumber(
       iNum /= 10;
    }
 }
+
+LPOBJECTDESC
+PAL_LoadObjectDesc(
+   LPCSTR         lpszFileName
+)
+/*++
+  Purpose:
+
+    Load the object description strings from file.
+
+  Parameters:
+
+    [IN]  lpszFileName - the filename to be loaded.
+
+  Return value:
+
+    Pointer to loaded data, in linked list form. NULL if unable to load.
+
+--*/
+{
+   FILE          *fp;
+   char           buf[512], *p;
+   LPOBJECTDESC   lpDesc = NULL, pNew = NULL;
+   unsigned int   i;
+
+   fp = fopen(lpszFileName, "r");
+
+   if (fp == NULL)
+   {
+      return NULL;
+   }
+
+   //
+   // Load the description data
+   //
+   while (fgets(buf, 512, fp) != NULL)
+   {
+      p = strchr(buf, '=');
+      if (p == NULL)
+      {
+         continue;
+      }
+
+      *p = '\0';
+      p++;
+
+      pNew = UTIL_calloc(1, sizeof(OBJECTDESC));
+
+      sscanf(buf, "%x", &i);
+      pNew->wObjectID = i;
+      pNew->lpDesc = strdup(p);
+
+      pNew->next = lpDesc;
+      lpDesc = pNew;
+   }
+
+   return lpDesc;
+}
+
+VOID
+PAL_FreeObjectDesc(
+   LPOBJECTDESC   lpObjectDesc
+)
+/*++
+  Purpose:
+
+    Free the object description data.
+
+  Parameters:
+
+    [IN]  lpObjectDesc - the description data to be freed.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   LPOBJECTDESC    p;
+
+   while (lpObjectDesc != NULL)
+   {
+      p = lpObjectDesc->next;
+      free(lpObjectDesc->lpDesc);
+      free(lpObjectDesc);
+      lpObjectDesc = p;
+   }
+}
+
+LPCSTR
+PAL_GetObjectDesc(
+   LPOBJECTDESC   lpObjectDesc,
+   WORD           wObjectID
+)
+/*++
+  Purpose:
+
+    Get the object description string from the linked list.
+
+  Parameters:
+
+    [IN]  lpObjectDesc - the description data linked list.
+
+    [IN]  wObjectID - the object ID.
+
+  Return value:
+
+    The description string. NULL if the specified object ID
+    is not found.
+
+--*/
+{
+   while (lpObjectDesc != NULL)
+   {
+      if (lpObjectDesc->wObjectID == wObjectID)
+      {
+         return lpObjectDesc->lpDesc;
+      }
+
+      lpObjectDesc = lpObjectDesc->next;
+   }
+
+   return NULL;
+}

@@ -80,6 +80,8 @@ PAL_InitGlobals(
    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
    gpGlobals->f.fpVOC = UTIL_OpenRequiredFile("voc.mkf");
 
+   gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
+
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -135,6 +137,11 @@ PAL_FreeGlobals(
       free(gpGlobals->g.lprgMagic);
       free(gpGlobals->g.lprgBattleField);
       free(gpGlobals->g.lprgLevelUpMagic);
+
+      //
+      // Free the object description data
+      //
+      PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
 
       //
       // Delete the instance

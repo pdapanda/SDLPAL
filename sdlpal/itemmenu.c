@@ -203,6 +203,42 @@ PAL_ItemSelectMenuUpdate(
       PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(12, 148));
    }
 
+   //
+   // Draw the description of the selected item
+   //
+   if (gpGlobals->lpObjectDesc != NULL)
+   {
+      char szDesc[512], *d, *next;
+      d = (char *)PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
+
+      if (d != NULL)
+      {
+         k = 150;
+         strcpy(szDesc, d);
+         d = szDesc;
+
+         while (TRUE)
+         {
+            next = strchr(d, '*');
+            if (next != NULL)
+            {
+               *next = '\0';
+               next++;
+            }
+
+            PAL_DrawText(d, PAL_XY(75, k), DESCTEXT_COLOR, TRUE, FALSE);
+            k += 16;
+
+            if (next == NULL)
+            {
+               break;
+            }
+
+            d = next;
+         }
+      }
+   }
+
    if (g_InputState.dwKeyPress & kKeySearch)
    {
       if ((gpGlobals->g.rgObject[wObject].item.wFlags & g_wItemFlags) &&
@@ -296,10 +332,20 @@ PAL_ItemSelectMenu(
       (*lpfnMenuItemChanged)(gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem);
    }
 
+   if (gpGlobals->lpObjectDesc != NULL)
+   {
+      VIDEO_BackupScreen();
+   }
+
    dwTime = SDL_GetTicks();
 
    while (TRUE)
    {
+      if (gpGlobals->lpObjectDesc != NULL)
+      {
+         VIDEO_RestoreScreen();
+      }
+
       w = PAL_ItemSelectMenuUpdate();
       VIDEO_UpdateScreen(NULL);
 
