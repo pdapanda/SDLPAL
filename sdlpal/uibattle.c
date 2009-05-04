@@ -972,14 +972,17 @@ PAL_BattleUIUpdate(
    switch (g_Battle.UI.state)
    {
    case kBattleUIWait:
-      PAL_BattlePlayerCheckReady();
-
-      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      if (!g_Battle.fEnemyCleared)
       {
-         if (g_Battle.rgPlayer[i].state == kFighterCom)
+         PAL_BattlePlayerCheckReady();
+
+         for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
          {
-            PAL_BattleUIPlayerReady(i);
-            break;
+            if (g_Battle.rgPlayer[i].state == kFighterCom)
+            {
+               PAL_BattleUIPlayerReady(i);
+               break;
+            }
          }
       }
       break;

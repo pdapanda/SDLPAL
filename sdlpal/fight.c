@@ -681,7 +681,8 @@ PAL_BattlePostActionCheck(
 --*/
 {
    int      i, j;
-   BOOL     fFade = FALSE, fEnemyRemaining = FALSE;
+   BOOL     fFade = FALSE;
+   BOOL     fEnemyRemaining = FALSE;
 
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
    {
@@ -710,13 +711,7 @@ PAL_BattlePostActionCheck(
 
    if (!fEnemyRemaining)
    {
-      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
-      {
-         g_Battle.rgPlayer[i].state = kFighterAct;
-         g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
-         g_Battle.rgPlayer[i].fDefending = FALSE;
-      }
-
+      g_Battle.fEnemyCleared = TRUE;
       g_Battle.UI.state = kBattleUIWait;
    }
 
@@ -908,7 +903,8 @@ PAL_BattleUpdateFighters(
          }
 #ifndef PAL_CLASSIC
          else if (g_Battle.rgPlayer[i].state == kFighterAct &&
-            g_Battle.rgPlayer[i].action.ActionType == kBattleActionMagic)
+            g_Battle.rgPlayer[i].action.ActionType == kBattleActionMagic &&
+            !g_Battle.fEnemyCleared)
          {
             //
             // Player is using a magic
@@ -916,7 +912,7 @@ PAL_BattleUpdateFighters(
             g_Battle.rgPlayer[i].wCurrentFrame = 5;
          }
 #endif
-         else if (g_Battle.rgPlayer[i].fDefending)
+         else if (g_Battle.rgPlayer[i].fDefending && !g_Battle.fEnemyCleared)
          {
             g_Battle.rgPlayer[i].wCurrentFrame = 3;
          }
@@ -1031,7 +1027,6 @@ PAL_BattleStartFrame(
 --*/
 {
    int                      i;
-   BOOL                     fEnded;
    WORD                     wPlayerRole;
    WORD                     wDexterity;
    BOOL                     fOnlyPuppet = TRUE;
@@ -1053,18 +1048,7 @@ PAL_BattleStartFrame(
    //
    // Check if the battle is over
    //
-   fEnded = TRUE;
-
-   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
-   {
-      if (g_Battle.rgEnemy[i].wObjectID != 0)
-      {
-         fEnded = FALSE;
-         break;
-      }
-   }
-
-   if (fEnded)
+   if (g_Battle.fEnemyCleared)
    {
       //
       // All enemies are cleared. Won the battle.
@@ -1075,7 +1059,7 @@ PAL_BattleStartFrame(
    }
    else
    {
-      fEnded = TRUE;
+      BOOL fEnded = TRUE;
 
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
@@ -1617,13 +1601,17 @@ PAL_BattleStartFrame(
    //
    // The R and F keys and Fleeing should affect all players
    //
-   if (g_InputState.dwKeyPress & kKeyRepeat)
+   if (g_Battle.UI.MenuState == kBattleMenuMain &&
+      g_Battle.UI.state == kBattleUISelectMove)
    {
-      g_Battle.fRepeat = TRUE;
-   }
-   else if (g_InputState.dwKeyPress & kKeyForce)
-   {
-      g_Battle.fForce = TRUE;
+      if (g_InputState.dwKeyPress & kKeyRepeat)
+      {
+         g_Battle.fRepeat = TRUE;
+      }
+      else if (g_InputState.dwKeyPress & kKeyForce)
+      {
+         g_Battle.fForce = TRUE;
+      }
    }
 
    if (g_Battle.fRepeat)
@@ -3045,11 +3033,31 @@ PAL_BattlePlayerValidateAction(
          {
             g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
          }
+         else if (gpGlobals->g.rgObject[wObjectID].magic.wFlags & kMagicFlagApplyToAll)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
+         }
+         else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+         }
+
          fToEnemy = TRUE;
       }
-      else if (!fValid)
+      else
       {
-         g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionDefend;
+         if (!fValid)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionDefend;
+         }
+         else if (gpGlobals->g.rgObject[wObjectID].magic.wFlags & kMagicFlagApplyToAll)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
+         }
+         else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = wPlayerIndex;
+         }
       }
       break;
 
@@ -3092,12 +3100,28 @@ PAL_BattlePlayerValidateAction(
       {
          g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
       }
+      else if (gpGlobals->g.rgObject[wObjectID].item.wFlags & kItemFlagApplyToAll)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
+      }
+      else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+      }
       break;
 
    case kBattleActionUseItem:
       if (PAL_GetItemAmount(wObjectID) == 0)
       {
          g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionDefend;
+      }
+      else if (gpGlobals->g.rgObject[wObjectID].item.wFlags & kItemFlagApplyToAll)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
+      }
+      else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = wPlayerIndex;
       }
       break;
 

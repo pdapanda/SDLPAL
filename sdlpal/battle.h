@@ -163,6 +163,7 @@ typedef struct tagBATTLE
    INT              iCashGained;          // total cash gained
 
    BOOL             fIsBoss;              // TRUE if boss fight
+   BOOL             fEnemyCleared;        // TRUE if enemies are cleared
    BATTLERESULT     BattleResult;
 
    FLOAT            flTimeChargingUnit;   // the base waiting time unit
