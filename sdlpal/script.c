@@ -336,7 +336,7 @@ PAL_AdditionalCredits(
 
 --*/
 {
-   const char rgszStrings[][50] = {
+   LPCSTR rgszStrings[] = {
       "SDLPAL (http://sdlpal.codeplex.com)",
 #ifdef PAL_CLASSIC
       "                  (\xB8\x67\xA8\xE5\xAF\x53\xA7\x4F\xBD\x67)",
