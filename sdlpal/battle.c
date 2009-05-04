@@ -947,7 +947,7 @@ PAL_BattleWon(
          gpGlobals->g.PlayerRoles.rgwHP[w] +=
             (gpGlobals->g.PlayerRoles.rgwMaxHP[w] - gpGlobals->g.PlayerRoles.rgwHP[w]) / f;
          gpGlobals->g.PlayerRoles.rgwMP[w] +=
-            (gpGlobals->g.PlayerRoles.rgwMaxMP[w] - gpGlobals->g.PlayerRoles.rgwMP[w]) / f / 1.5;
+            (gpGlobals->g.PlayerRoles.rgwMaxMP[w] - gpGlobals->g.PlayerRoles.rgwMP[w]) / f / 1.2;
       }
 #endif
    }
