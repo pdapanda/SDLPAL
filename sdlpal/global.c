@@ -260,7 +260,6 @@ PAL_InitGlobalGameData(
 
       PAL_ReadGlobalGameData();
    }
-
 #undef PAL_DOALLOCATE
 }
 

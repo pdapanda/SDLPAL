@@ -383,23 +383,25 @@ PAL_MagicSelectionMenu(
 --*/
 {
    WORD            w;
+   int             i;
    DWORD           dwTime;
 
    PAL_MagicSelectionMenuInit(wPlayerRole, fInBattle, wDefaultMagic);
    PAL_ClearKeyState();
 
-   if (gpGlobals->lpObjectDesc != NULL)
-   {
-      VIDEO_BackupScreen();
-   }
-
    dwTime = SDL_GetTicks();
 
    while (TRUE)
    {
-      if (gpGlobals->lpObjectDesc != NULL)
+      PAL_MakeScene();
+
+      w = 45;
+
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
-         VIDEO_RestoreScreen();
+         PAL_PlayerInfoBox(PAL_XY(w, 165), gpGlobals->rgParty[i].wPlayerRole, 100,
+            TIMEMETER_COLOR_DEFAULT, FALSE);
+         w += 78;
       }
 
       w = PAL_MagicSelectionMenuUpdate();

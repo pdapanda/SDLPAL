@@ -332,19 +332,11 @@ PAL_ItemSelectMenu(
       (*lpfnMenuItemChanged)(gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem);
    }
 
-   if (gpGlobals->lpObjectDesc != NULL)
-   {
-      VIDEO_BackupScreen();
-   }
-
    dwTime = SDL_GetTicks();
 
    while (TRUE)
    {
-      if (gpGlobals->lpObjectDesc != NULL)
-      {
-         VIDEO_RestoreScreen();
-      }
+      PAL_MakeScene();
 
       w = PAL_ItemSelectMenuUpdate();
       VIDEO_UpdateScreen(NULL);
