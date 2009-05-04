@@ -317,6 +317,61 @@ PAL_PartyRideEventObject(
    }
 }
 
+static VOID
+PAL_AdditionalCredits(
+   VOID
+)
+/*++
+  Purpose:
+
+    Show the additional credits.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   const char rgszStrings[][50] = {
+      "SDLPAL (http://sdlpal.codeplex.com)",
+#ifdef PAL_CLASSIC
+      "                  (\xB8\x67\xA8\xE5\xAF\x53\xA7\x4F\xBD\x67)",
+#endif
+      " ",
+      "  (c) 2009, Wei Mingzhi",
+      "      <weimingzhi@gmail.com>.",
+#ifdef __SYMBIAN32__
+      "  Symbian S60 \xB2\xBE\xB4\xD3 (c) 2009, netwan.",
+#endif
+      " ",
+      "\xA5\xBB\xB5\x7B\xA6\xA1\xAC\x4F\xA6\xDB\xA5\xD1\xB3\x6E\xC5\xE9\xA1\x41\xAB\xF6\xB7\xD3"
+      " GNU General",
+      "Public License (GPLv3) \xB5\x6F\xA7\x47",
+      " ",
+      "             ...Any key to exit",
+      ""
+   };
+
+   int        i = 0;
+
+   PAL_DrawOpeningMenuBackground();
+
+   while (rgszStrings[i][0] != '\0')
+   {
+      PAL_DrawText(rgszStrings[i], PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
+      i++;
+   }
+
+   PAL_SetPalette(0, FALSE);
+   VIDEO_UpdateScreen(NULL);
+
+   PAL_WaitForKey();
+}
+
 static WORD
 PAL_InterpretInstruction(
    WORD           wScriptEntry,
@@ -2656,6 +2711,7 @@ PAL_InterpretInstruction(
       //
       // Quit game
       //
+      PAL_AdditionalCredits();
       PAL_Shutdown();
       exit(0);
       break;

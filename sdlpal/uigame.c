@@ -20,7 +20,7 @@
 
 #include "main.h"
 
-static VOID
+VOID
 PAL_DrawOpeningMenuBackground(
    VOID
 )

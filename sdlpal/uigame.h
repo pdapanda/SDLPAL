@@ -28,6 +28,11 @@ extern "C"
 
 #include "ui.h"
 
+VOID
+PAL_DrawOpeningMenuBackground(
+   VOID
+);
+
 INT
 PAL_OpeningMenu(
    VOID
