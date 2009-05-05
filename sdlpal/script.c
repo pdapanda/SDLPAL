@@ -2625,7 +2625,10 @@ PAL_InterpretInstruction(
          }
       }
 
-      if (x < y || g_Battle.iHidingTime > 0)
+      if (x < y || g_Battle.iHidingTime > 0 ||
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusSleep] != 0 ||
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusParalyzed] != 0 ||
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusConfused] != 0)
       {
          if (pScript->rgwOperand[2] != 0)
          {
@@ -2681,7 +2684,10 @@ PAL_InterpretInstruction(
       //
       // Enemy transforms into something else
       //
-      if (g_Battle.iHidingTime <= 0)
+      if (g_Battle.iHidingTime <= 0 &&
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusSleep] == 0 &&
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusParalyzed] == 0 &&
+         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusConfused] == 0)
       {
          w = g_Battle.rgEnemy[wEventObjectID].e.wHealth;
 
