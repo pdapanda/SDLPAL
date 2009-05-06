@@ -438,8 +438,8 @@ PAL_StartDialog(
 
 --*/
 {
-   BYTE         buf[16384];
-   SDL_Rect     rect;
+   PAL_LARGE BYTE buf[16384];
+   SDL_Rect       rect;
 
    if (gpGlobals->fInBattle && !g_fUpdatedInBattle)
    {
@@ -582,7 +582,8 @@ PAL_DialogWaitForKey(
 
 --*/
 {
-   SDL_Color   palette[256], *pCurrentPalette, t;
+   PAL_LARGE SDL_Color   palette[256];
+   SDL_Color   *pCurrentPalette, t;
    int         i;
 
    //

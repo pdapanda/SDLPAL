@@ -684,7 +684,8 @@ PAL_LoadObjectDesc(
 --*/
 {
    FILE          *fp;
-   char           buf[512], *p;
+   PAL_LARGE   char           buf[512];
+   char          *p;
    LPOBJECTDESC   lpDesc = NULL, pNew = NULL;
    unsigned int   i;
 

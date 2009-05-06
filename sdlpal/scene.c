@@ -383,7 +383,7 @@ PAL_ApplyWave(
    int                  i, a, b;
    static int           index = 0;
    LPBYTE               p;
-   BYTE                 buf[320];
+   PAL_LARGE BYTE       buf[320];
 
    gpGlobals->wScreenWave += gpGlobals->sWaveProgression;
 

@@ -1258,7 +1258,8 @@ PAL_ItemUseMenu(
 
 --*/
 {
-   BYTE           bColor, bSelectedColor, bufImage[2048];
+   BYTE           bColor, bSelectedColor; 
+   PAL_LARGE BYTE bufImage[2048];
    DWORD          dwColorChangeTime;
    static WORD    wSelectedPlayer = 0;
    SDL_Rect       rect = {110, 2, 200, 180};
@@ -1470,7 +1471,7 @@ PAL_BuyMenu_OnItemChange(
 {
    const SDL_Rect      rect = {20, 8, 128, 175};
    int                 i, n;
-   BYTE                bufImage[2048];
+   PAL_LARGE BYTE      bufImage[2048];
 
    //
    // Draw the picture of current selected item

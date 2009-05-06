@@ -43,7 +43,7 @@ PAL_GetPalette(
 --*/
 {
    static SDL_Color      palette[256];
-   BYTE                  buf[1536];
+   PAL_LARGE BYTE        buf[1536];
    INT                   i;
 
    //
@@ -136,7 +136,8 @@ PAL_FadeOut(
 {
    int            i, j;
    UINT           time;
-   SDL_Color      palette[256], newpalette[256];
+   PAL_LARGE SDL_Color      palette[256];
+   PAL_LARGE SDL_Color		newpalette[256];
 
    //
    // Get the original palette...
@@ -200,7 +201,7 @@ PAL_FadeIn(
    int            i, j;
    UINT           time;
    SDL_Color     *palette = PAL_GetPalette(iPaletteNum, fNight);
-   SDL_Color      newpalette[256];
+   PAL_LARGE SDL_Color newpalette[256];
 
    if (palette == NULL)
    {
@@ -379,7 +380,8 @@ PAL_PaletteFade(
    int            i, j;
    UINT           time;
    SDL_Color     *newpalette = PAL_GetPalette(iPaletteNum, fNight);
-   SDL_Color      palette[256], t[256];
+   PAL_LARGE SDL_Color      palette[256];
+   PAL_LARGE SDL_Color		t[256];
 
    if (newpalette == NULL)
    {
@@ -454,7 +456,7 @@ PAL_ColorFade(
 --*/
 {
    SDL_Color       *palette;
-   SDL_Color        newpalette[256];
+   PAL_LARGE SDL_Color        newpalette[256];
    int              i, j;
 
    palette = PAL_GetPalette(gpGlobals->wNumPalette, gpGlobals->fNightPalette);
@@ -578,7 +580,7 @@ PAL_FadeToRed(
 --*/
 {
    SDL_Color       *palette;
-   SDL_Color        newpalette[256];
+   PAL_LARGE SDL_Color        newpalette[256];
    int              i, j;
    BYTE             color;
 
