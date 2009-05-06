@@ -222,7 +222,7 @@ PAL_SceneDrawSprites(
       PAL_AddSpriteToDraw(lpBitmap,
          gpGlobals->rgParty[i].x - PAL_RLEGetWidth(lpBitmap) / 2,
          gpGlobals->rgParty[i].y + gpGlobals->wLayer + 10,
-         gpGlobals->wLayer + 10);
+         gpGlobals->wLayer + 6);
 
       //
       // Calculate covering tiles on the map
