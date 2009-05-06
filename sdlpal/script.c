@@ -1361,7 +1361,7 @@ PAL_InterpretInstruction(
       // Set background music
       //
       gpGlobals->wNumMusic = pScript->rgwOperand[0];
-      RIX_Play(pScript->rgwOperand[0], (pScript->rgwOperand != 0x3D), pScript->rgwOperand[1]);
+      RIX_Play(pScript->rgwOperand[0], (pScript->rgwOperand[0] != 0x3D), pScript->rgwOperand[1]);
       break;
 
    case 0x0044:
