@@ -1120,7 +1120,7 @@ PAL_PlayerStatus(
       //
       PAL_DrawNumber(gpGlobals->Exp.rgPrimaryExp[iPlayerRole].wExp, 5,
          PAL_XY(58, 6), kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[iPlayerRole].wLevel],
+      PAL_DrawNumber(gpGlobals->g.rgLevelUpExp[gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole]],
          5, PAL_XY(58, 15), kNumColorCyan, kNumAlignRight);
       PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole], 2,
          PAL_XY(54, 35), kNumColorYellow, kNumAlignRight);
@@ -1258,7 +1258,7 @@ PAL_ItemUseMenu(
 
 --*/
 {
-   BYTE           bColor, bSelectedColor; 
+   BYTE           bColor, bSelectedColor;
    PAL_LARGE BYTE bufImage[2048];
    DWORD          dwColorChangeTime;
    static WORD    wSelectedPlayer = 0;
