@@ -270,6 +270,11 @@ PAL_GetEnemyDexterity(
    s = (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 3;
    s += (SHORT)g_Battle.rgEnemy[wEnemyIndex].e.wDexterity;
 
+   if (s < 10)
+   {
+      s = 10;
+   }
+
 #ifndef PAL_CLASSIC
    if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusHaste] != 0)
    {
@@ -757,6 +762,7 @@ PAL_BattlePostActionCheck(
 
                   g_Battle.BattleResult = kBattleResultOnGoing;
 
+                  PAL_ClearKeyState();
                   goto end;
                }
             }
@@ -818,6 +824,7 @@ PAL_BattlePostActionCheck(
                      PAL_RunTriggerScript(gpGlobals->g.rgObject[wName].player.wScriptOnDying, w);
 
                   g_Battle.BattleResult = kBattleResultOnGoing;
+                  PAL_ClearKeyState();
                }
 
                goto end;

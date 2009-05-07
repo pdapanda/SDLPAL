@@ -134,8 +134,8 @@ PAL_CalcCoverTiles(
                   break;
 
                case 2:
-                  dx = sh ? x : (x - 1);
-                  dy = sh ? (y + 1) : y;
+                  dx = (sh ? x : (x - 1));
+                  dy = (sh ? (y + 1) : y);
                   dh = 1 - sh;
                   break;
 
@@ -146,8 +146,8 @@ PAL_CalcCoverTiles(
                   break;
 
                case 4:
-                  dx = sh ? (x + 1) : x;
-                  dy = sh ? (y + 1) : y;
+                  dx = (sh ? (x + 1) : x);
+                  dy = (sh ? (y + 1) : y);
                   dh = 1 - sh;
                   break;
             }
@@ -383,7 +383,7 @@ PAL_ApplyWave(
    int                  i, a, b;
    static int           index = 0;
    LPBYTE               p;
-   PAL_LARGE BYTE       buf[320];
+   BYTE                 buf[320];
 
    gpGlobals->wScreenWave += gpGlobals->sWaveProgression;
 
