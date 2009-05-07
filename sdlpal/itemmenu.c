@@ -320,7 +320,7 @@ PAL_ItemSelectMenuInit(
       {
          w = gpGlobals->rgParty[i].wPlayerRole;
 
-         for (j = 0; j <= MAX_PLAYER_EQUIPMENTS; j++)
+         for (j = 0; j < MAX_PLAYER_EQUIPMENTS; j++)
          {
             if (gpGlobals->g.rgObject[gpGlobals->g.PlayerRoles.rgwEquipment[j][w]].item.wFlags & kItemFlagUsable)
             {
