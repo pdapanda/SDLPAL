@@ -80,7 +80,7 @@ PAL_GameUpdate(
       //
       // Update the vanish time for all event objects
       //
-      for (wEventObjectID = 0; wEventObjectID < gpGlobals->g.nEventObject; wEventObjectID++)
+      for (wEventObjectID = 1; wEventObjectID < gpGlobals->g.nEventObject; wEventObjectID++)
       {
          p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
 
