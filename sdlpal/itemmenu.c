@@ -314,21 +314,24 @@ PAL_ItemSelectMenuInit(
    //
    // Also add usable equipped items to the list
    //
-   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+   if (wItemFlags & kItemFlagUsable)
    {
-      w = gpGlobals->rgParty[i].wPlayerRole;
-
-      for (j = 0; j <= MAX_PLAYER_EQUIPMENTS; j++)
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
-         if (gpGlobals->g.rgObject[gpGlobals->g.PlayerRoles.rgwEquipment[j][w]].item.wFlags & kItemFlagUsable)
-         {
-            if (g_iNumInventory < MAX_INVENTORY)
-            {
-               gpGlobals->rgInventory[g_iNumInventory].wItem = gpGlobals->g.PlayerRoles.rgwEquipment[j][w];
-               gpGlobals->rgInventory[g_iNumInventory].nAmount = 0;
-               gpGlobals->rgInventory[g_iNumInventory].nAmountInUse = (WORD)-1;
+         w = gpGlobals->rgParty[i].wPlayerRole;
 
-               g_iNumInventory++;
+         for (j = 0; j <= MAX_PLAYER_EQUIPMENTS; j++)
+         {
+            if (gpGlobals->g.rgObject[gpGlobals->g.PlayerRoles.rgwEquipment[j][w]].item.wFlags & kItemFlagUsable)
+            {
+               if (g_iNumInventory < MAX_INVENTORY)
+               {
+                  gpGlobals->rgInventory[g_iNumInventory].wItem = gpGlobals->g.PlayerRoles.rgwEquipment[j][w];
+                  gpGlobals->rgInventory[g_iNumInventory].nAmount = 0;
+                  gpGlobals->rgInventory[g_iNumInventory].nAmountInUse = (WORD)-1;
+
+                  g_iNumInventory++;
+               }
             }
          }
       }

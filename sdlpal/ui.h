@@ -42,7 +42,7 @@ extern "C"
       SDL_GetTicks() / (600 / MENUITEM_COLOR_SELECTED_TOTALNUM)    \
       % MENUITEM_COLOR_SELECTED_TOTALNUM)
 
-#define MENUITEM_COLOR_EQUIPPEDITEM        0x85
+#define MENUITEM_COLOR_EQUIPPEDITEM        0x65
 
 #define DESCTEXT_COLOR                     0x2E
 
