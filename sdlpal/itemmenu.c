@@ -137,7 +137,7 @@ PAL_ItemSelectMenuUpdate(
                //
                // This item is selectable
                //
-               if ((SHORT)gpGlobals->rgInventory[i].nAmountInUse < 0)
+               if (gpGlobals->rgInventory[i].nAmount == 0)
                {
                   bColor = MENUITEM_COLOR_EQUIPPEDITEM;
                }
@@ -155,7 +155,7 @@ PAL_ItemSelectMenuUpdate(
             //
             bColor = MENUITEM_COLOR_INACTIVE;
          }
-         else if ((SHORT)gpGlobals->rgInventory[i].nAmountInUse < 0)
+         else if (gpGlobals->rgInventory[i].nAmount == 0)
          {
             bColor = MENUITEM_COLOR_EQUIPPEDITEM;
          }
@@ -178,7 +178,7 @@ PAL_ItemSelectMenuUpdate(
          //
          // Draw the amount of this item
          //
-		 if (gpGlobals->rgInventory[i].nAmount - gpGlobals->rgInventory[i].nAmountInUse > 1)
+		 if ((SHORT)gpGlobals->rgInventory[i].nAmount - (SHORT)gpGlobals->rgInventory[i].nAmountInUse > 1)
 		 {
             PAL_DrawNumber(gpGlobals->rgInventory[i].nAmount - gpGlobals->rgInventory[i].nAmountInUse,
                2, PAL_XY(96 + k * 100, 17 + j * 18), kNumColorCyan, kNumAlignRight);
@@ -256,7 +256,7 @@ PAL_ItemSelectMenuUpdate(
          (SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount >
          (SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse)
       {
-         if ((SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse >= 0)
+         if (gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount > 0)
          {
             j = (gpGlobals->iCurInvMenuItem < 3 * 4) ? (gpGlobals->iCurInvMenuItem / 3) : 4;
             k = gpGlobals->iCurInvMenuItem % 3;
