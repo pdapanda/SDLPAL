@@ -524,6 +524,8 @@ PAL_CheckObstacle(
 
 --*/
 {
+   int x, y, h, xr, yr;
+
    if (PAL_X(pos) < 0 || PAL_X(pos) >= 2048 || PAL_Y(pos) < 0 || PAL_Y(pos) >= 2048)
    {
       return TRUE;
@@ -532,8 +534,35 @@ PAL_CheckObstacle(
    //
    // Check if the map tile at the specified position is blocking
    //
-   if (PAL_MapTileIsBlocked(PAL_X(pos) / 32, PAL_Y(pos) / 16,
-      (PAL_X(pos) % 32) ? 1 : 0, PAL_GetCurrentMap()))
+   x = PAL_X(pos) / 32;
+   y = PAL_Y(pos) / 16;
+   h = 0;
+
+   xr = PAL_X(pos) % 32;
+   yr = PAL_Y(pos) % 16;
+
+   if (xr + yr * 2 >= 16)
+   {
+      if (xr + yr * 2 >= 48)
+      {
+         x++;
+         y++;
+      }
+      else if (32 - xr + yr * 2 < 16)
+      {
+         x++;
+      }
+      else if (32 - xr + yr * 2 < 48)
+      {
+         h = 1;
+      }
+      else
+      {
+         y++;
+      }
+   }
+
+   if (PAL_MapTileIsBlocked(x, y, h, PAL_GetCurrentMap()))
    {
       return TRUE;
    }
