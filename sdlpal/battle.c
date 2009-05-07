@@ -686,18 +686,23 @@ PAL_BattleWon(
       dwExp = gpGlobals->Exp.rgPrimaryExp[w].wExp;
       dwExp += g_Battle.iExpGained;
 
+      if (gpGlobals->Exp.rgPrimaryExp[w].wLevel > MAX_LEVELS)
+      {
+         gpGlobals->Exp.rgPrimaryExp[w].wLevel = MAX_LEVELS;
+      }
+
       while (dwExp >= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel])
       {
          dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel];
 
-		 if (gpGlobals->Exp.rgPrimaryExp[w].wLevel < MAX_LEVELS)
-		 {
+         if (gpGlobals->Exp.rgPrimaryExp[w].wLevel < MAX_LEVELS)
+         {
             fLevelUp = TRUE;
             PAL_PlayerLevelUp(w, 1);
 
             gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
             gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
-	     }
+          }
       }
 
       gpGlobals->Exp.rgPrimaryExp[w].wExp = (WORD)dwExp;
@@ -835,11 +840,16 @@ PAL_BattleWon(
                                                             \
    dwExp += gpGlobals->Exp.expname[w].wExp;                 \
                                                             \
+   if (gpGlobals->Exp.expname[w].wLevel > MAX_LEVELS)       \
+   {                                                        \
+      gpGlobals->Exp.expname[w].wLevel = MAX_LEVELS;        \
+   }                                                        \
+                                                            \
    while (dwExp >= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.expname[w].wLevel]) \
    {                                                        \
       dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.expname[w].wLevel]; \
       gpGlobals->g.PlayerRoles.statname[w] += RandomLong(1, 2); \
-      if (gpGlobals->Exp.expname[w].wLevel < 99)            \
+      if (gpGlobals->Exp.expname[w].wLevel < MAX_LEVELS)    \
       {                                                     \
          gpGlobals->Exp.expname[w].wLevel++;                \
       }                                                     \
