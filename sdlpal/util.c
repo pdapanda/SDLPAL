@@ -255,7 +255,8 @@ UTIL_Delay(
 {
    unsigned int t = SDL_GetTicks() + ms;
 
-   SDL_PollEvent(NULL);
+   while (SDL_PollEvent(NULL));
+
    while (SDL_GetTicks() < t)
    {
       SDL_Delay(1);

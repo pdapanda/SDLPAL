@@ -414,13 +414,11 @@ PAL_MagicSelectionMenu(
          return w;
       }
 
+      PAL_ProcessEvent();
       while (SDL_GetTicks() < dwTime)
       {
-         UTIL_Delay(1);
-         if (g_InputState.dwKeyPress != 0)
-         {
-            break;
-         }
+         PAL_ProcessEvent();
+         SDL_Delay(5);
       }
 
       dwTime = SDL_GetTicks() + FRAME_TIME;
