@@ -171,6 +171,7 @@ PAL_KeyboardEventFilter(
          break;
 
       case SDLK_f:
+      case SDLK_KP5: // 5 for mobile device    
          g_InputState.dwKeyPress |= kKeyForce;
          break;
 
