@@ -846,13 +846,15 @@ end:
    //
    if (g_Battle.lpSummonSprite != NULL)
    {
+      PAL_BattleUpdateFighters();
+      PAL_BattleDelay(1, 0, FALSE);
+
       free(g_Battle.lpSummonSprite);
       g_Battle.lpSummonSprite = NULL;
 
       g_Battle.sBackgroundColorShift = 0;
 
       PAL_BattleBackupScene();
-      PAL_BattleUpdateFighters();
       PAL_BattleMakeScene();
       PAL_BattleFadeScene();
    }
