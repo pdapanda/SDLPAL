@@ -702,7 +702,7 @@ PAL_BattleWon(
 
             gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
             gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
-          }
+         }
       }
 
       gpGlobals->Exp.rgPrimaryExp[w].wExp = (WORD)dwExp;
