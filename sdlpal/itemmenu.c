@@ -125,7 +125,7 @@ PAL_ItemSelectMenuUpdate(
          if (i == gpGlobals->iCurInvMenuItem)
          {
             if (!(gpGlobals->g.rgObject[wObject].item.wFlags & g_wItemFlags) ||
-               gpGlobals->rgInventory[i].nAmount <= gpGlobals->rgInventory[i].nAmountInUse)
+               (SHORT)gpGlobals->rgInventory[i].nAmount <= (SHORT)gpGlobals->rgInventory[i].nAmountInUse)
             {
                //
                // This item is not selectable
@@ -137,16 +137,27 @@ PAL_ItemSelectMenuUpdate(
                //
                // This item is selectable
                //
-               bColor = MENUITEM_COLOR_SELECTED;
+               if ((SHORT)gpGlobals->rgInventory[i].nAmountInUse < 0)
+               {
+                  bColor = MENUITEM_COLOR_EQUIPPEDITEM;
+               }
+               else
+               {
+                  bColor = MENUITEM_COLOR_SELECTED;
+               }
             }
          }
          else if (!(gpGlobals->g.rgObject[wObject].item.wFlags & g_wItemFlags) ||
-            gpGlobals->rgInventory[i].nAmount <= gpGlobals->rgInventory[i].nAmountInUse)
+            (SHORT)gpGlobals->rgInventory[i].nAmount <= (SHORT)gpGlobals->rgInventory[i].nAmountInUse)
          {
             //
             // This item is not selectable
             //
             bColor = MENUITEM_COLOR_INACTIVE;
+         }
+         else if ((SHORT)gpGlobals->rgInventory[i].nAmountInUse < 0)
+         {
+            bColor = MENUITEM_COLOR_EQUIPPEDITEM;
          }
 
          //
@@ -242,14 +253,17 @@ PAL_ItemSelectMenuUpdate(
    if (g_InputState.dwKeyPress & kKeySearch)
    {
       if ((gpGlobals->g.rgObject[wObject].item.wFlags & g_wItemFlags) &&
-         gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount >
-         gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse)
+         (SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount >
+         (SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse)
       {
-         j = (gpGlobals->iCurInvMenuItem < 3 * 4) ? (gpGlobals->iCurInvMenuItem / 3) : 4;
-         k = gpGlobals->iCurInvMenuItem % 3;
+         if ((SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse >= 0)
+         {
+            j = (gpGlobals->iCurInvMenuItem < 3 * 4) ? (gpGlobals->iCurInvMenuItem / 3) : 4;
+            k = gpGlobals->iCurInvMenuItem % 3;
 
-         PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * 100, 12 + j * 18),
-            MENUITEM_COLOR_CONFIRMED, FALSE, FALSE);
+            PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * 100, 12 + j * 18),
+               MENUITEM_COLOR_CONFIRMED, FALSE, FALSE);
+         }
 
          return wObject;
       }
@@ -277,6 +291,9 @@ PAL_ItemSelectMenuInit(
 
 --*/
 {
+   int           i, j;
+   WORD          w;
+
    g_wItemFlags = wItemFlags;
 
    //
@@ -292,6 +309,29 @@ PAL_ItemSelectMenuInit(
       gpGlobals->rgInventory[g_iNumInventory].wItem != 0)
    {
       g_iNumInventory++;
+   }
+
+   //
+   // Also add usable equipped items to the list
+   //
+   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+   {
+      w = gpGlobals->rgParty[i].wPlayerRole;
+
+      for (j = 0; j <= MAX_PLAYER_EQUIPMENTS; j++)
+      {
+         if (gpGlobals->g.rgObject[gpGlobals->g.PlayerRoles.rgwEquipment[j][w]].item.wFlags & kItemFlagUsable)
+         {
+            if (g_iNumInventory < MAX_INVENTORY)
+            {
+               gpGlobals->rgInventory[g_iNumInventory].wItem = gpGlobals->g.PlayerRoles.rgwEquipment[j][w];
+               gpGlobals->rgInventory[g_iNumInventory].nAmount = 0;
+               gpGlobals->rgInventory[g_iNumInventory].nAmountInUse = (WORD)-1;
+
+               g_iNumInventory++;
+            }
+         }
+      }
    }
 }
 
