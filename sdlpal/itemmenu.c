@@ -314,7 +314,7 @@ PAL_ItemSelectMenuInit(
    //
    // Also add usable equipped items to the list
    //
-   if (wItemFlags & kItemFlagUsable)
+   if ((wItemFlags & kItemFlagUsable) && !gpGlobals->fInBattle)
    {
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
