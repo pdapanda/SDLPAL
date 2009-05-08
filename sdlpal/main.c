@@ -440,7 +440,7 @@ main(
    //
    // Parse parameters.
    //
-   while ((c = getopt(argc, argv, "w:h:fa")) != -1)
+   while ((c = getopt(argc, argv, "w:h:f")) != -1)
    {
       switch (c)
       {
@@ -472,14 +472,6 @@ main(
          //
          fFullScreen = TRUE;
          break;
-
-#ifndef PAL_CLASSIC
-      case 'a':
-         //
-         // Toggle active time battle mode
-         //
-         g_fActiveTime = !g_fActiveTime;
-#endif
       }
    }
 
@@ -496,10 +488,10 @@ main(
       wScreenWidth = 320;
       wScreenHeight = 240;
 #endif
-#else		
+#else
       wScreenWidth = 640;
       wScreenHeight = 400;
-#endif      
+#endif
    }
 
    //
@@ -516,7 +508,7 @@ main(
    PAL_TrademarkScreen();
 #ifdef __SYMBIAN32__
    VIDEO_ToggleScaleScreen();
-#endif   
+#endif
    PAL_SplashScreen();
 
    //

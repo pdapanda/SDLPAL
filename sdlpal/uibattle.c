@@ -317,7 +317,7 @@ PAL_BattleUIIsActionValid(
             gpGlobals->rgPlayerStatus[w][kStatusSleep] != 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusConfused] != 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusSilence] != 0 ||
-            (g_Battle.rgPlayer[i].flTimeMeter < 100 && g_fActiveTime) ||
+            (g_Battle.rgPlayer[i].flTimeMeter < 100 && gpGlobals->bBattleSpeed > 0) ||
             g_Battle.rgPlayer[i].state == kFighterAct)
 #else
          if (gpGlobals->g.PlayerRoles.rgwHP[w] < gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5 ||
@@ -1234,7 +1234,7 @@ PAL_BattleUIUpdate(
                }
             }
 #else
-            else if (g_InputState.dwKeyPress & kKeyMenu && g_fActiveTime)
+            else if (g_InputState.dwKeyPress & kKeyMenu && gpGlobals->bBattleSpeed > 0)
             {
                float flMin = -1;
                j = -1;
@@ -1408,7 +1408,7 @@ PAL_BattleUIUpdate(
 #ifdef PAL_CLASSIC
       if (y == 1)
 #else
-      if (!g_fActiveTime && y == 1)
+      if (gpGlobals->bBattleSpeed == 0 && y == 1)
 #endif
       {
          g_Battle.UI.wPrevEnemyTarget = (WORD)x;
@@ -1524,7 +1524,7 @@ PAL_BattleUIUpdate(
 
    case kBattleUISelectTargetEnemyAll:
 #ifndef PAL_CLASSIC
-      if (!g_fActiveTime)
+      if (gpGlobals->bBattleSpeed == 0)
 #endif
       {
          //
@@ -1579,7 +1579,7 @@ PAL_BattleUIUpdate(
 
    case kBattleUISelectTargetPlayerAll:
 #ifndef PAL_CLASSIC
-      if (!g_fActiveTime)
+      if (gpGlobals->bBattleSpeed == 0)
 #endif
       {
          //

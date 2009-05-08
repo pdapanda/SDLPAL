@@ -523,6 +523,9 @@ typedef struct tagGLOBALVARS
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
    BOOL             fInBattle;           // TRUE if in battle
    BOOL             fAutoBattle;         // TRUE if auto-battle
+#ifndef PAL_CLASSIC
+   BYTE             bBattleSpeed;        // Battle Speed (0 = Wait, 1 = Fastest, 5 = Slowest)
+#endif
    WORD             wLastUnequippedItem; // last unequipped item
 
    PLAYERROLES      rgEquipmentEffect[MAX_PLAYER_EQUIPMENTS + 1]; // equipment effects
@@ -571,7 +574,7 @@ typedef struct tagSAVEDGAME
    WORD             wNumBattleMusic;         // battle music number
    WORD             wNumBattleField;         // battle field number
    WORD             wScreenWave;             // level of screen waving
-   WORD             wReserved1;              // unused
+   WORD             wReserved;               // unused
    WORD             wCollectValue;           // value of "collected" items
    WORD             wLayer;
    WORD             wChaseRange;

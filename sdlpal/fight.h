@@ -101,10 +101,6 @@ PAL_BattleSimulateMagic(
    WORD       wBaseDamage
 );
 
-#ifndef PAL_CLASSIC
-extern BOOL g_fActiveTime;
-#endif
-
 #ifdef __cplusplus
 }
 #endif

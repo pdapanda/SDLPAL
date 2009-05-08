@@ -365,13 +365,13 @@ PAL_SwitchMenu(
 #ifndef PAL_CLASSIC
 
 static VOID
-PAL_BattleModeMenu(
+PAL_BattleSpeedMenu(
    VOID
 )
 /*++
   Purpose:
 
-    Show the Battle Mode selection box.
+    Show the Battle Speed selection box.
 
   Parameters:
 
@@ -383,54 +383,41 @@ PAL_BattleModeMenu(
 
 --*/
 {
-   LPBOX           rgpBox[2];
-   MENUITEM        rgMenuItem[2];
-   int             i;
+   LPBOX           lpBox;
    WORD            wReturnValue;
-   const SDL_Rect  rect = {130, 100, 145, 50};
+   const SDL_Rect  rect = {132, 100, 160, 50};
 
-   //
-   // Create menu items
-   //
-   rgMenuItem[0].fEnabled = TRUE;
-   rgMenuItem[0].pos = PAL_XY(145, 110);
-   rgMenuItem[0].wValue = 0;
-   rgMenuItem[0].wNumWord = BATTLEMODEMENU_LABEL_WAIT;
-
-   rgMenuItem[1].fEnabled = TRUE;
-   rgMenuItem[1].pos = PAL_XY(213, 110);
-   rgMenuItem[1].wValue = 1;
-   rgMenuItem[1].wNumWord = BATTLEMODEMENU_LABEL_ACTIVE;
+   MENUITEM        rgMenuItem[6] = {
+      { 0,   BATTLESPEEDMENU_LABEL_WAIT,    TRUE,   PAL_XY(145, 110) },
+      { 1,   BATTLESPEEDMENU_LABEL_1,       TRUE,   PAL_XY(190, 110) },
+      { 2,   BATTLESPEEDMENU_LABEL_2,       TRUE,   PAL_XY(210, 110) },
+      { 3,   BATTLESPEEDMENU_LABEL_3,       TRUE,   PAL_XY(230, 110) },
+      { 4,   BATTLESPEEDMENU_LABEL_4,       TRUE,   PAL_XY(250, 110) },
+      { 5,   BATTLESPEEDMENU_LABEL_5,       TRUE,   PAL_XY(270, 110) },
+   };
 
    //
    // Create the boxes
    //
-   for (i = 0; i < 2; i++)
-   {
-      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i, 100), 3, TRUE);
-   }
-
+   lpBox = PAL_CreateSingleLineBox(PAL_XY(132, 100), 9, TRUE);
    VIDEO_UpdateScreen(&rect);
 
    //
    // Activate the menu
    //
-   wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, 2, g_fActiveTime ? 1 : 0,
+   wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, 6, gpGlobals->bBattleSpeed,
       MENUITEM_COLOR);
 
    //
    // Delete the boxes
    //
-   for (i = 0; i < 2; i++)
-   {
-      PAL_DeleteBox(rgpBox[i]);
-   }
+   PAL_DeleteBox(lpBox);
 
    VIDEO_UpdateScreen(&rect);
 
    if (wReturnValue != MENUITEM_VALUE_CANCELLED)
    {
-      g_fActiveTime = ((wReturnValue == 0) ? FALSE : TRUE);
+      gpGlobals->bBattleSpeed = wReturnValue;
    }
 }
 
@@ -647,7 +634,7 @@ PAL_SystemMenu(
       //
       // Battle Mode
       //
-      PAL_BattleModeMenu();
+      PAL_BattleSpeedMenu();
       break;
 
    case 6:

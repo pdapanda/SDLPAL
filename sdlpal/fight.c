@@ -23,11 +23,6 @@
 
 //#define INVINCIBLE 1
 
-// Set this to FALSE to disable Active-Time Battle
-#ifndef PAL_CLASSIC
-BOOL g_fActiveTime = TRUE;
-#endif
-
 static BOOL
 PAL_IsPlayerDying(
    WORD        wPlayerRole
@@ -362,8 +357,17 @@ PAL_UpdateTimeChargingUnit(
 
 --*/
 {
-   g_Battle.flTimeChargingUnit = (FLOAT)(pow(PAL_GetPlayerDexterity(0) + 5, 0.3) / 3);
+   g_Battle.flTimeChargingUnit = (FLOAT)(pow(PAL_GetPlayerDexterity(0) + 5, 0.3));
    g_Battle.flTimeChargingUnit /= PAL_GetPlayerDexterity(0);
+
+   if (gpGlobals->bBattleSpeed > 1)
+   {
+      g_Battle.flTimeChargingUnit /= gpGlobals->bBattleSpeed;
+   }
+   else
+   {
+      g_Battle.flTimeChargingUnit /= 1.5;
+   }
 }
 
 FLOAT
@@ -395,7 +399,7 @@ PAL_GetTimeChargingSpeed(
       return 0;
    }
 
-   if (!g_fActiveTime && g_Battle.UI.state != kBattleUIWait)
+   if (gpGlobals->bBattleSpeed == 0 && g_Battle.UI.state != kBattleUIWait)
    {
       return 0;
    }
@@ -1772,7 +1776,7 @@ PAL_BattleCommitAction(
    case kBattleActionFlee:
    case kBattleActionUseItem:
    case kBattleActionThrowItem:
-      if (g_fActiveTime)
+      if (gpGlobals->bBattleSpeed > 0)
       {
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 5;
          break;
@@ -3089,7 +3093,7 @@ PAL_BattlePlayerValidateAction(
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0 ||
             gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
-            (g_Battle.rgPlayer[i].flTimeMeter < 100 && g_fActiveTime) ||
+            (g_Battle.rgPlayer[i].flTimeMeter < 100 && gpGlobals->bBattleSpeed > 0) ||
             (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
 #endif
          {
@@ -3575,7 +3579,7 @@ PAL_BattlePlayerPerformAction(
          g_Battle.rgPlayer[i].state = kFighterWait;
 #else
          g_Battle.rgPlayer[i].flTimeMeter = 0;
-         g_Battle.rgPlayer[i].flTimeSpeedModifier = (g_fActiveTime ? 2 : 1);
+         g_Battle.rgPlayer[i].flTimeSpeedModifier = (gpGlobals->bBattleSpeed > 0 ? 2 : 1);
 #endif
       }
 

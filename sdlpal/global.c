@@ -84,6 +84,10 @@ PAL_InitGlobals(
 
    gpGlobals->bCurrentSaveSlot = 1;
 
+#ifndef PAL_CLASSIC
+   gpGlobals->bBattleSpeed = 3;
+#endif
+
    return 0;
 }
 

@@ -409,7 +409,7 @@ PAL_ApplyWave(
       a += b;
 
       //
-      // WARNING: assuming the screen with is 320
+      // WARNING: assuming the screen width is 320
       //
       wave[i] = a * gpGlobals->wScreenWave / 256;
       wave[i + 16] = 320 - wave[i];
