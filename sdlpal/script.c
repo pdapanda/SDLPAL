@@ -1515,7 +1515,15 @@ PAL_InterpretInstruction(
             }
 
             if (pScript->rgwOperand[2] ||
-               !PAL_CheckObstacle(PAL_XY(x, y), TRUE, wEventObjectID))
+               (!PAL_CheckObstacle(PAL_XY(x, y), TRUE, wEventObjectID) &&
+               !PAL_CheckObstacle(PAL_XY(x + 4, y), FALSE, 0) &&
+               !PAL_CheckObstacle(PAL_XY(x - 4, y), FALSE, 0) &&
+               !PAL_CheckObstacle(PAL_XY(x, y + 2), FALSE, 0) &&
+               !PAL_CheckObstacle(PAL_XY(x + 4, y + 2), FALSE, 0) &&
+               !PAL_CheckObstacle(PAL_XY(x - 4, y + 2), FALSE, 0) &&
+               !PAL_CheckObstacle(PAL_XY(x, y - 2), FALSE, 0) &&
+               !PAL_CheckObstacle(PAL_XY(x + 4, y - 2), FALSE, 0) &&
+               !PAL_CheckObstacle(PAL_XY(x - 4, y - 2), FALSE, 0)))
             {
                pEvtObj->x = x;
                pEvtObj->y = y;
