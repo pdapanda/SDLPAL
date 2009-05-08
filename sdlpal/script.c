@@ -318,6 +318,187 @@ PAL_PartyRideEventObject(
 }
 
 static VOID
+PAL_MonsterChasePlayer(
+   WORD         wEventObjectID,
+   WORD         wSpeed,
+   WORD         wChaseRange,
+   BOOL         fFloating
+)
+/*++
+  Purpose:
+
+    Make the specified event object chase the players.
+
+  Parameters:
+
+    [IN]  wEventObjectID - the event object ID of the monster.
+
+    [IN]  wSpeed - the speed of chasing.
+
+    [IN]  wChaseRange - sensitive range of the monster.
+
+    [IN]  fFloating - TRUE if monster is floating (i.e., ignore the obstacles)
+
+  Return value:
+
+    None.
+
+--*/
+{
+   LPEVENTOBJECT    pEvtObj = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
+   WORD             wMonsterSpeed = 0, prevx, prevy;
+   int              x, y, i, j, l;
+
+   if (gpGlobals->wChaseRange != 0)
+   {
+      x = PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset) - pEvtObj->x;
+      y = PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset) - pEvtObj->y;
+
+      if (x == 0)
+      {
+         x = RandomLong(0, 1) ? -1 : 1;
+      }
+
+      if (y == 0)
+      {
+         y = RandomLong(0, 1) ? -1 : 1;
+      }
+
+      prevx = pEvtObj->x;
+      prevy = pEvtObj->y;
+
+      i = prevx % 32;
+      j = prevy % 16;
+
+      prevx /= 32;
+      prevy /= 16;
+      l = 0;
+
+      if (i + j * 2 >= 16)
+      {
+         if (i + j * 2 >= 48)
+         {
+            prevx++;
+            prevy++;
+         }
+         else if (32 - i + j * 2 < 16)
+         {
+            prevx++;
+         }
+         else if (32 - i + j * 2 < 48)
+         {
+            l = 1;
+         }
+         else
+         {
+            prevy++;
+         }
+      }
+
+      prevx = prevx * 32 + l * 16;
+      prevy = prevy * 16 + l * 8;
+
+      //
+      // Is the party near to the event object?
+      //
+      if (abs(x) + abs(y) * 2 < wChaseRange * 32 * gpGlobals->wChaseRange)
+      {
+         if (x < 0)
+         {
+            if (y < 0)
+            {
+               pEvtObj->wDirection = kDirWest;
+            }
+            else
+            {
+               pEvtObj->wDirection = kDirSouth;
+            }
+         }
+         else
+         {
+            if (y < 0)
+            {
+               pEvtObj->wDirection = kDirNorth;
+            }
+            else
+            {
+               pEvtObj->wDirection = kDirEast;
+            }
+         }
+
+         if (x != 0)
+         {
+            x = pEvtObj->x + x / abs(x) * 16;
+         }
+         else
+         {
+            x = pEvtObj->x;
+         }
+
+         if (y != 0)
+         {
+            y = pEvtObj->y + y / abs(y) * 8;
+         }
+         else
+         {
+            y = pEvtObj->y;
+         }
+
+         if (fFloating)
+         {
+            wMonsterSpeed = wSpeed;
+         }
+         else
+         {
+            if (!PAL_CheckObstacle(PAL_XY(x, y), TRUE, wEventObjectID))
+            {
+               wMonsterSpeed = wSpeed;
+            }
+            else
+            {
+               pEvtObj->x = prevx;
+               pEvtObj->y = prevy;
+            }
+
+            for (l = 0; l < 4; l++)
+            {
+               switch (l)
+               {
+               case 0:
+                  pEvtObj->x -= 4;
+                  pEvtObj->y += 2;
+                  break;
+
+               case 1:
+                  pEvtObj->x -= 4;
+                  pEvtObj->y -= 2;
+                  break;
+
+               case 2:
+                  pEvtObj->x += 4;
+                  pEvtObj->y -= 2;
+                  break;
+
+               case 3:
+                  pEvtObj->x += 4;
+                  pEvtObj->y += 2;
+                  break;
+               }
+
+               if (PAL_CheckObstacle(PAL_XY(pEvtObj->x, pEvtObj->y), FALSE, 0))
+               {
+                  pEvtObj->x = prevx;
+                  pEvtObj->y = prevy;
+               }
+            }
+         }
+      }
+   }
+
+   PAL_NPCWalkOneStep(wEventObjectID, wMonsterSpeed);
+}
+
+static VOID
 PAL_AdditionalCredits(
    VOID
 )
@@ -1463,75 +1644,7 @@ PAL_InterpretInstruction(
          j = 4;
       }
 
-      if (gpGlobals->wChaseRange != 0)
-      {
-         x = PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset) - pEvtObj->x;
-         y = PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset) - pEvtObj->y;
-
-         //
-         // Is the party near to the event object?
-         //
-         if (abs(x) + abs(y) * 2 < i * 32 * gpGlobals->wChaseRange)
-         {
-            if (x < 0)
-            {
-               if (y < 0)
-               {
-                  pEvtObj->wDirection = kDirWest;
-               }
-               else
-               {
-                  pEvtObj->wDirection = kDirSouth;
-               }
-            }
-            else
-            {
-               if (y < 0)
-               {
-                  pEvtObj->wDirection = kDirNorth;
-               }
-               else
-               {
-                  pEvtObj->wDirection = kDirEast;
-               }
-            }
-
-            if (x != 0)
-            {
-               x = pEvtObj->x + x / abs(x) * j * 2;
-            }
-            else
-            {
-               x = pEvtObj->x;
-            }
-
-            if (y != 0)
-            {
-               y = pEvtObj->y + y / abs(y) * j;
-            }
-            else
-            {
-               y = pEvtObj->y;
-            }
-
-            if (pScript->rgwOperand[2] ||
-               (!PAL_CheckObstacle(PAL_XY(x, y), TRUE, wEventObjectID) &&
-               !PAL_CheckObstacle(PAL_XY(x + 4, y), FALSE, 0) &&
-               !PAL_CheckObstacle(PAL_XY(x - 4, y), FALSE, 0) &&
-               !PAL_CheckObstacle(PAL_XY(x, y + 2), FALSE, 0) &&
-               !PAL_CheckObstacle(PAL_XY(x + 4, y + 2), FALSE, 0) &&
-               !PAL_CheckObstacle(PAL_XY(x - 4, y + 2), FALSE, 0) &&
-               !PAL_CheckObstacle(PAL_XY(x, y - 2), FALSE, 0) &&
-               !PAL_CheckObstacle(PAL_XY(x + 4, y - 2), FALSE, 0) &&
-               !PAL_CheckObstacle(PAL_XY(x - 4, y - 2), FALSE, 0)))
-            {
-               pEvtObj->x = x;
-               pEvtObj->y = y;
-            }
-         }
-      }
-
-      PAL_NPCWalkOneStep(wEventObjectID, 0);
+      PAL_MonsterChasePlayer(wEventObjectID, j, i, pScript->rgwOperand[2]);
       break;
 
    case 0x004D:
