@@ -311,6 +311,8 @@ PAL_LoadDefaultGame(
    gpGlobals->wMaxPartyMemberIndex = 0;
    gpGlobals->viewport = PAL_XY(0, 0);
    gpGlobals->wLayer = 0;
+   gpGlobals->wChaseRange = 1;
+
    memset(gpGlobals->rgInventory, 0, sizeof(gpGlobals->rgInventory));
    memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgInventory));
    memset(gpGlobals->rgParty, 0, sizeof(gpGlobals->rgParty));
