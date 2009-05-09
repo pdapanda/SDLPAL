@@ -170,7 +170,7 @@ PAL_FadeOut(
       while (SDL_GetTicks() < time)
       {
          while (SDL_PollEvent(NULL));
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
    }
 }
@@ -232,11 +232,12 @@ PAL_FadeIn(
       VIDEO_UpdateScreen(NULL);
 #endif
 
-      SDL_PollEvent(NULL);
+      while (SDL_PollEvent(NULL));
+
       while (SDL_GetTicks() < time)
       {
          while (SDL_PollEvent(NULL));
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
    }
 }
@@ -311,11 +312,12 @@ PAL_SceneFade(
          }
          VIDEO_SetPalette(newpalette);
 
-         SDL_PollEvent(NULL);
+         while (SDL_PollEvent(NULL));
+
          while (SDL_GetTicks() < time)
          {
             while (SDL_PollEvent(NULL));
-            SDL_Delay(1);
+            SDL_Delay(5);
          }
       }
    }
@@ -346,11 +348,12 @@ PAL_SceneFade(
          }
          VIDEO_SetPalette(newpalette);
 
-         SDL_PollEvent(NULL);
+         while (SDL_PollEvent(NULL));
+
          while (SDL_GetTicks() < time)
          {
             while (SDL_PollEvent(NULL));
-            SDL_Delay(1);
+            SDL_Delay(5);
          }
       }
    }
@@ -425,11 +428,12 @@ PAL_PaletteFade(
          VIDEO_UpdateScreen(NULL);
       }
 
-      SDL_PollEvent(NULL);
+      while (SDL_PollEvent(NULL));
+
       while (SDL_GetTicks() < time)
       {
          while (SDL_PollEvent(NULL));
-         SDL_Delay(1);
+         SDL_Delay(5);
       }
    }
 }
@@ -560,6 +564,7 @@ PAL_ColorFade(
       {
          newpalette[i] = palette[bColor];
       }
+
       VIDEO_SetPalette(newpalette);
    }
 }
