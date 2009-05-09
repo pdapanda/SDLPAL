@@ -412,7 +412,7 @@ PAL_LoadGame(
    memcpy(gpGlobals->rgTrail, s.rgTrail, sizeof(gpGlobals->rgTrail));
    gpGlobals->Exp = s.Exp;
    gpGlobals->g.PlayerRoles = s.PlayerRoles;
-   memcpy(gpGlobals->rgPoisonStatus, s.rgPoisonStatus, sizeof(gpGlobals->rgPoisonStatus));
+   memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
    memcpy(gpGlobals->rgInventory, s.rgInventory, sizeof(gpGlobals->rgInventory));
    memcpy(gpGlobals->g.rgScene, s.rgScene, sizeof(gpGlobals->g.rgScene));
    memcpy(gpGlobals->g.rgObject, s.rgObject, sizeof(gpGlobals->g.rgObject));
@@ -551,7 +551,6 @@ PAL_InitGameData(
    gpGlobals->fInBattle = FALSE;
 
    memset(gpGlobals->rgPlayerStatus, 0, sizeof(gpGlobals->rgPlayerStatus));
-   memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
 
    PAL_UpdateEquipments();
 }
