@@ -164,7 +164,9 @@ PAL_FadeOut(
          newpalette[j].b = (palette[j].b * i) >> 6;
       }
       VIDEO_SetPalette(newpalette);
-      SDL_PollEvent(NULL);
+
+      while (SDL_PollEvent(NULL));
+
       while (SDL_GetTicks() < time)
       {
          while (SDL_PollEvent(NULL));
