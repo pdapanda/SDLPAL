@@ -1213,6 +1213,14 @@ PAL_StartBattle(
                gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
             }
          }
+
+         //
+         // Yet another HACK
+         //
+         if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -32)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity = (WORD)-8;
+         }
 #endif
       }
    }
