@@ -318,7 +318,7 @@ PAL_LoadDefaultGame(
    gpGlobals->wChaseRange = 1;
 
    memset(gpGlobals->rgInventory, 0, sizeof(gpGlobals->rgInventory));
-   memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgInventory));
+   memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
    memset(gpGlobals->rgParty, 0, sizeof(gpGlobals->rgParty));
    memset(gpGlobals->rgTrail, 0, sizeof(gpGlobals->rgTrail));
    memset(&(gpGlobals->Exp), 0, sizeof(gpGlobals->Exp));
@@ -551,6 +551,7 @@ PAL_InitGameData(
    gpGlobals->fInBattle = FALSE;
 
    memset(gpGlobals->rgPlayerStatus, 0, sizeof(gpGlobals->rgPlayerStatus));
+   memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
 
    PAL_UpdateEquipments();
 }
@@ -854,6 +855,7 @@ PAL_UpdateEquipments(
       for (j = 0; j < MAX_PLAYER_EQUIPMENTS; j++)
       {
          w = gpGlobals->g.PlayerRoles.rgwEquipment[j][i];
+
          if (w != 0)
          {
             gpGlobals->g.rgObject[w].item.wScriptOnEquip =
