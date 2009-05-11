@@ -1192,7 +1192,7 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].iColorShift = 0;
 
 #ifndef PAL_CLASSIC
-         g_Battle.rgEnemy[i].flTimeMeter = (gpGlobals->bBattleSpeed > 0 ? 50 : 15);
+         g_Battle.rgEnemy[i].flTimeMeter = 50;
 
          //
          // HACK: Otherwise the black thief lady will be too hard to beat
@@ -1242,7 +1242,7 @@ PAL_StartBattle(
    {
       g_Battle.rgPlayer[i].flTimeMeter = 15.0f;
 #ifndef PAL_CLASSIC
-      g_Battle.rgPlayer[i].flTimeSpeedModifier = (gpGlobals->bBattleSpeed > 0 ? 2.0f : 1.0f);
+      g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
 #endif
       g_Battle.rgPlayer[i].wHidingTime = 0;
       g_Battle.rgPlayer[i].state = kFighterWait;
