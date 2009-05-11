@@ -1215,7 +1215,7 @@ PAL_StartBattle(
          }
 
          //
-         // Yet another HACK
+         // Yet another HACKs
          //
          if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -32)
          {

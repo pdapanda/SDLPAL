@@ -639,7 +639,7 @@ PAL_DialogWaitForKey(
          VIDEO_SetPalette(palette);
       }
 
-      if (g_InputState.dwKeyPress & (kKeySearch | kKeyMenu))
+      if (g_InputState.dwKeyPress != 0)
       {
          break;
       }
