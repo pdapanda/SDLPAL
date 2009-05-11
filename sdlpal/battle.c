@@ -1225,6 +1225,10 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity = 8; // for Fox Demon
          }
+         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity = 0; // for Spider
+         }
 #endif
       }
    }
