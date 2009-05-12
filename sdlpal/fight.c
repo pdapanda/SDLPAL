@@ -371,7 +371,7 @@ PAL_UpdateTimeChargingUnit(
    }
    else
    {
-      g_Battle.flTimeChargingUnit /= 1.5;
+      g_Battle.flTimeChargingUnit /= 1.35;
    }
 }
 
@@ -4619,7 +4619,7 @@ PAL_BattleEnemyPerformAction(
       PAL_BattleDelay(1, 0, TRUE);
 
       g_Battle.rgPlayer[sTarget].pos = g_Battle.rgPlayer[sTarget].posOriginal;
-      PAL_BattleDelay(7, 0, TRUE);
+      PAL_BattleDelay(4, 0, TRUE);
 
       PAL_BattleUpdateFighters();
 
