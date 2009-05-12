@@ -84,10 +84,6 @@ PAL_InitGlobals(
 
    gpGlobals->bCurrentSaveSlot = 1;
 
-#ifndef PAL_CLASSIC
-   gpGlobals->bBattleSpeed = 3;
-#endif
-
    return 0;
 }
 
@@ -316,6 +312,9 @@ PAL_LoadDefaultGame(
    gpGlobals->viewport = PAL_XY(0, 0);
    gpGlobals->wLayer = 0;
    gpGlobals->wChaseRange = 1;
+#ifndef PAL_CLASSIC
+   gpGlobals->bBattleSpeed = 2;
+#endif
 
    memset(gpGlobals->rgInventory, 0, sizeof(gpGlobals->rgInventory));
    memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
@@ -407,6 +406,9 @@ PAL_LoadGame(
    gpGlobals->wChasespeedChangeCycles = s.wChasespeedChangeCycles;
    gpGlobals->nFollower = s.nFollower;
    gpGlobals->dwCash = s.dwCash;
+#ifndef PAL_CLASSIC
+   gpGlobals->bBattleSpeed = s.wBattleSpeed;
+#endif
 
    memcpy(gpGlobals->rgParty, s.rgParty, sizeof(gpGlobals->rgParty));
    memcpy(gpGlobals->rgTrail, s.rgTrail, sizeof(gpGlobals->rgTrail));
@@ -472,6 +474,9 @@ PAL_SaveGame(
    s.wChasespeedChangeCycles = gpGlobals->wChasespeedChangeCycles;
    s.nFollower = gpGlobals->nFollower;
    s.dwCash = gpGlobals->dwCash;
+#ifndef PAL_CLASSIC
+   s.wBattleSpeed = gpGlobals->bBattleSpeed;
+#endif
 
    memcpy(s.rgParty, gpGlobals->rgParty, sizeof(gpGlobals->rgParty));
    memcpy(s.rgTrail, gpGlobals->rgTrail, sizeof(gpGlobals->rgTrail));

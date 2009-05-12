@@ -574,7 +574,7 @@ typedef struct tagSAVEDGAME
    WORD             wNumBattleMusic;         // battle music number
    WORD             wNumBattleField;         // battle field number
    WORD             wScreenWave;             // level of screen waving
-   WORD             wReserved;               // unused
+   WORD             wBattleSpeed;            // battle speed
    WORD             wCollectValue;           // value of "collected" items
    WORD             wLayer;
    WORD             wChaseRange;
