@@ -1579,7 +1579,7 @@ PAL_BattleStartFrame(
 
          if (g_Battle.ActionQueue[g_Battle.iCurAction].fIsEnemy)
          {
-            if (g_Battle.iHidingTime == 0 &&
+            if (g_Battle.iHidingTime == 0 && !fOnlyPuppet &&
                g_Battle.rgEnemy[i].wObjectID != 0)
             {
                g_Battle.rgEnemy[i].wScriptOnReady =
@@ -1594,8 +1594,14 @@ PAL_BattleStartFrame(
          {
             wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
 
-            if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 ||
-               gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
+            if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0)
+            {
+               if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] == 0)
+               {
+                  g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
+               }
+            }
+            else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
                gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0)
             {
                g_Battle.rgPlayer[i].action.ActionType = kBattleActionPass;
