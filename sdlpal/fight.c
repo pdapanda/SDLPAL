@@ -1140,6 +1140,7 @@ PAL_BattleStartFrame(
             PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnTurnStart, i);
 
          g_Battle.rgEnemy[i].fTurnStart = FALSE;
+         fMoved = TRUE;
       }
    }
 
