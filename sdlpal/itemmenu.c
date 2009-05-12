@@ -361,17 +361,21 @@ PAL_ItemSelectMenu(
 
 --*/
 {
-   int        iPrevIndex;
-   WORD       w;
-   DWORD      dwTime;
+   int              iPrevIndex;
+   WORD             w;
+   DWORD            dwTime;
+   LPOBJECTDESC     lpObjectDescBak;
 
    PAL_ItemSelectMenuInit(wItemFlags);
    iPrevIndex = gpGlobals->iCurInvMenuItem;
 
    PAL_ClearKeyState();
 
+   lpObjectDescBak = gpGlobals->lpObjectDesc;
+
    if (lpfnMenuItemChanged != NULL)
    {
+      gpGlobals->lpObjectDesc = NULL;
       (*lpfnMenuItemChanged)(gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem);
    }
 
@@ -379,7 +383,10 @@ PAL_ItemSelectMenu(
 
    while (TRUE)
    {
-      PAL_MakeScene();
+      if (lpfnMenuItemChanged == NULL)
+      {
+         PAL_MakeScene();
+      }
 
       w = PAL_ItemSelectMenuUpdate();
       VIDEO_UpdateScreen(NULL);
@@ -401,6 +408,7 @@ PAL_ItemSelectMenu(
 
       if (w != 0xFFFF)
       {
+         gpGlobals->lpObjectDesc = lpObjectDescBak;
          return w;
       }
 
@@ -418,5 +426,6 @@ PAL_ItemSelectMenu(
       }
    }
 
+   assert(FALSE);
    return 0; // should not really reach here
 }
