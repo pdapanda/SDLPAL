@@ -30,7 +30,7 @@ extern "C"
 {
 #endif
 
-#define PAL_CLASSIC           1
+//#define PAL_CLASSIC           1
 
 //
 // SOME NOTES ON "AUTO SCRIPT" AND "TRIGGER SCRIPT":
