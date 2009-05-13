@@ -476,6 +476,8 @@ PAL_SaveGame(
    s.dwCash = gpGlobals->dwCash;
 #ifndef PAL_CLASSIC
    s.wBattleSpeed = gpGlobals->bBattleSpeed;
+#else
+   s.wBattleSpeed = 2;
 #endif
 
    memcpy(s.rgParty, gpGlobals->rgParty, sizeof(gpGlobals->rgParty));
