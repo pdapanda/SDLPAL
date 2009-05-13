@@ -1221,7 +1221,8 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity = (WORD)-8; // for Grandma Knife
          }
-         else if (g_Battle.rgEnemy[i].e.wDexterity == 20)
+         else if (g_Battle.rgEnemy[i].e.wDexterity == 20 &&
+            gpGlobals->g.PlayerRoles.rgwLevel[0] < 15)
          {
             g_Battle.rgEnemy[i].e.wDexterity = 8; // for Fox Demon
          }
