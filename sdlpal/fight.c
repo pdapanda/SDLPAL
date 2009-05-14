@@ -1726,7 +1726,7 @@ PAL_BattleCommitAction(
 
 #ifdef PAL_CLASSIC
    case kBattleActionUseItem:
-      if ((gpGlobals->g.rgObject[g_Battle.UI.wObjectID].item.wFlags & kItemFlagConsuming) == 0)
+      if ((gpGlobals->g.rgObject[g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID].item.wFlags & kItemFlagConsuming) == 0)
       {
          break;
       }
@@ -1734,7 +1734,7 @@ PAL_BattleCommitAction(
    case kBattleActionThrowItem:
       for (w = 0; w < MAX_INVENTORY; w++)
       {
-         if (gpGlobals->rgInventory[w].wItem == g_Battle.UI.wObjectID)
+         if (gpGlobals->rgInventory[w].wItem == g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID)
          {
             gpGlobals->rgInventory[w].nAmountInUse++;
             break;
