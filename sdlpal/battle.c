@@ -1316,17 +1316,21 @@ PAL_StartBattle(
    g_Battle.fFlee = FALSE;
 #endif
 
+#ifdef PAL_ALLOW_KEYREPEAT
    SDL_EnableKeyRepeat(200, 75);
+#endif
 
    //
    // Run the main battle routine.
    //
    i = PAL_BattleMain();
 
+#ifdef PAL_ALLOW_KEYREPEAT
    SDL_EnableKeyRepeat(0, 0);
    PAL_ClearKeyState();
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
+#endif
 
    if (i == kBattleResultWon)
    {

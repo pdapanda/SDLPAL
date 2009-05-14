@@ -78,6 +78,7 @@ extern "C"
 #else
 
 #define PAL_HAS_JOYSTICKS     1
+#define PAL_ALLOW_KEYREPEAT   1
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"
 #endif
