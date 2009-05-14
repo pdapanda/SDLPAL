@@ -1261,20 +1261,23 @@ PAL_BattleStartFrame(
             g_Battle.rgPlayer[i].action.flRemainingTime = 0;
          }
 
-         wDexterity = PAL_GetPlayerActualDexterity(wPlayerRole);
-         g_Battle.rgPlayer[i].action.flRemainingTime -= PAL_GetTimeChargingSpeed(wDexterity);
-
-         if (g_Battle.rgPlayer[i].action.flRemainingTime < 0 && !fMoved)
+         if (!fMoved)
          {
-            //
-            // Perform the action for this player.
-            //
-            PAL_BattlePlayerPerformAction(i);
+            wDexterity = PAL_GetPlayerActualDexterity(wPlayerRole);
+            g_Battle.rgPlayer[i].action.flRemainingTime -= PAL_GetTimeChargingSpeed(wDexterity);
 
-            fMoved = TRUE;
+            if (g_Battle.rgPlayer[i].action.flRemainingTime < 0)
+            {
+               //
+               // Perform the action for this player.
+               //
+               PAL_BattlePlayerPerformAction(i);
 
-            g_Battle.rgPlayer[i].flTimeMeter = 0;
-            g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
+               fMoved = TRUE;
+
+               g_Battle.rgPlayer[i].flTimeMeter = 0;
+               g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
+            }
          }
          break;
       }
@@ -1701,7 +1704,9 @@ PAL_BattleCommitAction(
    switch (g_Battle.UI.wActionType)
    {
    case kBattleActionMagic:
-      w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber].wCostMP;
+      w = g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID;
+      w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[w].magic.wMagicNumber].wCostMP;
+
       if (gpGlobals->g.PlayerRoles.rgwMP[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole] < w)
       {
          w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber].wType;
@@ -1758,7 +1763,8 @@ PAL_BattleCommitAction(
          //
          // The base casting time of magic is set to the MP costed
          //
-         p = &(gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber]);
+         w = g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID;
+         p = &(gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[w].magic.wMagicNumber]);
          wCostMP = p->wCostMP;
 
          if (wCostMP == 1)

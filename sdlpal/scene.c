@@ -155,7 +155,7 @@ PAL_CalcCoverTiles(
             for (l = 0; l < 2; l++)
             {
                lpTile = PAL_MapGetTileBitmap(dx, dy, dh, l, PAL_GetCurrentMap());
-               iTileHeight = (int)PAL_MapGetTileHeight(dx, dy, dh, l, PAL_GetCurrentMap());
+               iTileHeight = (signed char)PAL_MapGetTileHeight(dx, dy, dh, l, PAL_GetCurrentMap());
 
                //
                // Check if this tile may cover the sprites
