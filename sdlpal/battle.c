@@ -1316,7 +1316,7 @@ PAL_StartBattle(
    g_Battle.fFlee = FALSE;
 #endif
 
-   SDL_EnableKeyRepeat(250, 75);
+   SDL_EnableKeyRepeat(200, 75);
 
    //
    // Run the main battle routine.
