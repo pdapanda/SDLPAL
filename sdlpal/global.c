@@ -544,7 +544,7 @@ PAL_InitGameData(
    //
    // try loading from the saved game file.
    //
-   if (iSaveSlot == 0 || PAL_LoadGame(va("%s%d%s", PAL_PREFIX, iSaveSlot, ".rpg")) != 0)
+   if (iSaveSlot == 0 || PAL_LoadGame(va("%s%d%s", PAL_SAVE_PREFIX, iSaveSlot, ".rpg")) != 0)
    {
       //
       // Cannot load the saved game file. Load the defaults.

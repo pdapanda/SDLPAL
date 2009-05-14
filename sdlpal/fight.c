@@ -536,8 +536,8 @@ PAL_BattleBackupStat(
 
 --*/
 {
-   int i;
-   WORD wPlayerRole;
+   int          i;
+   WORD         wPlayerRole;
 
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
    {
@@ -578,10 +578,10 @@ PAL_BattleDisplayStatChange(
 
 --*/
 {
-   int i, x, y;
-   SHORT sDamage;
-   WORD wPlayerRole;
-   BOOL f = FALSE;
+   int      i, x, y;
+   SHORT    sDamage;
+   WORD     wPlayerRole;
+   BOOL     f = FALSE;
 
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
    {

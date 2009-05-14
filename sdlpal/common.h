@@ -60,19 +60,29 @@ extern "C"
 #define min(a, b)    (((a) < (b)) ? (a) : (b))
 #endif
 
-#ifdef __SYMBIAN32__
+#if defined (__SYMBIAN32__)
 
 #undef  _WIN32
 #undef  SDL_INIT_JOYSTICK
 #define SDL_INIT_JOYSTICK     0
 #define PAL_HAS_MOUSE         1
 #define PAL_PREFIX            "e:\\data\\pal\\"
+#define PAL_SAVE_PREFIX       "e:\\data\\pal\\"
+
+#elif defined (PSP)
+
+#define PAL_HAS_JOYSTICKS     1
+#define PAL_PREFIX            "ms0:/"
+#define PAL_SAVE_PREFIX       "ms0:/PSP/SAVEDATA/SDLPAL/"
 
 #else
 
 #define PAL_HAS_JOYSTICKS     1
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"
+#endif
+#ifndef PAL_SAVE_PREFIX
+#define PAL_SAVE_PREFIX       "./"
 #endif
 
 #endif
