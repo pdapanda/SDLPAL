@@ -1706,15 +1706,16 @@ PAL_BattleCommitAction(
 
       if (gpGlobals->g.PlayerRoles.rgwMP[gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole] < w)
       {
-         w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[g_Battle.UI.wObjectID].magic.wMagicNumber].wType;
+         w = g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID;
+         w = gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[w].magic.wMagicNumber].wType;
          if (w == kMagicTypeApplyToPlayer || w == kMagicTypeApplyToParty ||
             w == kMagicTypeTrance)
          {
-            g_Battle.UI.wActionType = kBattleActionDefend;
+            g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionDefend;
          }
          else
          {
-            g_Battle.UI.wActionType = kBattleActionAttack;
+            g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
             if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget == -1)
             {
                g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = 0;
