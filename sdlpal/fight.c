@@ -1261,23 +1261,20 @@ PAL_BattleStartFrame(
             g_Battle.rgPlayer[i].action.flRemainingTime = 0;
          }
 
-         if (!fMoved)
+         wDexterity = PAL_GetPlayerActualDexterity(wPlayerRole);
+         g_Battle.rgPlayer[i].action.flRemainingTime -= PAL_GetTimeChargingSpeed(wDexterity);
+
+         if (g_Battle.rgPlayer[i].action.flRemainingTime < 0 && !fMoved)
          {
-            wDexterity = PAL_GetPlayerActualDexterity(wPlayerRole);
-            g_Battle.rgPlayer[i].action.flRemainingTime -= PAL_GetTimeChargingSpeed(wDexterity);
+            //
+            // Perform the action for this player.
+            //
+            PAL_BattlePlayerPerformAction(i);
 
-            if (g_Battle.rgPlayer[i].action.flRemainingTime < 0)
-            {
-               //
-               // Perform the action for this player.
-               //
-               PAL_BattlePlayerPerformAction(i);
+            fMoved = TRUE;
 
-               fMoved = TRUE;
-
-               g_Battle.rgPlayer[i].flTimeMeter = 0;
-               g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
-            }
+            g_Battle.rgPlayer[i].flTimeMeter = 0;
+            g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
          }
          break;
       }
