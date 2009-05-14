@@ -1698,7 +1698,7 @@ PAL_BattleCommitAction(
    //
    // Check if the action is valid
    //
-   switch (g_Battle.UI.wActionType)
+   switch (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType)
    {
    case kBattleActionMagic:
       w = g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID;
@@ -1750,7 +1750,7 @@ PAL_BattleCommitAction(
    //
    // Calculate the waiting time for the action
    //
-   switch (g_Battle.UI.wActionType)
+   switch (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType)
    {
    case kBattleActionMagic:
       {
