@@ -1317,7 +1317,7 @@ PAL_StartBattle(
 #endif
 
 #ifdef PAL_ALLOW_KEYREPEAT
-   SDL_EnableKeyRepeat(200, 75);
+   SDL_EnableKeyRepeat(120, 75);
 #endif
 
    //
@@ -1328,7 +1328,6 @@ PAL_StartBattle(
 #ifdef PAL_ALLOW_KEYREPEAT
    SDL_EnableKeyRepeat(0, 0);
    PAL_ClearKeyState();
-   g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
 #endif
 
