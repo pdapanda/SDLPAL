@@ -2520,8 +2520,12 @@ PAL_InterpretInstruction(
       //
       if (gpGlobals->fInBattle)
       {
-         PAL_BattleShowPlayerPreMagicAnim(pScript->rgwOperand[0] - 1, FALSE);
-         g_Battle.rgPlayer[pScript->rgwOperand[0] - 1].wCurrentFrame = 6;
+         if (pScript->rgwOperand[0] != 0)
+         {
+            PAL_BattleShowPlayerPreMagicAnim(pScript->rgwOperand[0] - 1, FALSE);
+            g_Battle.rgPlayer[pScript->rgwOperand[0] - 1].wCurrentFrame = 6;
+         }
+
          for (i = 0; i < 5; i++)
          {
             for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
