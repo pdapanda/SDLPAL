@@ -3400,7 +3400,7 @@ PAL_BattlePlayerPerformAction(
 
       PAL_BattleUpdateFighters();
       PAL_BattleMakeScene();
-      PAL_BattleDelay(5, 0, TRUE);
+      PAL_BattleDelay(3, 0, TRUE);
 
       gpGlobals->Exp.rgAttackExp[wPlayerRole].wCount++;
       gpGlobals->Exp.rgHealthExp[wPlayerRole].wCount += RandomLong(2, 3);
