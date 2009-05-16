@@ -80,7 +80,7 @@ PAL_ShowDialogText(
 
 VOID
 PAL_ClearDialog(
-   VOID
+   BOOL         fWaitForKey
 );
 
 VOID

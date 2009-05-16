@@ -3066,7 +3066,7 @@ PAL_RunTriggerScript(
          //
          // Redraw screen
          //
-         PAL_ClearDialog();
+         PAL_ClearDialog(TRUE);
 
          if (PAL_DialogIsPlayingRNG())
          {
@@ -3145,7 +3145,7 @@ PAL_RunTriggerScript(
          {
             DWORD        time;
 
-            PAL_ClearDialog();
+            PAL_ClearDialog(TRUE);
 
             time = SDL_GetTicks() + FRAME_TIME;
 
@@ -3175,7 +3175,7 @@ PAL_RunTriggerScript(
          //
          // Goto the specified address if player selected no
          //
-         PAL_ClearDialog();
+         PAL_ClearDialog(FALSE);
 
          if (!PAL_ConfirmMenu())
          {
@@ -3191,7 +3191,7 @@ PAL_RunTriggerScript(
          //
          // Show dialog in the middle part of the screen
          //
-         PAL_ClearDialog();
+         PAL_ClearDialog(TRUE);
          PAL_StartDialog(kDialogCenter, (BYTE)pScript->rgwOperand[0], 0,
             pScript->rgwOperand[2] ? TRUE : FALSE);
          wScriptEntry++;
@@ -3201,7 +3201,7 @@ PAL_RunTriggerScript(
          //
          // Show dialog in the upper part of the screen
          //
-         PAL_ClearDialog();
+         PAL_ClearDialog(TRUE);
          PAL_StartDialog(kDialogUpper, (BYTE)pScript->rgwOperand[1],
             pScript->rgwOperand[0], pScript->rgwOperand[2] ? TRUE : FALSE);
          wScriptEntry++;
@@ -3211,7 +3211,7 @@ PAL_RunTriggerScript(
          //
          // Show dialog in the lower part of the screen
          //
-         PAL_ClearDialog();
+         PAL_ClearDialog(TRUE);
          PAL_StartDialog(kDialogLower, (BYTE)pScript->rgwOperand[1],
             pScript->rgwOperand[0], pScript->rgwOperand[2] ? TRUE : FALSE);
          wScriptEntry++;
@@ -3221,7 +3221,7 @@ PAL_RunTriggerScript(
          //
          // Show text in a window at the center of the screen
          //
-         PAL_ClearDialog();
+         PAL_ClearDialog(TRUE);
          PAL_StartDialog(kDialogCenterWindow, (BYTE)pScript->rgwOperand[0], 0, FALSE);
          wScriptEntry++;
          break;
@@ -3230,7 +3230,7 @@ PAL_RunTriggerScript(
          //
          // Restore the screen
          //
-         PAL_ClearDialog();
+         PAL_ClearDialog(TRUE);
          VIDEO_RestoreScreen();
          VIDEO_UpdateScreen(NULL);
          wScriptEntry++;
@@ -3245,7 +3245,7 @@ PAL_RunTriggerScript(
          break;
 
       default:
-         PAL_ClearDialog();
+         PAL_ClearDialog(TRUE);
          wScriptEntry = PAL_InterpretInstruction(wScriptEntry, wEventObjectID);
          break;
       }

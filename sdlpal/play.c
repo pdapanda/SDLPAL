@@ -584,7 +584,7 @@ PAL_WaitForKey(
 
    PAL_ClearKeyState();
 
-   while (wTimeOut != 0 && SDL_GetTicks() < dwTimeOut)
+   while (wTimeOut == 0 || SDL_GetTicks() < dwTimeOut)
    {
       UTIL_Delay(5);
 

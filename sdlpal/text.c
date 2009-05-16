@@ -901,7 +901,7 @@ PAL_ShowDialogText(
 
 VOID
 PAL_ClearDialog(
-   VOID
+   BOOL       fWaitForKey
 )
 /*++
   Purpose:
@@ -910,7 +910,7 @@ PAL_ClearDialog(
 
   Parameters:
 
-    None.
+    [IN]  fWaitForKey - whether wait for any key or not.
 
   Return value:
 
@@ -918,7 +918,7 @@ PAL_ClearDialog(
 
 --*/
 {
-   if (g_TextLib.nCurrentDialogLine > 0)
+   if (g_TextLib.nCurrentDialogLine > 0 && fWaitForKey)
    {
       PAL_DialogWaitForKey();
    }
@@ -953,7 +953,7 @@ PAL_EndDialog(
 
 --*/
 {
-   PAL_ClearDialog();
+   PAL_ClearDialog(TRUE);
 
    //
    // Set some default parameters, as there are some parts of script
