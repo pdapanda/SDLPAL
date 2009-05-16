@@ -1976,6 +1976,8 @@ PAL_BattleShowPlayerAttackAnim(
          {
             g_Battle.rgEnemy[sTarget].iColorShift = 6;
          }
+
+         PAL_BattleDisplayStatChange();
       }
 
       VIDEO_UpdateScreen(NULL);
@@ -1985,8 +1987,6 @@ PAL_BattleShowPlayerAttackAnim(
          g_Battle.rgPlayer[wPlayerIndex].pos =
             PAL_XY(PAL_X(g_Battle.rgPlayer[wPlayerIndex].pos) + 2,
                    PAL_Y(g_Battle.rgPlayer[wPlayerIndex].pos) + 1);
-
-         PAL_BattleDisplayStatChange();
       }
    }
 
