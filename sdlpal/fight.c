@@ -369,6 +369,10 @@ PAL_UpdateTimeChargingUnit(
    {
       g_Battle.flTimeChargingUnit /= (1 + gpGlobals->bBattleSpeed * 0.5);
    }
+   else
+   {
+      g_Battle.flTimeChargingUnit /= 1.2;
+   }
 }
 
 FLOAT
@@ -3967,6 +3971,10 @@ PAL_BattlePlayerPerformAction(
          if (gpGlobals->bBattleSpeed > 1)
          {
             g_Battle.flTimeChargingUnit *= (1 + gpGlobals->bBattleSpeed * 0.5);
+         }
+         else
+         {
+            g_Battle.flTimeChargingUnit *= 1.2;
          }
 #endif
          PAL_BattleBackupScene();
