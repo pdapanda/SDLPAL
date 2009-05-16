@@ -1031,29 +1031,7 @@ PAL_BattleUIUpdate(
          switch (g_Battle.UI.MenuState)
          {
          case kBattleMenuMain:
-            if (g_InputState.dir == kDirNorth)
-            {
-               g_Battle.UI.wSelectedAction = 0;
-            }
-            else if (g_InputState.dir == kDirSouth)
-            {
-               g_Battle.UI.wSelectedAction = 3;
-            }
-            else if (g_InputState.dir == kDirWest)
-            {
-               if (PAL_BattleUIIsActionValid(kBattleUIActionMagic))
-               {
-                  g_Battle.UI.wSelectedAction = 1;
-               }
-            }
-            else if (g_InputState.dir == kDirEast)
-            {
-               if (PAL_BattleUIIsActionValid(kBattleUIActionCoopMagic))
-               {
-                  g_Battle.UI.wSelectedAction = 2;
-               }
-            }
-            else if (g_InputState.dwKeyPress & kKeySearch)
+            if (g_InputState.dwKeyPress & kKeySearch)
             {
                switch (g_Battle.UI.wSelectedAction)
                {
@@ -1263,6 +1241,28 @@ PAL_BattleUIUpdate(
                }
             }
 #endif
+            else if (g_InputState.dir == kDirNorth)
+            {
+               g_Battle.UI.wSelectedAction = 0;
+            }
+            else if (g_InputState.dir == kDirSouth)
+            {
+               g_Battle.UI.wSelectedAction = 3;
+            }
+            else if (g_InputState.dir == kDirWest)
+            {
+               if (PAL_BattleUIIsActionValid(kBattleUIActionMagic))
+               {
+                  g_Battle.UI.wSelectedAction = 1;
+               }
+            }
+            else if (g_InputState.dir == kDirEast)
+            {
+               if (PAL_BattleUIIsActionValid(kBattleUIActionCoopMagic))
+               {
+                  g_Battle.UI.wSelectedAction = 2;
+               }
+            }
             break;
 
          case kBattleMenuMagicSelect:
