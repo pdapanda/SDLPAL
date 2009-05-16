@@ -662,7 +662,7 @@ PAL_BattleWon(
       PAL_DrawNumber(g_Battle.iCashGained, 5, PAL_XY(162, 119), kNumColorYellow, kNumAlignMid);
 
       VIDEO_UpdateScreen(&rect);
-      PAL_WaitForKey(3000);
+      PAL_WaitForKey(g_Battle.fIsBoss ? 5500 : 3000);
    }
 
    //
