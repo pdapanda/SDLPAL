@@ -246,10 +246,10 @@ PAL_BattleFadeScene(
    {
       for (j = 0; j < 6; j++)
       {
-         SDL_PollEvent(NULL);
+         PAL_ProcessEvent();
          while (SDL_GetTicks() <= time)
          {
-            SDL_PollEvent(NULL);
+            PAL_ProcessEvent();
             SDL_Delay(1);
          }
          time = SDL_GetTicks() + 20;

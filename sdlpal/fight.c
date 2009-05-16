@@ -1985,6 +1985,8 @@ PAL_BattleShowPlayerAttackAnim(
          g_Battle.rgPlayer[wPlayerIndex].pos =
             PAL_XY(PAL_X(g_Battle.rgPlayer[wPlayerIndex].pos) + 2,
                    PAL_Y(g_Battle.rgPlayer[wPlayerIndex].pos) + 1);
+
+         PAL_BattleDisplayStatChange();
       }
    }
 
@@ -3306,19 +3308,6 @@ PAL_BattlePlayerPerformAction(
             }
 
             PAL_BattleShowPlayerAttackAnim(wPlayerIndex, fCritical);
-
-            //
-            // Show the number of damage
-            //
-            x = PAL_X(g_Battle.rgEnemy[sTarget].pos) - 9;
-            y = PAL_Y(g_Battle.rgEnemy[sTarget].pos) - 115;
-
-            if (y < 10)
-            {
-               y = 10;
-            }
-
-            PAL_BattleUIShowNum((WORD)sDamage, PAL_XY(x, y), kNumColorBlue);
          }
       }
       else
@@ -3339,8 +3328,6 @@ PAL_BattlePlayerPerformAction(
                g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 7;
                PAL_BattleDelay(4, 0, TRUE);
             }
-
-            PAL_BattleShowPlayerAttackAnim(wPlayerIndex, fCritical);
 
             for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
             {
@@ -3376,19 +3363,6 @@ PAL_BattlePlayerPerformAction(
 
                g_Battle.rgEnemy[index[i]].e.wHealth -= sDamage;
 
-               //
-               // Show the number of damage
-               //
-               x = PAL_X(g_Battle.rgEnemy[index[i]].pos) - 9;
-               y = PAL_Y(g_Battle.rgEnemy[index[i]].pos) - 115;
-
-               if (y < 10)
-               {
-                  y = 10;
-               }
-
-               PAL_BattleUIShowNum((WORD)sDamage, PAL_XY(x, y), kNumColorBlue);
-
                division++;
                if (division > 3)
                {
@@ -3396,6 +3370,8 @@ PAL_BattlePlayerPerformAction(
                }
             }
          }
+
+         PAL_BattleShowPlayerAttackAnim(wPlayerIndex, fCritical);
       }
 
       PAL_BattleUpdateFighters();

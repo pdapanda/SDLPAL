@@ -86,7 +86,7 @@ typedef struct tagSHOWNUM
 {
    WORD             wNum;
    PAL_POS          pos;
-   WORD             wTime;
+   DWORD            dwTime;
    NUMCOLOR         color;
 } SHOWNUM;
 

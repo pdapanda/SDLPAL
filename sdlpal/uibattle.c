@@ -1667,14 +1667,18 @@ end:
    //
    for (i = 0; i < BATTLEUI_MAX_SHOWNUM; i++)
    {
-      if (g_Battle.UI.rgShowNum[i].wTime > 0)
+      if (g_Battle.UI.rgShowNum[i].wNum > 0)
       {
-         PAL_DrawNumber(g_Battle.UI.rgShowNum[i].wNum, 5, g_Battle.UI.rgShowNum[i].pos,
-            g_Battle.UI.rgShowNum[i].color, kNumAlignRight);
-
-         g_Battle.UI.rgShowNum[i].wTime--;
-         g_Battle.UI.rgShowNum[i].pos =
-            PAL_XY(PAL_X(g_Battle.UI.rgShowNum[i].pos), PAL_Y(g_Battle.UI.rgShowNum[i].pos) - 1);
+         if ((SDL_GetTicks() - g_Battle.UI.rgShowNum[i].dwTime) / BATTLE_FRAME_TIME > 10)
+         {
+            g_Battle.UI.rgShowNum[i].wNum = 0;
+         }
+         else
+         {
+            PAL_DrawNumber(g_Battle.UI.rgShowNum[i].wNum, 5,
+               PAL_XY(PAL_X(g_Battle.UI.rgShowNum[i].pos), PAL_Y(g_Battle.UI.rgShowNum[i].pos) - (SDL_GetTicks() - g_Battle.UI.rgShowNum[i].dwTime) / BATTLE_FRAME_TIME),
+               g_Battle.UI.rgShowNum[i].color, kNumAlignRight);
+         }
       }
    }
 
@@ -1706,16 +1710,16 @@ PAL_BattleUIShowNum(
 
 --*/
 {
-   int i;
+   int     i;
 
    for (i = 0; i < BATTLEUI_MAX_SHOWNUM; i++)
    {
-      if (g_Battle.UI.rgShowNum[i].wTime == 0)
+      if (g_Battle.UI.rgShowNum[i].wNum == 0)
       {
          g_Battle.UI.rgShowNum[i].wNum = wNum;
          g_Battle.UI.rgShowNum[i].pos = PAL_XY(PAL_X(pos) - 15, PAL_Y(pos));
          g_Battle.UI.rgShowNum[i].color = color;
-         g_Battle.UI.rgShowNum[i].wTime = 10;
+         g_Battle.UI.rgShowNum[i].dwTime = SDL_GetTicks();
 
          break;
       }
