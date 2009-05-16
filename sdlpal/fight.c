@@ -3962,8 +3962,12 @@ PAL_BattlePlayerPerformAction(
 #ifdef PAL_CLASSIC
          g_Battle.iHidingTime = -g_Battle.iHidingTime;
 #else
-         g_Battle.iHidingTime = -g_Battle.iHidingTime * 25;
-         g_Battle.iHidingTime *= ((gpGlobals->bBattleSpeed == 0) ? 1 : gpGlobals->bBattleSpeed);
+         g_Battle.iHidingTime = -g_Battle.iHidingTime * 30;
+
+         if (gpGlobals->bBattleSpeed > 1)
+         {
+            g_Battle.flTimeChargingUnit *= (1 + gpGlobals->bBattleSpeed * 0.5);
+         }
 #endif
          PAL_BattleBackupScene();
          PAL_BattleMakeScene();
