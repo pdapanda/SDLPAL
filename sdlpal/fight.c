@@ -367,7 +367,7 @@ PAL_UpdateTimeChargingUnit(
 
    if (gpGlobals->bBattleSpeed > 1)
    {
-      g_Battle.flTimeChargingUnit /= (1 + gpGlobals->bBattleSpeed * 0.3);
+      g_Battle.flTimeChargingUnit /= (1 + gpGlobals->bBattleSpeed * 0.5);
    }
 }
 
