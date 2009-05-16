@@ -718,17 +718,17 @@ PAL_GetPlayerElementalResistance(
 
 WORD
 PAL_GetPlayerBattleSprite(
-   WORD             wPlayerRole
+   WORD           wPlayerRole
 );
 
 WORD
 PAL_GetPlayerCooperativeMagic(
-   WORD             wPlayerRole
+   WORD           wPlayerRole
 );
 
 BOOL
 PAL_PlayerCanAttackAll(
-   WORD        wPlayerRole
+   WORD           wPlayerRole
 );
 
 BOOL
