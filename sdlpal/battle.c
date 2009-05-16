@@ -331,7 +331,7 @@ PAL_BattleMain(
    // Fade out the music and delay for a while
    //
    RIX_Play(0, FALSE, 1);
-   UTIL_Delay(800);
+   UTIL_Delay(300);
 
    //
    // Switch the screen
@@ -662,7 +662,7 @@ PAL_BattleWon(
       PAL_DrawNumber(g_Battle.iCashGained, 5, PAL_XY(162, 119), kNumColorYellow, kNumAlignMid);
 
       VIDEO_UpdateScreen(&rect);
-      PAL_WaitForKey();
+      PAL_WaitForKey(3000);
    }
 
    //
@@ -811,7 +811,7 @@ PAL_BattleWon(
          // Update the screen and wait for key
          //
          VIDEO_UpdateScreen(&rect1);
-         PAL_WaitForKey();
+         PAL_WaitForKey(3000);
 
          OrigPlayerRoles = gpGlobals->g.PlayerRoles;
       }
@@ -871,7 +871,7 @@ PAL_BattleWon(
          OrigPlayerRoles.statname[w],                       \
          5, PAL_XY(188, 74), kNumColorYellow, kNumAlignRight); \
       VIDEO_UpdateScreen(&rect);                            \
-      PAL_WaitForKey();                                     \
+      PAL_WaitForKey(3000);                                 \
    }                                                        \
 }
 
@@ -912,7 +912,7 @@ PAL_BattleWon(
                PAL_XY(75 + 16 * 5, 115), 0x1B, FALSE, FALSE);
 
             VIDEO_UpdateScreen(&rect);
-            PAL_WaitForKey();
+            PAL_WaitForKey(3000);
          }
 
          j++;

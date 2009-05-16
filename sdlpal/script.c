@@ -550,7 +550,7 @@ PAL_AdditionalCredits(
    PAL_SetPalette(0, FALSE);
    VIDEO_UpdateScreen(NULL);
 
-   PAL_WaitForKey();
+   PAL_WaitForKey(0);
 }
 
 static WORD
@@ -1651,7 +1651,7 @@ PAL_InterpretInstruction(
       //
       // wait for any key
       //
-      PAL_WaitForKey();
+      PAL_WaitForKey(0);
       break;
 
    case 0x004E:

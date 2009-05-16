@@ -35,6 +35,7 @@ typedef struct tagRIXPLAYER
    DWORD                      dwEndFadeTime;
    enum { FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fLoop;
+   BOOL                       fNextLoop;
    BYTE                       buf[22050 / 70 * 2];
    LPBYTE                     pos;
 } RIXPLAYER, *LPRIXPLAYER;
@@ -105,6 +106,7 @@ RIX_FillBuffer(
             // There is no current playing music. Just start playing the next one.
             //
             gpRixPlayer->iCurrentMusic = gpRixPlayer->iNextMusic;
+            gpRixPlayer->fLoop = gpRixPlayer->fNextLoop;
             gpRixPlayer->FadeType = RIXPLAYER::FADE_IN;
             gpRixPlayer->dwEndFadeTime = t +
                (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
@@ -125,6 +127,7 @@ RIX_FillBuffer(
                // Fade to the next music
                //
                gpRixPlayer->iCurrentMusic = gpRixPlayer->iNextMusic;
+               gpRixPlayer->fLoop = gpRixPlayer->fNextLoop;
                gpRixPlayer->FadeType = RIXPLAYER::FADE_IN;
                gpRixPlayer->dwEndFadeTime = t +
                   (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
@@ -244,6 +247,8 @@ RIX_Init(
    gpRixPlayer->iCurrentMusic = -1;
    gpRixPlayer->dwEndFadeTime = 0;
    gpRixPlayer->pos = NULL;
+   gpRixPlayer->fLoop = FALSE;
+   gpRixPlayer->fNextLoop = FALSE;
 
    return 0;
 }
@@ -308,7 +313,7 @@ RIX_Play(
    }
 
    DWORD t = SDL_GetTicks();
-   gpRixPlayer->fLoop = fLoop;
+   gpRixPlayer->fNextLoop = fLoop;
 
    if (iNumRIX == gpRixPlayer->iCurrentMusic && !g_fNoMusic)
    {

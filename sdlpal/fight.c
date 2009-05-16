@@ -2938,8 +2938,8 @@ PAL_BattleShowPostMagicAnim(
 
 --*/
 {
-   int i, j, x, y, dist = 8;
-   PAL_POS rgEnemyPosBak[MAX_ENEMIES_IN_TEAM];
+   int         i, j, x, y, dist = 8;
+   PAL_POS     rgEnemyPosBak[MAX_ENEMIES_IN_TEAM];
 
    for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
    {

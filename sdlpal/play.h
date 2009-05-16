@@ -48,7 +48,7 @@ PAL_StartFrame(
 
 VOID
 PAL_WaitForKey(
-   VOID
+   WORD      wTimeOut
 );
 
 #ifdef __cplusplus

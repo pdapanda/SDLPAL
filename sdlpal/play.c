@@ -563,7 +563,7 @@ PAL_StartFrame(
 
 VOID
 PAL_WaitForKey(
-   VOID
+   WORD      wTimeOut
 )
 /*++
   Purpose:
@@ -572,7 +572,7 @@ PAL_WaitForKey(
 
   Parameters:
 
-    None.
+    [IN]  wTimeOut - the maximum time of the waiting. 0 = wait forever.
 
   Return value:
 
@@ -580,11 +580,14 @@ PAL_WaitForKey(
 
 --*/
 {
+   DWORD     dwTimeOut = SDL_GetTicks() + wTimeOut;
+
    PAL_ClearKeyState();
 
-   while (TRUE)
+   while (wTimeOut != 0 && SDL_GetTicks() < dwTimeOut)
    {
-      UTIL_Delay(1);
+      UTIL_Delay(5);
+
       if (g_InputState.dwKeyPress & (kKeySearch | kKeyMenu))
       {
          break;
