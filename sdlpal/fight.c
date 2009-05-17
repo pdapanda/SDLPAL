@@ -3970,11 +3970,11 @@ PAL_BattlePlayerPerformAction(
 
          if (gpGlobals->bBattleSpeed > 1)
          {
-            g_Battle.flTimeChargingUnit *= 1 + (gpGlobals->bBattleSpeed - 1) * 0.5;
+            g_Battle.iHidingTime *= 1 + (gpGlobals->bBattleSpeed - 1) * 0.5;
          }
          else
          {
-            g_Battle.flTimeChargingUnit *= 1.2;
+            g_Battle.iHidingTime *= 1.2;
          }
 #endif
          PAL_BattleBackupScene();
