@@ -1978,6 +1978,7 @@ PAL_BattleShowPlayerAttackAnim(
          }
 
          PAL_BattleDisplayStatChange();
+         PAL_BattleBackupStat();
       }
 
       VIDEO_UpdateScreen(NULL);
