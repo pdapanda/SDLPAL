@@ -683,11 +683,11 @@ PAL_LoadObjectDesc(
 
 --*/
 {
-   FILE          *fp;
-   PAL_LARGE   char           buf[512];
-   char          *p;
-   LPOBJECTDESC   lpDesc = NULL, pNew = NULL;
-   unsigned int   i;
+   FILE                      *fp;
+   PAL_LARGE char             buf[512];
+   char                      *p;
+   LPOBJECTDESC               lpDesc = NULL, pNew = NULL;
+   unsigned int               i;
 
    fp = fopen(lpszFileName, "r");
 

@@ -22,6 +22,7 @@
 
 static int     g_iNumInventory = 0;
 static WORD    g_wItemFlags = 0;
+static BOOL    g_fNoDesc = FALSE;
 
 WORD
 PAL_ItemSelectMenuUpdate(
@@ -217,7 +218,7 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the description of the selected item
    //
-   if (gpGlobals->lpObjectDesc != NULL)
+   if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
    {
       char szDesc[512], *d, *next;
       d = (char *)PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
@@ -364,18 +365,15 @@ PAL_ItemSelectMenu(
    int              iPrevIndex;
    WORD             w;
    DWORD            dwTime;
-   LPOBJECTDESC     lpObjectDescBak;
 
    PAL_ItemSelectMenuInit(wItemFlags);
    iPrevIndex = gpGlobals->iCurInvMenuItem;
 
    PAL_ClearKeyState();
 
-   lpObjectDescBak = gpGlobals->lpObjectDesc;
-
    if (lpfnMenuItemChanged != NULL)
    {
-      gpGlobals->lpObjectDesc = NULL;
+      g_fNoDesc = TRUE;
       (*lpfnMenuItemChanged)(gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem);
    }
 
@@ -408,7 +406,7 @@ PAL_ItemSelectMenu(
 
       if (w != 0xFFFF)
       {
-         gpGlobals->lpObjectDesc = lpObjectDescBak;
+         g_fNoDesc = FALSE;
          return w;
       }
 
