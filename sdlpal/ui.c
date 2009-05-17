@@ -719,6 +719,7 @@ PAL_LoadObjectDesc(
       pNew->next = lpDesc;
       lpDesc = pNew;
    }
+
    fclose(fp);
    return lpDesc;
 }
