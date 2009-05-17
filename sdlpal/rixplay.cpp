@@ -155,8 +155,9 @@ RIX_FillBuffer(
    //
    while (len > 0)
    {
-      if (gpRixPlayer->pos - gpRixPlayer->buf >= 22050 / 70 * 2 ||
-         gpRixPlayer->pos == NULL)
+	  if (gpRixPlayer->pos == NULL ||
+	      gpRixPlayer->pos - gpRixPlayer->buf >= 22050 / 70 * 2
+		 )
       {
          gpRixPlayer->pos = gpRixPlayer->buf;
          if (!gpRixPlayer->rix.update())
