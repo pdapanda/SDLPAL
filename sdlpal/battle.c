@@ -1065,7 +1065,7 @@ PAL_BattlePlayerEscape(
    {
       for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
       {
-         wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+         wPlayerRole = gpGlobals->rgParty[j].wPlayerRole;
 
          if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] > 0)
          {
