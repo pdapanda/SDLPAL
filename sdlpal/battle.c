@@ -1219,7 +1219,7 @@ PAL_StartBattle(
          //
          if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -32)
          {
-            g_Battle.rgEnemy[i].e.wDexterity = (WORD)-8; // for Grandma Knife
+            g_Battle.rgEnemy[i].e.wDexterity = 0; // for Grandma Knife
          }
          else if (g_Battle.rgEnemy[i].e.wDexterity == 20 &&
             gpGlobals->g.PlayerRoles.rgwLevel[0] < 15)
@@ -1229,6 +1229,10 @@ PAL_StartBattle(
          else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
          {
             g_Battle.rgEnemy[i].e.wDexterity = 0; // for Spider
+         }
+         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -16)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity = 0; // for Zombie
          }
 #endif
       }

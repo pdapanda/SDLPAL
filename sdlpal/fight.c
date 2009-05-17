@@ -265,12 +265,12 @@ PAL_GetEnemyDexterity(
    s = (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 3;
    s += (SHORT)g_Battle.rgEnemy[wEnemyIndex].e.wDexterity;
 
-   if (s < 10)
+#ifndef PAL_CLASSIC
+   if (s < 20)
    {
-      s = 10;
+      s = 20;
    }
 
-#ifndef PAL_CLASSIC
    if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusHaste] != 0)
    {
       s *= 6;
