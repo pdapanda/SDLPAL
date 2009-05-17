@@ -252,7 +252,7 @@ PAL_BattleFadeScene(
             PAL_ProcessEvent();
             SDL_Delay(1);
          }
-         time = SDL_GetTicks() + 20;
+         time = SDL_GetTicks() + 16;
 
          //
          // Blend the pixels in the 2 buffers, and put the result into the

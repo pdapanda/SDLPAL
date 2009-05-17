@@ -1484,6 +1484,21 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetPlayer:
+#ifndef PAL_CLASSIC
+      if (gpGlobals->bBattleSpeed == 0)
+#endif
+      {
+         //
+         // Don't bother selecting unless using Active-Time Battle
+         // when only 1 player is in the party
+         //
+         if (gpGlobals->wMaxPartyMemberIndex == 0)
+         {
+            g_Battle.UI.wSelectedIndex = 0;
+            PAL_BattleCommitAction(FALSE);
+         }
+      }
+
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;
       if (s_iFrame & 1)
       {
