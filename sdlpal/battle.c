@@ -1234,6 +1234,12 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity = 0; // for Zombie
          }
+         else if (g_Battle.rgEnemy[i].e.wLevel < 20 &&
+            gpGlobals->wNumScene >= 0xD8 && gpGlobals->wNumScene <= 0xE2)
+         {
+            g_Battle.rgEnemy[i].e.wLevel += 20;
+            g_Battle.rgEnemy[i].e.wDexterity += 25;
+         }
 #endif
       }
    }
