@@ -333,10 +333,12 @@ PAL_GetPlayerActualDexterity(
       wDexterity /= 5;
    }
 
+#ifdef PAL_CLASSIC
    if (wDexterity > 999)
    {
       wDexterity = 999;
    }
+#endif
 
    return wDexterity;
 }
