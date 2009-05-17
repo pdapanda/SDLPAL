@@ -331,7 +331,7 @@ PAL_BattleMain(
    // Fade out the music and delay for a while
    //
    RIX_Play(0, FALSE, 1);
-   UTIL_Delay(300);
+   UTIL_Delay(200);
 
    //
    // Switch the screen
