@@ -1234,6 +1234,10 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity = 0; // for Zombie
          }
+         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -20)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity = -8; // for Flower Demon
+         }
          else if (g_Battle.rgEnemy[i].e.wLevel < 20 &&
             gpGlobals->wNumScene >= 0xD8 && gpGlobals->wNumScene <= 0xE2)
          {
