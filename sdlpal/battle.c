@@ -1241,12 +1241,15 @@ PAL_StartBattle(
          else if (g_Battle.rgEnemy[i].e.wLevel < 20 &&
             gpGlobals->wNumScene >= 0xD8 && gpGlobals->wNumScene <= 0xE2)
          {
+            //
+            // for low-level monsters in the Cave of Trial
+            //
             g_Battle.rgEnemy[i].e.wLevel += 15;
             g_Battle.rgEnemy[i].e.wDexterity += 25;
          }
          else if (gpGlobals->wNumScene == 0x90)
          {
-            g_Battle.rgEnemy[i].e.wDexterity += 25; // for Dragons
+            g_Battle.rgEnemy[i].e.wDexterity += 25; // for Tower Dragons
          }
 #endif
       }
