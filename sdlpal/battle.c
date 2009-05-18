@@ -1244,6 +1244,10 @@ PAL_StartBattle(
             g_Battle.rgEnemy[i].e.wLevel += 15;
             g_Battle.rgEnemy[i].e.wDexterity += 25;
          }
+         else if (gpGlobals->wNumScene == 0x90)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity += 25; // for Dragons
+         }
 #endif
       }
    }
