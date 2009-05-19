@@ -412,7 +412,7 @@ VIDEO_ToggleScaleScreen(
    }
 #endif
    VIDEO_Resize(g_wInitialWidth, g_wInitialHeight);
-#endif   
+#endif
 }
 
 VOID
@@ -679,11 +679,11 @@ VIDEO_FadeScreen(
    {
       for (j = 0; j < 6; j++)
       {
-         SDL_PollEvent(NULL);
+         while (SDL_PollEvent(NULL));
          while (SDL_GetTicks() <= time)
          {
-            SDL_PollEvent(NULL);
-            SDL_Delay(1);
+            while (SDL_PollEvent(NULL));
+            SDL_Delay(5);
          }
          time = SDL_GetTicks() + wSpeed;
 
