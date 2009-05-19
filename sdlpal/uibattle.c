@@ -1004,6 +1004,32 @@ PAL_BattleUIUpdate(
             {SPRITENUM_BATTLEICON_MISCMENU,  PAL_XY(27, 170), kBattleUIActionMisc}
          };
 
+         if (g_Battle.UI.MenuState == kBattleMenuMain)
+         {
+            if (g_InputState.dir == kDirNorth)
+            {
+               g_Battle.UI.wSelectedAction = 0;
+            }
+            else if (g_InputState.dir == kDirSouth)
+            {
+               g_Battle.UI.wSelectedAction = 3;
+            }
+            else if (g_InputState.dir == kDirWest)
+            {
+               if (PAL_BattleUIIsActionValid(kBattleUIActionMagic))
+               {
+                  g_Battle.UI.wSelectedAction = 1;
+               }
+            }
+            else if (g_InputState.dir == kDirEast)
+            {
+               if (PAL_BattleUIIsActionValid(kBattleUIActionCoopMagic))
+               {
+                  g_Battle.UI.wSelectedAction = 2;
+               }
+            }
+         }
+
          if (!PAL_BattleUIIsActionValid(rgItems[g_Battle.UI.wSelectedAction].action))
          {
             g_Battle.UI.wSelectedAction = 0;
@@ -1241,28 +1267,6 @@ PAL_BattleUIUpdate(
                }
             }
 #endif
-            else if (g_InputState.dir == kDirNorth)
-            {
-               g_Battle.UI.wSelectedAction = 0;
-            }
-            else if (g_InputState.dir == kDirSouth)
-            {
-               g_Battle.UI.wSelectedAction = 3;
-            }
-            else if (g_InputState.dir == kDirWest)
-            {
-               if (PAL_BattleUIIsActionValid(kBattleUIActionMagic))
-               {
-                  g_Battle.UI.wSelectedAction = 1;
-               }
-            }
-            else if (g_InputState.dir == kDirEast)
-            {
-               if (PAL_BattleUIIsActionValid(kBattleUIActionCoopMagic))
-               {
-                  g_Battle.UI.wSelectedAction = 2;
-               }
-            }
             break;
 
          case kBattleMenuMagicSelect:
