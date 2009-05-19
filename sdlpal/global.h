@@ -142,18 +142,18 @@ typedef enum tagTRIGGERMODE
 
 typedef struct tagEVENTOBJECT
 {
-   SHORT        sVanishTime;      // vanish time (?)
-   WORD         x;                // X coordinate on the map
-   WORD         y;                // Y coordinate on the map
-   SHORT        sLayer;           // layer value
-   WORD         wTriggerScript;   // Trigger script entry
-   WORD         wAutoScript;      // Auto script entry
-   SHORT        sState;           // state of this object
-   WORD         wTriggerMode;     // trigger mode
-   WORD         wSpriteNum;       // number of the sprite
-   USHORT       nSpriteFrames;    // total number of frames of the sprite
-   WORD         wDirection;       // direction
-   WORD         wCurrentFrameNum; // current frame number
+   SHORT        sVanishTime;         // vanish time (?)
+   WORD         x;                   // X coordinate on the map
+   WORD         y;                   // Y coordinate on the map
+   SHORT        sLayer;              // layer value
+   WORD         wTriggerScript;      // Trigger script entry
+   WORD         wAutoScript;         // Auto script entry
+   SHORT        sState;              // state of this object
+   WORD         wTriggerMode;        // trigger mode
+   WORD         wSpriteNum;          // number of the sprite
+   USHORT       nSpriteFrames;       // total number of frames of the sprite
+   WORD         wDirection;          // direction
+   WORD         wCurrentFrameNum;    // current frame number
    USHORT       nScriptIdleFrame;    // count of idle frames, used by trigger script
    WORD         wSpritePtrOffset;    // FIXME: ???
    USHORT       nSpriteFramesAuto;   // total number of frames of the sprite, used by auto script
