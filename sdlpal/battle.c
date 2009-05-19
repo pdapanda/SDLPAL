@@ -1239,7 +1239,7 @@ PAL_StartBattle(
          else if (g_Battle.rgEnemy[i].e.wExp == 250 &&
             g_Battle.rgEnemy[i].e.wCash == 1100)
          {
-            g_Battle.rgEnemy[i].e.wDexterity += 20; // for Snake Demon
+            g_Battle.rgEnemy[i].e.wDexterity += 12; // for Snake Demon
          }
          else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
          {
