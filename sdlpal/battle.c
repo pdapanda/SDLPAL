@@ -1270,6 +1270,16 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity += 25; // for Tower Dragons
          }
+         else if (g_Battle.rgEnemy[i].e.wLevel == 2 &&
+            g_Battle.rgEnemy[i].e.wCash == 48)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity += 8; // for Miao Fists
+         }
+         else if (g_Battle.rgEnemy[i].e.wLevel == 4 &&
+            g_Battle.rgEnemy[i].e.wCash == 240)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity += 18; // for Fat Miao
+         }
 #endif
       }
    }
