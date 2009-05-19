@@ -1236,6 +1236,11 @@ PAL_StartBattle(
                g_Battle.rgEnemy[i].e.wDexterity = 60;
             }
          }
+         else if (g_Battle.rgEnemy[i].e.wExp == 250 &&
+            g_Battle.rgEnemy[i].e.wCash == 1100)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity += 20; // for Snake Demon
+         }
          else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
          {
             g_Battle.rgEnemy[i].e.wDexterity = 0; // for Spider
