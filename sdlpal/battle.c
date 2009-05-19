@@ -1221,14 +1221,28 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity = 0; // for Grandma Knife
          }
-         else if (g_Battle.rgEnemy[i].e.wDexterity == 20 &&
-            gpGlobals->g.PlayerRoles.rgwLevel[0] < 15)
+         else if (g_Battle.rgEnemy[i].e.wDexterity == 20)
          {
-            g_Battle.rgEnemy[i].e.wDexterity = 8; // for Fox Demon
+            //
+            // for Fox Demon
+            //
+            if (gpGlobals->g.PlayerRoles.rgwLevel[0] < 15)
+            {
+               g_Battle.rgEnemy[i].e.wDexterity = 8;
+            }
+            else if (gpGlobals->g.PlayerRoles.rgwLevel[4] > 28 ||
+               gpGlobals->Exp.rgPrimaryExp[4].wExp > 0)
+            {
+               g_Battle.rgEnemy[i].e.wDexterity = 60;
+            }
          }
          else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
          {
             g_Battle.rgEnemy[i].e.wDexterity = 0; // for Spider
+         }
+         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -30)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity = (WORD)-10; // for Stone Head
          }
          else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -16)
          {
