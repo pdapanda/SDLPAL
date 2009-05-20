@@ -78,7 +78,9 @@ extern "C"
 #else
 
 #define PAL_HAS_JOYSTICKS     1
+#ifndef _WIN32_WCE
 #define PAL_ALLOW_KEYREPEAT   1
+#endif
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"
 #endif
@@ -92,7 +94,7 @@ extern "C"
 
 #include <windows.h>
 
-#ifndef __BORLANDC__
+#if !defined(__BORLANDC__) && !defined(_WIN32_WCE)
 #include <io.h>
 #endif
 

@@ -3372,9 +3372,9 @@ PAL_BattlePlayerPerformAction(
                   division = 3;
                }
             }
-         }
 
-         PAL_BattleShowPlayerAttackAnim(wPlayerIndex, fCritical);
+            PAL_BattleShowPlayerAttackAnim(wPlayerIndex, fCritical);
+         }
       }
 
       PAL_BattleUpdateFighters();
