@@ -65,11 +65,11 @@ RIX_FillBuffer(
 
 --*/
 {
-   INT       i, l, oldlen = len, volume = SDL_MIX_MAXVOLUME;
+   INT       i, l, oldlen = len, volume = SDL_MIX_MAXVOLUME / 2;
    UINT      t = SDL_GetTicks();
 
 #ifdef __SYMBIAN32__
-   volume = g_iVolume;
+   volume = g_iVolume / 2;
 #endif
 
    if (gpRixPlayer == NULL)
