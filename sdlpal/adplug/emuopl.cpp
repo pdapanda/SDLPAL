@@ -26,7 +26,7 @@ CEmuopl::CEmuopl(int rate, bool bit16, bool usestereo)
    opl[0] = OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
    opl[1] = OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
 
-   currType = TYPE_DUAL_OPL2;
+   currType = TYPE_OPL2;
 
    init();
 }
