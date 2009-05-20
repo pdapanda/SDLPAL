@@ -231,6 +231,8 @@ RIX_Init(
       return -1;
    }
 
+   gpRixPlayer->opl.settype(TYPE_OPL2);
+
    //
    // Load the MKF file.
    //
