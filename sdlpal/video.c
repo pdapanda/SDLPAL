@@ -29,6 +29,12 @@ SDL_Surface              *gpScreenBak        = NULL;
 // The real screen surface
 static SDL_Surface       *gpScreenReal       = NULL;
 
+#ifdef __SYMBIAN32__
+static BOOL bScaleScreen = FALSE;
+#else
+static BOOL bScaleScreen = TRUE;
+#endif
+
 // Initial screen size
 static WORD               g_wInitialWidth    = 640;
 static WORD               g_wInitialHeight   = 400;
@@ -199,13 +205,20 @@ VIDEO_UpdateScreen(
 --*/
 {
    SDL_Rect        srcrect, dstrect;
-
+   short offset = 240 - 200;
+   short screenRealHeight = gpScreenReal->h;
+   short screenRealY = 0;
+   if(!bScaleScreen)
+   {
+	   screenRealHeight -= offset;
+	   screenRealY = offset / 2;
+   }
    if (lpRect != NULL)
    {
-      dstrect.x = (SHORT)((INT)(lpRect->x) * gpScreenReal->w / gpScreen->w);
-      dstrect.y = (SHORT)((INT)(lpRect->y) * gpScreenReal->h / gpScreen->h);
+	  dstrect.x = (SHORT)((INT)(lpRect->x) * gpScreenReal->w / gpScreen->w);
+      dstrect.y = (SHORT)((INT)(screenRealY + lpRect->y) * screenRealHeight / gpScreen->h);
       dstrect.w = (WORD)((DWORD)(lpRect->w) * gpScreenReal->w / gpScreen->w);
-      dstrect.h = (WORD)((DWORD)(lpRect->h) * gpScreenReal->h / gpScreen->h);
+      dstrect.h = (WORD)((DWORD)(lpRect->h) * screenRealHeight / gpScreen->h);
 
       SDL_SoftStretch(gpScreen, (SDL_Rect *)lpRect, gpScreenReal, &dstrect);
       SDL_UpdateRect(gpScreenReal, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
@@ -221,9 +234,9 @@ VIDEO_UpdateScreen(
       srcrect.h = 200 - g_wShakeLevel;
 
       dstrect.x = 0;
-      dstrect.y = 0;
+      dstrect.y = screenRealY;
       dstrect.w = 320 * gpScreenReal->w / gpScreen->w;
-      dstrect.h = (200 - g_wShakeLevel) * gpScreenReal->h / gpScreen->h;
+      dstrect.h = (200 - g_wShakeLevel) * screenRealHeight / gpScreen->h;
 
       if (g_wShakeTime & 1)
       {
@@ -231,21 +244,21 @@ VIDEO_UpdateScreen(
       }
       else
       {
-         dstrect.y = g_wShakeLevel * gpScreenReal->h / gpScreen->h;
+         dstrect.y = (screenRealY + g_wShakeLevel) * screenRealHeight / gpScreen->h;
       }
 
       SDL_SoftStretch(gpScreen, &srcrect, gpScreenReal, &dstrect);
 
       if (g_wShakeTime & 1)
       {
-         dstrect.y = (200 - g_wShakeLevel) * gpScreenReal->h / gpScreen->h;
+         dstrect.y = (screenRealY + screenRealHeight - g_wShakeLevel) * screenRealHeight / gpScreen->h;
       }
       else
       {
-         dstrect.y = 0;
+         dstrect.y = screenRealY;
       }
 
-      dstrect.h = g_wShakeLevel * gpScreenReal->h / gpScreen->h;
+      dstrect.h = g_wShakeLevel * screenRealHeight / gpScreen->h;
 
       SDL_FillRect(gpScreenReal, &dstrect, 0);
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
@@ -254,7 +267,12 @@ VIDEO_UpdateScreen(
    }
    else
    {
-      SDL_SoftStretch(gpScreen, NULL, gpScreenReal, NULL);
+	  dstrect.x = 0;
+	  dstrect.y = screenRealY;
+	  dstrect.w = gpScreenReal->w;
+	  dstrect.h = screenRealHeight;
+
+	  SDL_SoftStretch(gpScreen, NULL, gpScreenReal, &dstrect);
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
    }
 }
@@ -388,30 +406,9 @@ VIDEO_ToggleScaleScreen(
 --*/
 {
 #ifdef __SYMBIAN32__
-
-   static BOOL bFullScreen = FALSE;
-
-   bFullScreen = !bFullScreen;
-#ifdef __S60_5X__
-   if (bFullScreen)
-   {
-      g_wInitialWidth = 640;
-   }
-   else
-   {
-      g_wInitialWidth = 576;
-   }
-#else
-   if (bFullScreen)
-   {
-      g_wInitialHeight = 240;
-   }
-   else
-   {
-      g_wInitialHeight = 200;
-   }
-#endif
-   VIDEO_Resize(g_wInitialWidth, g_wInitialHeight);
+	bScaleScreen = !bScaleScreen;
+	VIDEO_Resize(320,240);
+	VIDEO_UpdateScreen(NULL);
 #endif
 }
 
@@ -624,7 +621,15 @@ VIDEO_SwitchScreen(
 {
    int               i, j;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-
+   SDL_Rect         dstrect;
+      short offset = 240 - 200;
+      short screenRealHeight = gpScreenReal->h;
+      short screenRealY = 0;
+      if(!bScaleScreen)
+   	   {
+   	   screenRealHeight -= offset;
+   	   screenRealY = offset / 2;
+   	   }
    wSpeed++;
    wSpeed *= 10;
 
@@ -638,7 +643,12 @@ VIDEO_SwitchScreen(
       //
       // Draw the backup buffer to the screen
       //
-      SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, NULL);
+      dstrect.x = 0;
+      dstrect.y = screenRealY;
+      dstrect.w = gpScreenReal->w;
+      dstrect.h = screenRealHeight;
+
+      SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 
       UTIL_Delay(wSpeed);
@@ -669,7 +679,15 @@ VIDEO_FadeScreen(
    DWORD             time;
    BYTE              a, b;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-
+   SDL_Rect         dstrect;
+   short offset = 240 - 200;
+   short screenRealHeight = gpScreenReal->h;
+   short screenRealY = 0;
+   if(!bScaleScreen)
+   {
+	   screenRealHeight -= offset;
+	   screenRealY = offset / 2;
+   }
    time = SDL_GetTicks();
 
    wSpeed++;
@@ -760,7 +778,12 @@ VIDEO_FadeScreen(
          }
          else
          {
-            SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, NULL);
+			dstrect.x = 0;
+        	dstrect.y = screenRealY;
+        	dstrect.w = gpScreenReal->w;
+        	dstrect.h = screenRealHeight;
+
+            SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
             SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
          }
       }
