@@ -329,8 +329,12 @@ PAL_GetPlayerActualDexterity(
       //
       // player who is low of HP should be slower
       //
+#ifdef PAL_CLASSIC
+      wDexterity /= 2;
+#else
       wDexterity *= 4;
       wDexterity /= 5;
+#endif
    }
 
 #ifdef PAL_CLASSIC
