@@ -205,14 +205,16 @@ VIDEO_UpdateScreen(
 --*/
 {
    SDL_Rect        srcrect, dstrect;
-   short offset = 240 - 200;
-   short screenRealHeight = gpScreenReal->h;
-   short screenRealY = 0;
-   if(!bScaleScreen)
+   short           offset = 240 - 200;
+   short           screenRealHeight = gpScreenReal->h;
+   short           screenRealY = 0;
+
+   if (!bScaleScreen)
    {
-	   screenRealHeight -= offset;
-	   screenRealY = offset / 2;
+      screenRealHeight -= offset;
+      screenRealY = offset / 2;
    }
+
    if (lpRect != NULL)
    {
 	  dstrect.x = (SHORT)((INT)(lpRect->x) * gpScreenReal->w / gpScreen->w);
@@ -431,9 +433,9 @@ VIDEO_ToggleFullscreen(
 
 --*/
 {
-   DWORD          flags;
+   DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
-   int            i;
+   int                      i;
 
    //
    // Get the original palette.
@@ -621,15 +623,18 @@ VIDEO_SwitchScreen(
 {
    int               i, j;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-   SDL_Rect         dstrect;
-      short offset = 240 - 200;
-      short screenRealHeight = gpScreenReal->h;
-      short screenRealY = 0;
-      if(!bScaleScreen)
-   	   {
-   	   screenRealHeight -= offset;
-   	   screenRealY = offset / 2;
-   	   }
+   SDL_Rect          dstrect;
+
+   short             offset = 240 - 200;
+   short             screenRealHeight = gpScreenReal->h;
+   short             screenRealY = 0;
+
+   if (!bScaleScreen)
+   {
+      screenRealHeight -= offset;
+      screenRealY = offset / 2;
+   }
+
    wSpeed++;
    wSpeed *= 10;
 
@@ -679,15 +684,17 @@ VIDEO_FadeScreen(
    DWORD             time;
    BYTE              a, b;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-   SDL_Rect         dstrect;
-   short offset = 240 - 200;
-   short screenRealHeight = gpScreenReal->h;
-   short screenRealY = 0;
-   if(!bScaleScreen)
+   SDL_Rect          dstrect;
+   short             offset = 240 - 200;
+   short             screenRealHeight = gpScreenReal->h;
+   short             screenRealY = 0;
+
+   if (!bScaleScreen)
    {
-	   screenRealHeight -= offset;
-	   screenRealY = offset / 2;
+      screenRealHeight -= offset;
+      screenRealY = offset / 2;
    }
+
    time = SDL_GetTicks();
 
    wSpeed++;
