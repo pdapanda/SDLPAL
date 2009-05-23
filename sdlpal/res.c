@@ -243,6 +243,9 @@ PAL_LoadResources(
 
       if (gpResources->lpMap == NULL)
       {
+         fclose(fpMAP);
+         fclose(fpGOP);
+
          TerminateOnError("PAL_LoadResources(): Fail to load map #%d (scene #%d) !",
             gpGlobals->g.rgScene[i].wMapNum, gpGlobals->wNumScene);
       }
