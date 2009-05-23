@@ -284,11 +284,6 @@ TerminateOnError(
 
    fprintf(stderr, "\nFATAL ERROR: %s\n", string);
 
-#ifdef __SYMBIAN32__
-   printf("\nFATAL ERROR: %s\n", string);
-   PAL_WaitForKey(30000);
-#endif
-
 #ifdef _WIN32
    MessageBoxA(0, string, "FATAL ERROR", MB_ICONERROR);
 #endif
@@ -302,12 +297,15 @@ TerminateOnError(
 #endif
 
    PAL_Shutdown();
-
+#ifdef __SYMBIAN32__
+   while (1);
+#else   
 #ifdef NDS
    while (1);
 #else
    exit(255);
 #endif
+#endif   
 }
 
 void *

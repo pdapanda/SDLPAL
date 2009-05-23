@@ -66,12 +66,14 @@ PAL_InitGlobals(
    // Open files
    //
    gpGlobals->f.fpFBP = UTIL_OpenRequiredFile("fbp.mkf");
+#ifndef __SYMBIAN32__ /*delay open*/
    gpGlobals->f.fpMAP = UTIL_OpenRequiredFile("map.mkf");
    gpGlobals->f.fpGOP = UTIL_OpenRequiredFile("gop.mkf");
    gpGlobals->f.fpRNG = UTIL_OpenRequiredFile("rng.mkf");
    gpGlobals->f.fpPAT = UTIL_OpenRequiredFile("pat.mkf");
+   gpGlobals->f.fpABC = UTIL_OpenRequiredFile("abc.mkf");   
+#endif 
    gpGlobals->f.fpMGO = UTIL_OpenRequiredFile("mgo.mkf");
-   gpGlobals->f.fpABC = UTIL_OpenRequiredFile("abc.mkf");
    gpGlobals->f.fpBALL = UTIL_OpenRequiredFile("ball.mkf");
    gpGlobals->f.fpDATA = UTIL_OpenRequiredFile("data.mkf");
    gpGlobals->f.fpF = UTIL_OpenRequiredFile("f.mkf");
@@ -112,12 +114,14 @@ PAL_FreeGlobals(
       // Close all opened files
       //
       UTIL_CloseFile(gpGlobals->f.fpFBP);
+#ifndef __SYMBIAN32__ /*delay open*/
       UTIL_CloseFile(gpGlobals->f.fpGOP);
       UTIL_CloseFile(gpGlobals->f.fpMAP);
       UTIL_CloseFile(gpGlobals->f.fpRNG);
       UTIL_CloseFile(gpGlobals->f.fpPAT);
+      UTIL_CloseFile(gpGlobals->f.fpABC);      
+#endif      
       UTIL_CloseFile(gpGlobals->f.fpMGO);
-      UTIL_CloseFile(gpGlobals->f.fpABC);
       UTIL_CloseFile(gpGlobals->f.fpBALL);
       UTIL_CloseFile(gpGlobals->f.fpDATA);
       UTIL_CloseFile(gpGlobals->f.fpF);

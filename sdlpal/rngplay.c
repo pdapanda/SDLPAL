@@ -435,7 +435,9 @@ PAL_RNGPlay(
 {
    UINT            iTime;
    int             iDelay = 800 / (iSpeed == 0 ? 16 : iSpeed);
-
+#ifdef __SYMBIAN32__ /*delay open*/
+   gpGlobals->f.fpRNG = UTIL_OpenRequiredFile("rng.mkf");
+#endif 
    for (; iStartFrame <= iEndFrame; iStartFrame++)
    {
       iTime = SDL_GetTicks() + iDelay;
@@ -471,4 +473,7 @@ PAL_RNGPlay(
          SDL_Delay(1);
       }
    }
+#ifdef __SYMBIAN32__ /*delay open*/
+   UTIL_CloseFile(gpGlobals->f.fpRNG); 
+#endif    
 }

@@ -66,8 +66,8 @@ extern "C"
 #undef  SDL_INIT_JOYSTICK
 #define SDL_INIT_JOYSTICK     0
 #define PAL_HAS_MOUSE         1
-#define PAL_PREFIX            "e:\\data\\pal\\"
-#define PAL_SAVE_PREFIX       "e:\\data\\pal\\"
+#define PAL_PREFIX            "e:/data/pal/"
+#define PAL_SAVE_PREFIX       "e:/data/pal/"
 
 #elif defined (PSP)
 

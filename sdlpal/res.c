@@ -207,7 +207,10 @@ PAL_LoadResources(
 {
    int                i, index, l, n;
    WORD               wPlayerID, wSpriteNum;
-
+#ifdef __SYMBIAN32__ /*delay open*/
+   gpGlobals->f.fpMAP = UTIL_OpenRequiredFile("map.mkf");
+   gpGlobals->f.fpGOP = UTIL_OpenRequiredFile("gop.mkf");
+#endif 
    if (gpResources == NULL)
    {
       return;
@@ -331,6 +334,10 @@ PAL_LoadResources(
    // Clear all of the load flags
    //
    gpResources->bLoadFlags = 0;
+#ifdef __SYMBIAN32__ /*delay open*/
+      UTIL_CloseFile(gpGlobals->f.fpGOP);
+      UTIL_CloseFile(gpGlobals->f.fpMAP);
+#endif   
 }
 
 LPPALMAP

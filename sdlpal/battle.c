@@ -493,6 +493,9 @@ PAL_LoadBattleSprites(
 --*/
 {
    int           i, l, x, y, s;
+#ifdef __SYMBIAN32__ /*delay open*/
+   gpGlobals->f.fpABC = UTIL_OpenRequiredFile("abc.mkf");   
+#endif 
 
    PAL_FreeBattleSprites();
 
@@ -561,6 +564,9 @@ PAL_LoadBattleSprites(
       g_Battle.rgEnemy[i].posOriginal = PAL_XY(x, y);
       g_Battle.rgEnemy[i].pos = PAL_XY(x, y);
    }
+#ifdef __SYMBIAN32__ /*delay open*/
+      UTIL_CloseFile(gpGlobals->f.fpABC);      
+#endif     
 }
 
 static VOID

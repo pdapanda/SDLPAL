@@ -45,7 +45,9 @@ PAL_GetPalette(
    static SDL_Color      palette[256];
    PAL_LARGE BYTE        buf[1536];
    INT                   i;
-
+#ifdef __SYMBIAN32__ /*delay open*/
+   gpGlobals->f.fpPAT = UTIL_OpenRequiredFile("pat.mkf");   
+#endif 
    //
    // Read the palette data from the pat.mkf file
    //
@@ -77,7 +79,9 @@ PAL_GetPalette(
       palette[i].b += (255 - palette[i].b) / 5;
 #endif
    }
-
+#ifdef __SYMBIAN32__ /*delay open*/
+      UTIL_CloseFile(gpGlobals->f.fpPAT);      
+#endif  
    return palette;
 }
 
