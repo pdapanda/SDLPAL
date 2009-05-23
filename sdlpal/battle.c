@@ -493,11 +493,11 @@ PAL_LoadBattleSprites(
 --*/
 {
    int           i, l, x, y, s;
-#ifdef __SYMBIAN32__ /*delay open*/
-   gpGlobals->f.fpABC = UTIL_OpenRequiredFile("abc.mkf");   
-#endif 
+   FILE         *fp;
 
    PAL_FreeBattleSprites();
+
+   fp = UTIL_OpenRequiredFile("abc.mkf");
 
    //
    // Load battle sprites for players
@@ -539,8 +539,7 @@ PAL_LoadBattleSprites(
       }
 
       l = PAL_MKFGetDecompressedSize(
-         gpGlobals->g.rgObject[g_Battle.rgEnemy[i].wObjectID].enemy.wEnemyID,
-         gpGlobals->f.fpABC);
+         gpGlobals->g.rgObject[g_Battle.rgEnemy[i].wObjectID].enemy.wEnemyID, fp);
 
       if (l <= 0)
       {
@@ -550,8 +549,7 @@ PAL_LoadBattleSprites(
       g_Battle.rgEnemy[i].lpSprite = UTIL_calloc(l, 1);
 
       PAL_MKFDecompressChunk(g_Battle.rgEnemy[i].lpSprite, l,
-         gpGlobals->g.rgObject[g_Battle.rgEnemy[i].wObjectID].enemy.wEnemyID,
-         gpGlobals->f.fpABC);
+         gpGlobals->g.rgObject[g_Battle.rgEnemy[i].wObjectID].enemy.wEnemyID, fp);
 
       //
       // Set the default position for this enemy
@@ -564,9 +562,8 @@ PAL_LoadBattleSprites(
       g_Battle.rgEnemy[i].posOriginal = PAL_XY(x, y);
       g_Battle.rgEnemy[i].pos = PAL_XY(x, y);
    }
-#ifdef __SYMBIAN32__ /*delay open*/
-      UTIL_CloseFile(gpGlobals->f.fpABC);      
-#endif     
+
+   fclose(fp);
 }
 
 static VOID

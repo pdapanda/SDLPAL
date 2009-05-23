@@ -451,12 +451,7 @@ typedef struct tagGAMEDATA
 typedef struct tagFILES
 {
    FILE            *fpFBP;      // battlefield background images
-   FILE            *fpMAP;      // map data
-   FILE            *fpGOP;      // map tile data
-   FILE            *fpRNG;      // movie data
-   FILE            *fpPAT;      // palette data
    FILE            *fpMGO;      // sprites in scenes
-   FILE            *fpABC;      // enemy sprites during battle
    FILE            *fpBALL;     // item bitmaps
    FILE            *fpDATA;     // misc data
    FILE            *fpF;        // player sprites during battle

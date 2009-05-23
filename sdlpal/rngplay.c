@@ -435,18 +435,20 @@ PAL_RNGPlay(
 {
    UINT            iTime;
    int             iDelay = 800 / (iSpeed == 0 ? 16 : iSpeed);
-#ifdef __SYMBIAN32__ /*delay open*/
-   gpGlobals->f.fpRNG = UTIL_OpenRequiredFile("rng.mkf");
-#endif 
+   FILE           *fp;
+
+   fp = UTIL_OpenRequiredFile("rng.mkf");
+
    for (; iStartFrame <= iEndFrame; iStartFrame++)
    {
       iTime = SDL_GetTicks() + iDelay;
 
-      if (PAL_RNGBlitToSurface(iNumRNG, iStartFrame, gpScreen, gpGlobals->f.fpRNG) == -1)
+      if (PAL_RNGBlitToSurface(iNumRNG, iStartFrame, gpScreen, fp) == -1)
       {
          //
          // Failed to get the frame, don't go further
          //
+         fclose(fp);
          return;
       }
 
@@ -467,13 +469,13 @@ PAL_RNGPlay(
       //
       // Delay for a while
       //
+      PAL_ProcessEvent();
       while (SDL_GetTicks() <= iTime)
       {
          PAL_ProcessEvent();
          SDL_Delay(1);
       }
    }
-#ifdef __SYMBIAN32__ /*delay open*/
-   UTIL_CloseFile(gpGlobals->f.fpRNG); 
-#endif    
+
+   fclose(fp);
 }

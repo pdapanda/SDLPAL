@@ -207,14 +207,15 @@ PAL_LoadResources(
 {
    int                i, index, l, n;
    WORD               wPlayerID, wSpriteNum;
-#ifdef __SYMBIAN32__ /*delay open*/
-   gpGlobals->f.fpMAP = UTIL_OpenRequiredFile("map.mkf");
-   gpGlobals->f.fpGOP = UTIL_OpenRequiredFile("gop.mkf");
-#endif 
+   FILE              *fpMAP, *fpGOP;
+
    if (gpResources == NULL)
    {
       return;
    }
+
+   fpMAP = UTIL_OpenRequiredFile("map.mkf");
+   fpGOP = UTIL_OpenRequiredFile("gop.mkf");
 
    //
    // Load scene
@@ -238,7 +239,7 @@ PAL_LoadResources(
       //
       i = gpGlobals->wNumScene - 1;
       gpResources->lpMap = PAL_LoadMap(gpGlobals->g.rgScene[i].wMapNum,
-         gpGlobals->f.fpMAP, gpGlobals->f.fpGOP);
+         fpMAP, fpGOP);
 
       if (gpResources->lpMap == NULL)
       {
@@ -334,10 +335,9 @@ PAL_LoadResources(
    // Clear all of the load flags
    //
    gpResources->bLoadFlags = 0;
-#ifdef __SYMBIAN32__ /*delay open*/
-      UTIL_CloseFile(gpGlobals->f.fpGOP);
-      UTIL_CloseFile(gpGlobals->f.fpMAP);
-#endif   
+
+   fclose(fpGOP);
+   fclose(fpMAP);
 }
 
 LPPALMAP
