@@ -297,15 +297,12 @@ TerminateOnError(
 #endif
 
    PAL_Shutdown();
-#ifdef __SYMBIAN32__
-   while (1);
-#else   
-#ifdef NDS
+
+#if defined(__SYMBIAN32__) || defined (NDS)
    while (1);
 #else
    exit(255);
 #endif
-#endif   
 }
 
 void *
