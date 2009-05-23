@@ -3279,6 +3279,7 @@ PAL_BattlePlayerPerformAction(
             fCritical = FALSE;
 
             sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
+            sDamage += RandomLong(1, 2);
 
             if (RandomLong(0, 5) == 0 ||
                gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0)
@@ -3350,6 +3351,7 @@ PAL_BattlePlayerPerformAction(
                res = g_Battle.rgEnemy[index[i]].e.wPhysicalResistance;
 
                sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
+               sDamage += RandomLong(1, 2);
 
                if (fCritical)
                {
