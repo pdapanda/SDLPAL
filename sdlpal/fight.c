@@ -4538,6 +4538,7 @@ PAL_BattleEnemyPerformAction(
          g_Battle.rgPlayer[sTarget].wCurrentFrame = 4;
 
          sDamage = PAL_CalcPhysicalAttackDamage(str + RandomLong(0, 2), def, 2);
+         sDamage += RandomLong(0, 1);
 
          if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusProtect])
          {
