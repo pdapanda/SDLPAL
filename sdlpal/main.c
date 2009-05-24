@@ -209,7 +209,7 @@ PAL_SplashScreen(
    LPSPRITE       lpSpriteCrane;
    LPCBITMAPRLE   lpBitmapTitle;
    LPBYTE         buf, buf2;
-   int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0;
+   int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0, iTitleHeight;
    DWORD          dwTime, dwBeginTime;
 
    if (palette == NULL)
@@ -221,13 +221,7 @@ PAL_SplashScreen(
    //
    // Allocate all the needed memory at once for simplification
    //
-   buf = (LPBYTE)calloc(1, 320 * 200 * 2);
-   if (buf == NULL)
-   {
-      fprintf(stderr, "ERROR: PAL_SplashScreen(): Memory allocation error!\n");
-      return;
-   }
-
+   buf = (LPBYTE)UTIL_calloc(1, 320 * 200 * 2);
    buf2 = (LPBYTE)(buf + 320 * 200);
    lpSpriteCrane = (LPSPRITE)buf2 + 32000;
 
@@ -255,6 +249,9 @@ PAL_SplashScreen(
    lpBitmapTitle = PAL_SpriteGetFrame(buf2, 0);
    PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_CRANE, gpGlobals->f.fpMGO);
    DecodeYJ1(buf, lpSpriteCrane, 32000);
+
+   iTitleHeight = PAL_RLEGetHeight(lpBitmapTitle);
+   ((LPWORD)lpBitmapTitle)[1] = 0; // HACKHACK
 
    //
    // Generate the positions of the cranes
@@ -351,6 +348,11 @@ PAL_SplashScreen(
       //
       // Draw the title...
       //
+      if (PAL_RLEGetHeight(lpBitmapTitle) < iTitleHeight)
+      {
+         ((LPWORD)lpBitmapTitle)[1] = SWAP16(SWAP16(((LPWORD)lpBitmapTitle)[1]) + 1);
+      }
+
       PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
 
       VIDEO_UpdateScreen(NULL);
@@ -363,6 +365,11 @@ PAL_SplashScreen(
          //
          // User has pressed a key...
          //
+         ((LPWORD)lpBitmapTitle)[1] = SWAP16((WORD)iTitleHeight);
+         PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
+
+         VIDEO_UpdateScreen(NULL);
+
          if (dwTime < 15000)
          {
             //
