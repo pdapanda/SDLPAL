@@ -399,10 +399,11 @@ PAL_SplashScreen(
       //
       // Delay a while...
       //
+      PAL_ProcessEvent();
       while (SDL_GetTicks() - dwBeginTime < dwTime + 85)
       {
          SDL_Delay(1);
-         while (SDL_PollEvent(NULL));
+         PAL_ProcessEvent();
       }
    }
 
