@@ -282,6 +282,7 @@ TerminateOnError(
    vsnprintf(string, sizeof(string), fmt, argptr);
    va_end(argptr);
 
+
    fprintf(stderr, "\nFATAL ERROR: %s\n", string);
 
 #ifdef _WIN32
@@ -292,13 +293,19 @@ TerminateOnError(
    system(va("beep; xmessage \"FATAL ERROR: %s\"", string));
 #endif
 
+#if defined(__SYMBIAN32__)
+   fprintf(stdout, "\nFATAL ERROR: %s\n", string);
+   SDL_Delay(30000);
+#endif
+   
 #ifdef _DEBUG
    assert(!"TerminateOnError()"); // allows jumping to debugger
-#endif
+#endif   
 
-   PAL_Shutdown();
 
-#if defined(__SYMBIAN32__) || defined (NDS)
+PAL_Shutdown();
+
+#if defined (NDS)
    while (1);
 #else
    exit(255);

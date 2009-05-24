@@ -34,8 +34,8 @@ GLREF_C TInt E32Main()
 #ifdef __S60_50__
     return SDLEnv::SetMain(SDL_main, CSDL::EEnableFocusStop | CSDL::EImageResizeZoomOut
 
-                | /*CSDL::EAutoOrientation |*/ CSDL::EAllowImageResizeKeepRatio /*| CSDL::EDrawModeGdi*/,
-         NULL, /*SDLEnv::EParamQuery |*/ SDLEnv::EEnableVirtualMouseMoveEvents);
+                | CSDL::EAutoOrientation | CSDL::EAllowImageResizeKeepRatio | CSDL::EDrawModeGdi,
+         NULL /*,SDLEnv::EParamQuery | SDLEnv::EEnableVirtualMouseMoveEvents*/);
 #else
     return SDLEnv::SetMain(SDL_main,CSDL::EEnableFocusStop
                 | CSDL::EAutoOrientation | CSDL::EAllowImageResizeKeepRatio /*| CSDL::EDrawModeGdi*/,

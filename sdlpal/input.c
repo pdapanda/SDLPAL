@@ -254,6 +254,7 @@ PAL_MouseEventFilter(
 --*/
 {
 #ifdef PAL_HAS_MOUSE
+   static short hitTest = 0; // Double click detect;	
    const SDL_VideoInfo *vi;
 
    double       screenWidth, gridWidth;
@@ -262,7 +263,10 @@ PAL_MouseEventFilter(
    double       thumbx;
    double       thumby;
    INT          gridIndex;
-   static INT   lastReleaseButtonTime, lastPressButtonTime;
+   BOOL			isLeftMouseDBClick = FALSE;
+   BOOL			isLeftMouseClick = FALSE;
+   BOOL			isRightMouseClick = FALSE;
+   static INT   lastReleaseButtonTime, lastPressButtonTime, betweenTime;
    static INT   lastPressx = 0;
    static INT   lastPressy = 0;
    static INT   lastReleasex = 0;
@@ -281,7 +285,7 @@ PAL_MouseEventFilter(
    thumbx = ceil(mx / gridWidth);
    thumby = floor(my / gridHeight);
    gridIndex = thumbx + thumby * 3 - 1;
-
+   
    switch (lpEvent->type)
    {
    case SDL_MOUSEBUTTONDOWN:
@@ -307,49 +311,97 @@ PAL_MouseEventFilter(
          g_InputState.dir = kDirEast;
          break;
       case 1:
+    	 g_InputState.prevdir = g_InputState.dir;
+    	 g_InputState.dir = kDirNorth;
          g_InputState.dwKeyPress |= kKeyUp;
          break;
       case 7:
+    	 g_InputState.prevdir = g_InputState.dir;
+    	 g_InputState.dir = kDirSouth; 
          g_InputState.dwKeyPress |= kKeyDown;
          break;
       case 3:
-         g_InputState.dwKeyPress |= kKeyLeft;
+    	 g_InputState.prevdir = g_InputState.dir;
+    	 g_InputState.dir = kDirWest;
+    	 g_InputState.dwKeyPress |= kKeyLeft;
          break;
       case 5:
+         g_InputState.prevdir = g_InputState.dir;
+         g_InputState.dir = kDirEast;
          g_InputState.dwKeyPress |= kKeyRight;
          break;
       }
       break;
    case SDL_MOUSEBUTTONUP:
-      //
-      // Pressed the joystick button
-      //
       lastReleaseButtonTime = SDL_GetTicks();
       lastReleasex = lpEvent->button.x;
       lastReleasey = lpEvent->button.y;
+      hitTest ++;
+      if (abs(lastPressx - lastReleasex) < 25 &&
+                     abs(lastPressy - lastReleasey) < 25)
+      {
+		  betweenTime = lastReleaseButtonTime - lastPressButtonTime;
+		  if (betweenTime >500)
+		  {
+			  isRightMouseClick = TRUE;
+		  }
+		  else if (betweenTime >=0)
+		  {
+			  if((betweenTime < 100) && (hitTest >= 2))
+			  {
+				  isLeftMouseClick = TRUE;
+			  	  hitTest = 0;  
+			  }
+			  else
+			  {  
+				  isLeftMouseClick = TRUE;
+				  if(betweenTime > 100)
+				  {
+					  hitTest = 0;
+				  }
+				  
+			  }
+		  }
+      }
       switch (gridIndex)
       {
       case 2:
+    	 if( isLeftMouseDBClick )
+		 {
+			 SOUND_AdjustVolume(1);
+			 break;
+		 }
       case 6:
       case 0:
+    	 if( isLeftMouseDBClick )
+		 {
+			 SOUND_AdjustVolume(0);
+			 break;
+		 } 
       case 8:
          g_InputState.dir = kDirUnknown;
          g_InputState.prevdir = kDirUnknown;
          break;
+      case 1:
+    	 if( isLeftMouseDBClick )
+		 {
+			 g_InputState.dwKeyPress |= kKeyForce;
+		 }
+    	 break;
       case 4:
-         if (abs(lastPressx - lastReleasex) < 25 &&
-               abs(lastPressy - lastReleasey) < 25)
-         {
-            if ((lastReleaseButtonTime - lastPressButtonTime) >500)
-            {
-               g_InputState.dwKeyPress |= kKeyMenu;
-            }
-            else
-            {
-               g_InputState.dwKeyPress |= kKeySearch;
-            }
-         }
-         break;
+		if (isRightMouseClick) // menu
+		{
+		   g_InputState.dwKeyPress |= kKeyMenu;
+		}
+		else if (isLeftMouseClick) // search
+		{
+		   g_InputState.dwKeyPress |= kKeySearch;
+		}
+		else if (isLeftMouseDBClick) //repeat attack
+		{
+		   g_InputState.dwKeyPress |= kKeyRepeat;	
+		}
+        break;
       }
       break;
    }
