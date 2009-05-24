@@ -76,7 +76,7 @@ VIDEO_Init(
    // Create the screen surface.
    //
 #ifdef NDS
-   gpScreenReal = SDL_SetVideoMode(293, 196 , 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+   gpScreenReal = SDL_SetVideoMode(293, 196, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
 #else
    gpScreenReal = SDL_SetVideoMode(wScreenWidth, wScreenHeight, 8,
       SDL_HWSURFACE | SDL_RESIZABLE | (fFullScreen ? SDL_FULLSCREEN : 0));
