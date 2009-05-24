@@ -350,7 +350,7 @@ PAL_SplashScreen(
       //
       if (PAL_RLEGetHeight(lpBitmapTitle) < iTitleHeight)
       {
-         ((LPWORD)lpBitmapTitle)[1] = SWAP16(SWAP16(((LPWORD)lpBitmapTitle)[1]) + 1);
+         ((LPWORD)lpBitmapTitle)[1] = SWAP16(SWAP16(((LPWORD)lpBitmapTitle)[1]) + 1); // HACKHACK
       }
 
       PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
@@ -365,7 +365,7 @@ PAL_SplashScreen(
          //
          // User has pressed a key...
          //
-         ((LPWORD)lpBitmapTitle)[1] = SWAP16((WORD)iTitleHeight);
+         ((LPWORD)lpBitmapTitle)[1] = SWAP16((WORD)iTitleHeight); // HACKHACK
          PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
 
          VIDEO_UpdateScreen(NULL);
