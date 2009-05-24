@@ -30,9 +30,13 @@ SDL_Surface              *gpScreenBak        = NULL;
 static SDL_Surface       *gpScreenReal       = NULL;
 
 #ifdef __SYMBIAN32__
-static BOOL bScaleScreen = FALSE;
+	#ifdef __S60_5X__
+		static BOOL bScaleScreen = TRUE;
+	#else
+		static BOOL bScaleScreen = FALSE;
+	#endif
 #else
-static BOOL bScaleScreen = TRUE;
+	static BOOL bScaleScreen = TRUE;
 #endif
 
 // Initial screen size
@@ -207,8 +211,9 @@ VIDEO_UpdateScreen(
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;
    short           screenRealHeight = gpScreenReal->h;
+   short           screenRealWidtht = gpScreenReal->w;
+   short           screenRealX = 0;
    short           screenRealY = 0;
-
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;
@@ -300,7 +305,7 @@ VIDEO_SetPalette(
 {
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
 #ifdef __SYMBIAN32__
-   VIDEO_UpdateScreen(NULL);
+   SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif
 }
 
