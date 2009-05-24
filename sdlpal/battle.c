@@ -1078,10 +1078,13 @@ PAL_BattlePlayerEscape(
             switch (j)
             {
             case 0:
-               g_Battle.rgPlayer[j].pos =
-                  PAL_XY(PAL_X(g_Battle.rgPlayer[j].pos) + 4,
-                         PAL_Y(g_Battle.rgPlayer[j].pos) + 6);
-               break;
+               if (gpGlobals->wMaxPartyMemberIndex > 0)
+               {
+                  g_Battle.rgPlayer[j].pos =
+                     PAL_XY(PAL_X(g_Battle.rgPlayer[j].pos) + 4,
+                            PAL_Y(g_Battle.rgPlayer[j].pos) + 6);
+                  break;
+               }
 
             case 1:
                g_Battle.rgPlayer[j].pos =
@@ -1104,6 +1107,16 @@ PAL_BattlePlayerEscape(
 
       PAL_BattleDelay(1, 0, FALSE);
    }
+
+   //
+   // Remove all players from the screen
+   //
+   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+   {
+      g_Battle.rgPlayer[i].pos = PAL_XY(9999, 9999);
+   }
+
+   PAL_BattleDelay(1, 0, FALSE);
 
    g_Battle.BattleResult = kBattleResultFleed;
 }
