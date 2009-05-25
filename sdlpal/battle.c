@@ -1262,7 +1262,7 @@ PAL_StartBattle(
          }
          else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
          {
-            g_Battle.rgEnemy[i].e.wDexterity = 0; // for Spider
+            g_Battle.rgEnemy[i].e.wDexterity = 15; // for Spider
          }
          else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -30)
          {
