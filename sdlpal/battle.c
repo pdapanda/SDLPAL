@@ -1299,6 +1299,12 @@ PAL_StartBattle(
          {
             g_Battle.rgEnemy[i].e.wDexterity += 18; // for Fat Miao
          }
+         else if (g_Battle.rgEnemy[i].e.wLevel == 16 &&
+            g_Battle.rgEnemy[i].e.wMagicRate == 4 &&
+            g_Battle.rgEnemy[i].e.wAttackEquivItemRate == 4)
+         {
+            g_Battle.rgEnemy[i].e.wDexterity += 50; // for Black Spider
+         }
 #endif
       }
    }
