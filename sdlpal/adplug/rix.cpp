@@ -17,17 +17,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * rix.cpp - Softstar RIX OPL Format Player by palxex <palxex@gmail.com> and BSPAL
+ *
+ * May 27, 2009 - Modified for compatibility with Big-Endian by Wei Mingzhi
+ *                <whistler@openoffice.org>
  */
 
 #include "rix.h"
 #include <string.h>
 
-#ifdef __SYMBIAN32__
-	#define stricmp strcasecmp
-#else 
-	#ifndef _WIN32
-		#define stricmp strcasecmp
-	#endif
+#if !defined(_WIN32) || defined(__SYMBIAN32__)
+   #define stricmp strcasecmp
+#endif
+
+#if defined(__hppa__) || \
+   defined(__m68k__) || defined(mc68000) || defined(_M_M68K) || \
+   (defined(__MIPS__) && defined(__MISPEB__)) || \
+   defined(__ppc__) || defined(__POWERPC__) || defined(_M_PPC) || \
+   defined(__sparc__)
+   // big endian
+   #define RIX_SWAP16(a) (((a) << 8) | ((a) >> 8))
+   #define RIX_SWAP32(a) (((a) << 24) | (((a) << 8) & 0x00FF0000) | (((a) >> 8) & 0x0000FF00) | ((a) >> 24))
+#else
+   // little endian
+   #define RIX_SWAP16(a) (a)
+   #define RIX_SWAP32(a) (a)
 #endif
 
 const unsigned char CrixPlayer::adflag[] = {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1};
@@ -78,17 +91,18 @@ bool CrixPlayer::load(const std::string &filename, const CFileProvider &fp) {
    if (stricmp(filename.substr(filename.length()-4,4).c_str(),".mkf")==0) {
       flag_mkf=1;
       f->seek(0);
-      int offset=f->readInt(4);
+      int offset = f->readInt(4);
       f->seek(offset);
    }
-   if (f->readInt(2)!=0x55aa) {
+   if (f->readInt(2) != 0x55aa) {
       fp.close(f);
       return false;
    }
    file_buffer = new unsigned char [fp.filesize(f) + 1];
    f->seek(0);
-   while (!f->eof())
-      file_buffer[i++]=f->readInt(1);
+   while (!f->eof()) {
+      file_buffer[i++] = f->readInt(1);
+   }
    length=i;
    fp.close(f);
    if (!flag_mkf)
@@ -129,24 +143,24 @@ void CrixPlayer::rewind(int subsong) {
    memset(reg_bufs, 0, 18 * sizeof(ADDT));
 
    if (flag_mkf) {
-      unsigned int *buf_index=(unsigned int *)file_buffer;
-      int offset1=buf_index[subsong],offset2;
-      while ((offset2=buf_index[++subsong])==offset1);
-      length=offset2-offset1+1;
-      buf_addr=file_buffer+offset1;
+      unsigned int *buf_index = (unsigned int *)file_buffer;
+      int offset1 = RIX_SWAP32(buf_index[subsong]), offset2;
+      while ((offset2 = RIX_SWAP32(buf_index[++subsong])) == offset1);
+      length = offset2 - offset1 + 1;
+      buf_addr = file_buffer + offset1;
    }
    opl->init();
-   opl->write(1,32);    // go to OPL2 mode
+   opl->write(1, 32);   // go to OPL2 mode
    set_new_int();
    data_initial();
 }
 
 unsigned int CrixPlayer::getsubsongs() {
    if (flag_mkf) {
-      unsigned int *buf_index=(unsigned int *)file_buffer;
-      int songs=buf_index[0]/4,i=0;
-      for (i=0;i<songs;i++)
-         if (buf_index[i+1]==buf_index[i])
+      unsigned int *buf_index = (unsigned int *)file_buffer;
+      int songs = RIX_SWAP32(buf_index[0]) / 4, i = 0;
+      for (i = 0; i < songs; i++)
+         if (buf_index[i + 1] == buf_index[i])
             songs--;
       return songs;
    } else
@@ -166,7 +180,7 @@ inline void CrixPlayer::set_new_int() {
 inline void CrixPlayer::Pause() {
    register unsigned short i;
    pause_flag = 1;
-   for (i=0;i<11;i++)
+   for (i = 0; i < 11; i++)
       switch_ad_bd(i);
 }
 /*----------------------------------------------------------*/
@@ -179,13 +193,13 @@ inline void CrixPlayer::data_initial() {
    rhythm = buf_addr[2];
    mus_block = (buf_addr[0x0D]<<8)+buf_addr[0x0C];
    ins_block = (buf_addr[0x09]<<8)+buf_addr[0x08];
-   I = mus_block+1;
+   I = mus_block + 1;
    if (rhythm != 0) {
       //                ad_a0b0_reg(6);
       //                ad_a0b0_reg(7);
       //                ad_a0b0_reg(8);
-      ad_a0b0l_reg_(8,0x18,0);
-      ad_a0b0l_reg_(7,0x1F,0);
+      ad_a0b0l_reg_(8, 0x18, 0);
+      ad_a0b0l_reg_(7, 0x1F, 0);
    }
    bd_modify = 0;
    //   ad_bd_reg();
@@ -195,13 +209,13 @@ inline void CrixPlayer::data_initial() {
 /*----------------------------------------------------------*/
 inline unsigned short CrixPlayer::ad_initial() {
    register unsigned short i,j,k = 0;
-   for (i=0;i<25;i++) {
-      f_buffer[i*12]=(unsigned int)((i*24+10000)*0.27461678223+4)>>3;
-      for (int t=1;t<12;t++)
-         f_buffer[i*12+t] = (unsigned short)(f_buffer[i*12+t-1] * 1.06);
+   for (i = 0; i < 25; i++) {
+      f_buffer[i * 12] = (unsigned int)((i * 24 + 10000) * 0.27461678223 + 4) >> 3;
+      for (int t = 1; t < 12; t++)
+         f_buffer[i * 12 + t] = (unsigned short)(f_buffer[i * 12 + t - 1] * 1.06);
    }
-   for (i=0;i<8;i++)
-      for (j=0;j<12;j++) {
+   for (i = 0; i < 8; i++)
+      for (j = 0; j < 12; j++) {
          a0b0_data5[k] = i;
          addrs_head[k] = j;
          k++;
@@ -215,7 +229,7 @@ inline unsigned short CrixPlayer::ad_initial() {
    return 1;//ad_test();
 }
 /*----------------------------------------------------------*/
-inline void CrixPlayer::ad_bop(unsigned short reg,unsigned short value) {
+inline void CrixPlayer::ad_bop(unsigned short reg, unsigned short value) {
    opl->write(reg & 0xff, value & 0xff);
 }
 /*--------------------------------------------------------------*/

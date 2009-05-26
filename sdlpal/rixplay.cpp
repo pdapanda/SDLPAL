@@ -194,7 +194,7 @@ RIX_FillBuffer(
       //
       for (i = 0; i < (int)(l / sizeof(SHORT)); i++)
       {
-         SHORT s = SWAP16(*(SHORT *)(gpRixPlayer->pos));
+         SHORT s = (*(SHORT *)(gpRixPlayer->pos));
          *(SHORT *)(stream) = SWAP16(s * volume / SDL_MIX_MAXVOLUME);
          stream += sizeof(SHORT);
          gpRixPlayer->pos += sizeof(SHORT);

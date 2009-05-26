@@ -22,7 +22,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
 
-// Converted to C from C++ by Wei Mingzhi <whistler@openoffice.org>.
+// Ported to C from C++ and modified for compatibility with Big-Endian
+// by Wei Mingzhi <whistler@openoffice.org>.
 
 #include "common.h"
 
