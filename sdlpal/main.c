@@ -444,7 +444,7 @@ main(
 #ifdef _WIN32
    putenv("SDL_VIDEODRIVER=directx");
 #endif
-
+#ifndef __SYMBIAN32__
    //
    // Parse parameters.
    //
@@ -482,7 +482,7 @@ main(
          break;
       }
    }
-
+#endif
    //
    // Default resolution is 640x400.
    //
