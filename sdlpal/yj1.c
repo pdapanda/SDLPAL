@@ -146,7 +146,7 @@ DecodeYJ1(
 
    do
    {
-      unsigned short tree_len = SWAP32((unsigned short)hdr->HuffmanTreeLength) * 2;
+      unsigned short tree_len = ((unsigned short)hdr->HuffmanTreeLength) * 2;
       unsigned int bitptr = 0;
       unsigned char *flag = (unsigned char *)src + 16 + tree_len;
 
@@ -156,7 +156,7 @@ DecodeYJ1(
       root[0].value = 0;
       root[0].left = root + 1;
       root[0].right = root + 2;
-      for(i = 1; i <= tree_len; i++)
+      for (i = 1; i <= tree_len; i++)
       {
          root[i].leaf = !get_bits(flag, &bitptr, 1);
          root[i].value = src[15 + i];
