@@ -214,6 +214,7 @@ VIDEO_UpdateScreen(
    short           screenRealWidtht = gpScreenReal->w;
    short           screenRealX = 0;
    short           screenRealY = 0;
+
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;

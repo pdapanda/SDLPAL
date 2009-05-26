@@ -511,7 +511,7 @@ PAL_SystemMenu(
    WORD                wReturnValue;
    int                 iSlot, i, iSavedTimes;
    FILE               *fp;
-   const SDL_Rect      rect = {40, 60, 100, 140};
+   const SDL_Rect      rect = {40, 60, 100, 135};
 
    //
    // Create menu items
