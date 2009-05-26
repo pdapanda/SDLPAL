@@ -3126,6 +3126,18 @@ PAL_BattlePlayerValidateAction(
             break;
          }
       }
+
+      if (g_Battle.rgPlayer[wPlayerIndex].action.ActionType == kBattleActionCoopMagic)
+      {
+         if (gpGlobals->g.rgObject[wObjectID].magic.wFlags & kMagicFlagApplyToAll)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
+         }
+         else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
+         {
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+         }
+      }
       break;
 
    case kBattleActionFlee:
