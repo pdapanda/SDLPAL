@@ -68,7 +68,8 @@ PAL_RLEBlitToSurface(
    //
    // Skip the 0x00000002 in the file header.
    //
-   if (SWAP32(((LPDWORD)lpBitmapRLE)[0]) == 0x00000002)
+   if (lpBitmapRLE[0] == 0x02 && lpBitmapRLE[1] == 0x00 &&
+      lpBitmapRLE[2] == 0x00 && lpBitmapRLE[3] == 0x00)
    {
       lpBitmapRLE += 4;
    }
@@ -76,8 +77,8 @@ PAL_RLEBlitToSurface(
    //
    // Get the width and height of the bitmap.
    //
-   uiWidth = SWAP16(((LPWORD)lpBitmapRLE)[0]);
-   uiHeight = SWAP16(((LPWORD)lpBitmapRLE)[1]);
+   uiWidth = lpBitmapRLE[0] | (lpBitmapRLE[1] << 8);
+   uiHeight = lpBitmapRLE[2] | (lpBitmapRLE[3] << 8);
 
    //
    // Calculate the total length of the bitmap.
@@ -197,7 +198,8 @@ PAL_RLEBlitWithColorShift(
    //
    // Skip the 0x00000002 in the file header.
    //
-   if (SWAP32(((LPDWORD)lpBitmapRLE)[0]) == 0x00000002)
+   if (lpBitmapRLE[0] == 0x02 && lpBitmapRLE[1] == 0x00 &&
+      lpBitmapRLE[2] == 0x00 && lpBitmapRLE[3] == 0x00)
    {
       lpBitmapRLE += 4;
    }
@@ -205,8 +207,8 @@ PAL_RLEBlitWithColorShift(
    //
    // Get the width and height of the bitmap.
    //
-   uiWidth = SWAP16(((LPWORD)lpBitmapRLE)[0]);
-   uiHeight = SWAP16(((LPWORD)lpBitmapRLE)[1]);
+   uiWidth = lpBitmapRLE[0] | (lpBitmapRLE[1] << 8);
+   uiHeight = lpBitmapRLE[2] | (lpBitmapRLE[3] << 8);
 
    //
    // Calculate the total length of the bitmap.
@@ -344,7 +346,8 @@ PAL_RLEBlitMonoColor(
    //
    // Skip the 0x00000002 in the file header.
    //
-   if (SWAP32(((LPDWORD)lpBitmapRLE)[0]) == 0x00000002)
+   if (lpBitmapRLE[0] == 0x02 && lpBitmapRLE[1] == 0x00 &&
+      lpBitmapRLE[2] == 0x00 && lpBitmapRLE[3] == 0x00)
    {
       lpBitmapRLE += 4;
    }
@@ -352,8 +355,8 @@ PAL_RLEBlitMonoColor(
    //
    // Get the width and height of the bitmap.
    //
-   uiWidth = SWAP16(((LPWORD)lpBitmapRLE)[0]);
-   uiHeight = SWAP16(((LPWORD)lpBitmapRLE)[1]);
+   uiWidth = lpBitmapRLE[0] | (lpBitmapRLE[1] << 8);
+   uiHeight = lpBitmapRLE[2] | (lpBitmapRLE[3] << 8);
 
    //
    // Calculate the total length of the bitmap.
@@ -510,14 +513,18 @@ PAL_RLEGetWidth(
    }
 
    //
-   // Skip the 0x00000002 in the header.
+   // Skip the 0x00000002 in the file header.
    //
-   if (SWAP32(((LPDWORD)lpBitmapRLE)[0]) == 0x00000002)
+   if (lpBitmapRLE[0] == 0x02 && lpBitmapRLE[1] == 0x00 &&
+      lpBitmapRLE[2] == 0x00 && lpBitmapRLE[3] == 0x00)
    {
       lpBitmapRLE += 4;
    }
 
-   return SWAP16(((LPWORD)lpBitmapRLE)[0]);
+   //
+   // Return the width of the bitmap.
+   //
+   return lpBitmapRLE[0] | (lpBitmapRLE[1] << 8);
 }
 
 UINT
@@ -545,14 +552,18 @@ PAL_RLEGetHeight(
    }
 
    //
-   // Skip the 0x00000002 in the header.
+   // Skip the 0x00000002 in the file header.
    //
-   if (SWAP32(((LPDWORD)lpBitmapRLE)[0]) == 0x00000002)
+   if (lpBitmapRLE[0] == 0x02 && lpBitmapRLE[1] == 0x00 &&
+      lpBitmapRLE[2] == 0x00 && lpBitmapRLE[3] == 0x00)
    {
       lpBitmapRLE += 4;
    }
 
-   return SWAP16(((LPWORD)lpBitmapRLE)[1]);
+   //
+   // Return the height of the bitmap.
+   //
+   return lpBitmapRLE[2] | (lpBitmapRLE[3] << 8);
 }
 
 WORD
@@ -579,7 +590,7 @@ PAL_SpriteGetNumFrames(
       return 0;
    }
 
-   return SWAP16(*((LPWORD)lpSprite)) - 1;
+   return (lpSprite[0] | (lpSprite[1] << 8)) - 1;
 }
 
 LPCBITMAPRLE
@@ -614,8 +625,8 @@ PAL_SpriteGetFrame(
    //
    // Hack for broken sprites like the Bloody-Mouth Bug
    //
-//   imagecount = SWAP16(*((LPWORD)lpSprite)) - 1;
-   imagecount = SWAP16(*((LPWORD)lpSprite));
+//   imagecount = (lpSprite[0] | (lpSprite[1] << 8)) - 1;
+   imagecount = (lpSprite[0] | (lpSprite[1] << 8));
 
    if (iFrameNum < 0 || iFrameNum >= imagecount)
    {
@@ -628,7 +639,8 @@ PAL_SpriteGetFrame(
    //
    // Get the offset of the frame
    //
-   offset = (WORD)(SWAP16(((LPWORD)lpSprite)[iFrameNum]) * 2);
+   iFrameNum <<= 1;
+   offset = (WORD)((lpSprite[iFrameNum] | (lpSprite[iFrameNum + 1] << 8)) << 1);
    return lpSprite + offset;
 }
 

@@ -175,7 +175,7 @@ PAL_RNGBlitToSurface(
    INT                   dst_ptr     = 0;
    BYTE                  data        = 0;
    WORD                  wdata       = 0;
-   INT                   x, y, i, n, m;
+   INT                   x, y, i, n;//, m;
 //   LPBYTE                prng        = NULL;
    LPBYTE                rng         = NULL;
    LPBYTE                buf         = NULL;
