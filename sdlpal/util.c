@@ -19,7 +19,9 @@
 //
 
 #include "util.h"
-
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
 void
 trim(
    char *str
@@ -411,4 +413,51 @@ UTIL_CloseFile(
    {
       fclose(fp);
    }
+}
+static FILE* pLogFile;
+#define ENABLE_LOG 1
+void UTIL_WriteLog(int Priority,const char* Fmt,...){
+#ifdef __SYMBIAN32__
+#ifdef ENABLE_LOG
+	va_list vaa;
+	time_t   lTime;
+	struct tm *curTime;
+	char szDateBuf[260];
+	time(&lTime);
+	if (Priority < LOG_EMERG || Priority >= LOG_LAST_PRIORITY) {
+         return;
+     }
+     if (!(pLogFile = fopen(_PATH_LOG,"a+"))) {
+        return ;
+     } 
+     curTime   =   localtime(&lTime);   
+     strftime(   szDateBuf,   128,"%Y-%m-%d   %H:%M:%S",   curTime   );
+     szDateBuf[strlen(szDateBuf)-1]='\0'; //remove the 
+ 
+     
+     va_start(vaa,Fmt);
+     
+     fprintf(pLogFile,"[%s]",szDateBuf);
+     vfprintf(pLogFile,Fmt,vaa);
+     fprintf(pLogFile,"\n");
+     fflush(pLogFile);
+     va_end(vaa);
+     fclose(pLogFile);
+#endif
+#endif     
+}
+
+FILE* UTIL_OpenLog(char* pszLogFileName){
+     if (!(pLogFile = fopen(pszLogFileName,"a+"))){
+         return NULL;
+     }
+     return pLogFile;
+}
+
+int UTIL_CloseLog(){
+     int nErr = 0;
+     if (nErr = fclose(pLogFile)) {
+         return nErr;
+     }
+     return 0;
 }

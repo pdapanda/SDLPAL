@@ -28,6 +28,18 @@ extern "C"
 {
 #endif
 
+/* define for log */
+#define  _PATH_LOG   "e:/data/pal/log.txt" 
+#define  LOG_EMERG   0 /* system is unusable */ 
+#define  LOG_ALERT   1 /* action must be taken immediately */ 
+#define  LOG_CRIT   2 /* critical conditions */ 
+#define  LOG_ERR   3 /* error conditions */ 
+#define  LOG_WARNING   4 /* warning conditions */ 
+#define  LOG_NOTICE   5 /* normal but significant condition */ 
+#define  LOG_INFO   6 /* informational */ 
+#define  LOG_DEBUG   7 /* debug-level messages */
+#define  LOG_LAST_PRIORITY 8 /* last level */
+
 void
 trim(
    char *str
@@ -82,6 +94,11 @@ UTIL_CloseFile(
    FILE                *fp
 );
 
+void SDL_WriteLog(
+		int Priority,
+		const char* Fmt,
+		...
+);
 #ifdef __cplusplus
 }
 #endif
