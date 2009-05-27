@@ -256,15 +256,6 @@ PAL_GetWord(
    //
    trim(buf);
 
-   //
-   // HACKHACK: Remove the trailing number in the word
-   //
-   l = strlen(buf);
-   if ((l & 1) && buf[l - 1] == '1')
-   {
-      buf[l - 1] = '\0';
-   }
-
    return buf;
 }
 
