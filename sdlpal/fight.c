@@ -3006,12 +3006,12 @@ PAL_BattlePlayerValidateAction(
 
 --*/
 {
-   WORD   wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
-   WORD   wObjectID = g_Battle.rgPlayer[wPlayerIndex].action.wActionID;
-   SHORT  sTarget = g_Battle.rgPlayer[wPlayerIndex].action.sTarget;
-   BOOL   fValid = TRUE, fToEnemy = FALSE;
-   WORD   w;
-   int    i;
+   const WORD   wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+   const WORD   wObjectID = g_Battle.rgPlayer[wPlayerIndex].action.wActionID;
+   const SHORT  sTarget = g_Battle.rgPlayer[wPlayerIndex].action.sTarget;
+   BOOL         fValid = TRUE, fToEnemy = FALSE;
+   WORD         w;
+   int          i;
 
    switch (g_Battle.rgPlayer[wPlayerIndex].action.ActionType)
    {
@@ -3104,20 +3104,20 @@ PAL_BattlePlayerValidateAction(
 
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
-         wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+         w = gpGlobals->rgParty[i].wPlayerRole;
 
 #ifdef PAL_CLASSIC
-         if (PAL_IsPlayerDying(wPlayerRole) ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
+         if (PAL_IsPlayerDying(w) ||
+            gpGlobals->rgPlayerStatus[w][kStatusSilence] > 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusSleep] > 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusParalyzed] > 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusConfused] > 0)
 #else
-         if (PAL_IsPlayerDying(wPlayerRole) ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] > 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] > 0 ||
-            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0 ||
+         if (PAL_IsPlayerDying(w) ||
+            gpGlobals->rgPlayerStatus[w][kStatusSilence] > 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusSleep] > 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusParalyzed] > 0 ||
+            gpGlobals->rgPlayerStatus[w][kStatusConfused] > 0 ||
             (g_Battle.rgPlayer[i].flTimeMeter < 100 && gpGlobals->bBattleSpeed > 0) ||
             (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
 #endif
@@ -3212,8 +3212,6 @@ PAL_BattlePlayerValidateAction(
    //
    if (g_Battle.rgPlayer[wPlayerIndex].action.ActionType == kBattleActionAttack)
    {
-      wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
-
       if (sTarget == -1)
       {
          if (!PAL_PlayerCanAttackAll(wPlayerRole))
