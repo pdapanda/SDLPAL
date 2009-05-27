@@ -295,8 +295,8 @@ PAL_GetMsg(
       return NULL;
    }
 
-   dwOffset = g_TextLib.lpMsgOffset[wNumMsg];
-   dwSize = g_TextLib.lpMsgOffset[wNumMsg + 1] - dwOffset;
+   dwOffset = SWAP32(g_TextLib.lpMsgOffset[wNumMsg]);
+   dwSize = SWAP32(g_TextLib.lpMsgOffset[wNumMsg + 1]) - dwOffset;
    assert(dwSize < 255);
 
    memcpy(buf, g_TextLib.lpMsgBuf + dwOffset, dwSize);
