@@ -214,10 +214,16 @@ VIDEO_UpdateScreen(
    short           screenRealWidtht = gpScreenReal->w;
    short           screenRealX = 0;
    short           screenRealY = 0;
+
+   //
    // Lock surface if needed
-   	if (SDL_MUSTLOCK(gpScreenReal))
-   		if (SDL_LockSurface(gpScreenReal) < 0)
-   			return;
+   //
+   if (SDL_MUSTLOCK(gpScreenReal))
+   {
+      if (SDL_LockSurface(gpScreenReal) < 0)
+         return;
+   }
+
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;
@@ -232,9 +238,12 @@ VIDEO_UpdateScreen(
       dstrect.h = (WORD)((DWORD)(lpRect->h) * screenRealHeight / gpScreen->h);
 
       SDL_SoftStretch(gpScreen, (SDL_Rect *)lpRect, gpScreenReal, &dstrect);
-      // Unlock if needed
-      	if (SDL_MUSTLOCK(gpScreenReal))
-      		SDL_UnlockSurface(gpScreenReal);
+
+      if (SDL_MUSTLOCK(gpScreenReal))
+      {
+         SDL_UnlockSurface(gpScreenReal);
+      }
+
       SDL_UpdateRect(gpScreenReal, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
    }
    else if (g_wShakeTime != 0)
@@ -275,9 +284,12 @@ VIDEO_UpdateScreen(
       dstrect.h = g_wShakeLevel * screenRealHeight / gpScreen->h;
 
       SDL_FillRect(gpScreenReal, &dstrect, 0);
-      // Unlock if needed
-            	if (SDL_MUSTLOCK(gpScreenReal))
-            		SDL_UnlockSurface(gpScreenReal);
+
+      if (SDL_MUSTLOCK(gpScreenReal))
+      {
+         SDL_UnlockSurface(gpScreenReal);
+      }
+
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 
       g_wShakeTime--;
@@ -290,9 +302,12 @@ VIDEO_UpdateScreen(
 	  dstrect.h = screenRealHeight;
 
 	  SDL_SoftStretch(gpScreen, NULL, gpScreenReal, &dstrect);
-	  // Unlock if needed
-	        	if (SDL_MUSTLOCK(gpScreenReal))
-	        		SDL_UnlockSurface(gpScreenReal);
+
+      if (SDL_MUSTLOCK(gpScreenReal))
+      {
+         SDL_UnlockSurface(gpScreenReal);
+      }
+
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
    }
 }
@@ -706,7 +721,7 @@ VIDEO_FadeScreen(
    short             offset = 240 - 200;
    short             screenRealHeight = gpScreenReal->h;
    short             screenRealY = 0;
-   
+
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;
