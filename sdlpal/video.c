@@ -211,8 +211,6 @@ VIDEO_UpdateScreen(
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;
    short           screenRealHeight = gpScreenReal->h;
-   short           screenRealWidtht = gpScreenReal->w;
-   short           screenRealX = 0;
    short           screenRealY = 0;
 
    //
