@@ -3116,7 +3116,6 @@ PAL_BattlePlayerValidateAction(
          if (PAL_IsPlayerDying(w) ||
             gpGlobals->rgPlayerStatus[w][kStatusSilence] > 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusSleep] > 0 ||
-            gpGlobals->rgPlayerStatus[w][kStatusParalyzed] > 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusConfused] > 0 ||
             (g_Battle.rgPlayer[i].flTimeMeter < 100 && gpGlobals->bBattleSpeed > 0) ||
             (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
