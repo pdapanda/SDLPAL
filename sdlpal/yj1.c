@@ -73,7 +73,7 @@ get_bits(
    unsigned int count
 )
 {
-   unsigned short *temp = ((unsigned short *)src) + (*bitptr >> 4);
+   unsigned char *temp = ((unsigned char *)src) + ((*bitptr >> 4) << 1);
    unsigned int bptr = *bitptr & 0xf;
    unsigned short mask;
    *bitptr += count;
@@ -81,10 +81,10 @@ get_bits(
    {
       count = count + bptr - 16;
       mask = 0xffff >> bptr;
-      return ((SWAP16(*temp) & mask) << count) | (SWAP16(temp[1]) >> (16 - count));
+      return (((temp[0] | (temp[1] << 8)) & mask) << count) | ((temp[2] | (temp[3] << 8)) >> (16 - count));
    }
    else
-      return (((unsigned short)(SWAP16(*temp) << bptr)) >> (16 - count));
+      return (((unsigned short)((temp[0] | (temp[1] << 8)) << bptr)) >> (16 - count));
 }
 
 static unsigned short
