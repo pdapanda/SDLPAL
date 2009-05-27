@@ -3075,7 +3075,7 @@ PAL_BattlePlayerValidateAction(
          {
             g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
          }
-         else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
+         else if (sTarget == -1)
          {
             g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
          }
@@ -3133,7 +3133,7 @@ PAL_BattlePlayerValidateAction(
          {
             g_Battle.rgPlayer[wPlayerIndex].action.sTarget = -1;
          }
-         else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
+         else if (sTarget == -1)
          {
             g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
          }
@@ -3212,6 +3212,8 @@ PAL_BattlePlayerValidateAction(
    //
    if (g_Battle.rgPlayer[wPlayerIndex].action.ActionType == kBattleActionAttack)
    {
+      wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+
       if (sTarget == -1)
       {
          if (!PAL_PlayerCanAttackAll(wPlayerRole))
