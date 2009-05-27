@@ -30,13 +30,13 @@ SDL_Surface              *gpScreenBak        = NULL;
 static SDL_Surface       *gpScreenReal       = NULL;
 
 #ifdef __SYMBIAN32__
-	#ifdef __S60_5X__
-		static BOOL bScaleScreen = TRUE;
-	#else
-		static BOOL bScaleScreen = FALSE;
-	#endif
+   #ifdef __S60_5X__
+      static BOOL bScaleScreen = TRUE;
+   #else
+      static BOOL bScaleScreen = FALSE;
+   #endif
 #else
-	static BOOL bScaleScreen = TRUE;
+   static BOOL bScaleScreen = TRUE;
 #endif
 
 // Initial screen size
@@ -440,7 +440,7 @@ VIDEO_ToggleScaleScreen(
 {
 #ifdef __SYMBIAN32__
 	bScaleScreen = !bScaleScreen;
-	VIDEO_Resize(320,240);
+	VIDEO_Resize(320, 240);
 	VIDEO_UpdateScreen(NULL);
 #endif
 }

@@ -139,8 +139,8 @@ PAL_FadeOut(
 
 --*/
 {
-   int            i, j;
-   UINT           time;
+   int                      i, j;
+   UINT                     time;
    PAL_LARGE SDL_Color      palette[256];
    PAL_LARGE SDL_Color		newpalette[256];
 
@@ -155,28 +155,29 @@ PAL_FadeOut(
    //
    // Start fading out...
    //
-   for (i = 63; i >= 3; i--)
-   {
-      time = SDL_GetTicks() + iDelay * 10;
+   time = SDL_GetTicks() + iDelay * 10 * 60;
 
+   while (TRUE)
+   {
       //
       // Set the current palette...
       //
-      for (j = 0; j < 256; j++)
+      j = (int)(time - SDL_GetTicks()) / iDelay / 10;
+      if (j < 0)
       {
-         newpalette[j].r = (palette[j].r * i) >> 6;
-         newpalette[j].g = (palette[j].g * i) >> 6;
-         newpalette[j].b = (palette[j].b * i) >> 6;
+         break;
       }
+
+      for (i = 0; i < 256; i++)
+      {
+         newpalette[i].r = (palette[i].r * j) >> 6;
+         newpalette[i].g = (palette[i].g * j) >> 6;
+         newpalette[i].b = (palette[i].b * j) >> 6;
+      }
+
       VIDEO_SetPalette(newpalette);
 
-      while (SDL_PollEvent(NULL));
-
-      while (SDL_GetTicks() < time)
-      {
-         while (SDL_PollEvent(NULL));
-         SDL_Delay(5);
-      }
+      UTIL_Delay(10);
    }
 }
 
@@ -205,46 +206,46 @@ PAL_FadeIn(
 
 --*/
 {
-   int            i, j;
-   UINT           time;
-   SDL_Color     *palette = PAL_GetPalette(iPaletteNum, fNight);
-   PAL_LARGE SDL_Color newpalette[256];
+   int                      i, j;
+   UINT                     time;
+   SDL_Color               *palette;
+   PAL_LARGE SDL_Color      newpalette[256];
 
-   if (palette == NULL)
-   {
-      return;
-   }
+   //
+   // Get the new palette...
+   //
+   palette = PAL_GetPalette(iPaletteNum, fNight);
 
    //
    // Start fading in...
    //
-   for (i = 4; i < 64; i++)
+   time = SDL_GetTicks() + iDelay * 10 * 60;
+   while (TRUE)
    {
-      time = SDL_GetTicks() + iDelay * 10;
-
       //
-      // Calculate the current palette...
+      // Set the current palette...
       //
-      for (j = 0; j < 256; j++)
+      j = (int)(time - SDL_GetTicks()) / iDelay / 10;
+      if (j < 0)
       {
-         newpalette[j].r = (palette[j].r * i) >> 6;
-         newpalette[j].g = (palette[j].g * i) >> 6;
-         newpalette[j].b = (palette[j].b * i) >> 6;
+         break;
       }
+
+      j = 60 - j;
+
+      for (i = 0; i < 256; i++)
+      {
+         newpalette[i].r = (palette[i].r * j) >> 6;
+         newpalette[i].g = (palette[i].g * j) >> 6;
+         newpalette[i].b = (palette[i].b * j) >> 6;
+      }
+
       VIDEO_SetPalette(newpalette);
 
-#ifdef __SYMBIAN32__
-      VIDEO_UpdateScreen(NULL);
-#endif
-
-      while (SDL_PollEvent(NULL));
-
-      while (SDL_GetTicks() < time)
-      {
-         while (SDL_PollEvent(NULL));
-         SDL_Delay(5);
-      }
+      UTIL_Delay(10);
    }
+
+   VIDEO_SetPalette(palette);
 }
 
 VOID
