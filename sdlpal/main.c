@@ -207,7 +207,7 @@ PAL_SplashScreen(
    SDL_Surface   *lpBitmapDown, *lpBitmapUp;
    SDL_Rect       srcrect, dstrect;
    LPSPRITE       lpSpriteCrane;
-   LPCBITMAPRLE   lpBitmapTitle;
+   LPBITMAPRLE    lpBitmapTitle;
    LPBYTE         buf, buf2;
    int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0, iTitleHeight;
    DWORD          dwTime, dwBeginTime;
@@ -246,12 +246,13 @@ PAL_SplashScreen(
    PAL_FBPBlitToSurface(buf2, lpBitmapDown);
    PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_TITLE, gpGlobals->f.fpMGO);
    DecodeYJ1(buf, buf2, 32000);
-   lpBitmapTitle = PAL_SpriteGetFrame(buf2, 0);
+   lpBitmapTitle = (LPBITMAPRLE)PAL_SpriteGetFrame(buf2, 0);
    PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_CRANE, gpGlobals->f.fpMGO);
    DecodeYJ1(buf, lpSpriteCrane, 32000);
 
    iTitleHeight = PAL_RLEGetHeight(lpBitmapTitle);
-   ((LPWORD)lpBitmapTitle)[1] = 0; // HACKHACK
+   lpBitmapTitle[2] = 0;
+   lpBitmapTitle[3] = 0; // HACKHACK
 
    //
    // Generate the positions of the cranes
@@ -350,7 +351,13 @@ PAL_SplashScreen(
       //
       if (PAL_RLEGetHeight(lpBitmapTitle) < iTitleHeight)
       {
-         ((LPWORD)lpBitmapTitle)[1] = SWAP16(SWAP16(((LPWORD)lpBitmapTitle)[1]) + 1); // HACKHACK
+         //
+         // HACKHACK
+         //
+         WORD w = lpBitmapTitle[2] | (lpBitmapTitle[3] << 8);
+         w++;
+         lpBitmapTitle[2] = (w & 0xFF);
+         lpBitmapTitle[3] = (w >> 8);
       }
 
       PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
@@ -365,7 +372,9 @@ PAL_SplashScreen(
          //
          // User has pressed a key...
          //
-         ((LPWORD)lpBitmapTitle)[1] = SWAP16((WORD)iTitleHeight); // HACKHACK
+         lpBitmapTitle[2] = iTitleHeight & 0xFF;
+         lpBitmapTitle[3] = iTitleHeight >> 8; // HACKHACK
+
          PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
 
          VIDEO_UpdateScreen(NULL);
