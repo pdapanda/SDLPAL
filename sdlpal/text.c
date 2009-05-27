@@ -236,7 +236,6 @@ PAL_GetWord(
 --*/
 {
    static char buf[WORD_LENGTH + 1];
-   int l;
 
    if (wNumWord >= PAL_ADDITIONAL_WORD_FIRST)
    {
