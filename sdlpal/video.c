@@ -226,7 +226,7 @@ VIDEO_UpdateScreen(
 
    if (lpRect != NULL)
    {
-	  dstrect.x = (SHORT)((INT)(lpRect->x) * gpScreenReal->w / gpScreen->w);
+      dstrect.x = (SHORT)((INT)(lpRect->x) * gpScreenReal->w / gpScreen->w);
       dstrect.y = (SHORT)((INT)(screenRealY + lpRect->y) * screenRealHeight / gpScreen->h);
       dstrect.w = (WORD)((DWORD)(lpRect->w) * gpScreenReal->w / gpScreen->w);
       dstrect.h = (WORD)((DWORD)(lpRect->h) * screenRealHeight / gpScreen->h);
@@ -290,12 +290,12 @@ VIDEO_UpdateScreen(
    }
    else
    {
-	  dstrect.x = 0;
-	  dstrect.y = screenRealY;
-	  dstrect.w = gpScreenReal->w;
-	  dstrect.h = screenRealHeight;
+      dstrect.x = 0;
+      dstrect.y = screenRealY;
+      dstrect.w = gpScreenReal->w;
+      dstrect.h = screenRealHeight;
 
-	  SDL_SoftStretch(gpScreen, NULL, gpScreenReal, &dstrect);
+      SDL_SoftStretch(gpScreen, NULL, gpScreenReal, &dstrect);
 
       if (SDL_MUSTLOCK(gpScreenReal))
       {
