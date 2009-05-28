@@ -155,6 +155,8 @@ PAL_Shutdown(
    PAL_ShutdownInput();
    VIDEO_Shutdown();
 
+   UTIL_CloseLog();
+
    SDL_Quit();
 }
 
@@ -449,12 +451,13 @@ main(
    WORD          wScreenWidth = 0, wScreenHeight = 0;
    int           c;
    BOOL          fFullScreen = FALSE;
-#ifdef __SYMBIAN32__
+
    UTIL_OpenLog();
-#endif   
+
 #ifdef _WIN32
    putenv("SDL_VIDEODRIVER=directx");
 #endif
+
 #ifndef __SYMBIAN32__
    //
    // Parse parameters.
@@ -494,6 +497,7 @@ main(
       }
    }
 #endif
+
    //
    // Default resolution is 640x400.
    //
@@ -529,9 +533,6 @@ main(
    //
    PAL_GameMain();
 
-#ifdef __SYMBIAN32__
-   UTIL_CloseLog();
-#endif     
    //
    // Should not really reach here...
    //

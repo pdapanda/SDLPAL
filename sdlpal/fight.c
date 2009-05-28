@@ -1169,7 +1169,14 @@ PAL_BattleStartFrame(
 
             if (g_Battle.rgEnemy[i].flTimeMeter > 100 && flMax > 0)
             {
-               g_Battle.rgEnemy[i].state = kFighterCom;
+               if (g_Battle.iHidingTime == 0)
+               {
+                  g_Battle.rgEnemy[i].state = kFighterCom;
+               }
+               else
+               {
+                  g_Battle.rgEnemy[i].flTimeMeter = 0;
+               }
             }
          }
          break;

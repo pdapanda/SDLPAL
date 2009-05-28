@@ -178,9 +178,9 @@ PAL_DrawCharOnSurface(
 
 --*/
 {
-   int i, j, dx;
-   int x = PAL_X(pos), y = PAL_Y(pos);
-   LPBYTE pChar;
+   int       i, j, dx;
+   int       x = PAL_X(pos), y = PAL_Y(pos);
+   LPBYTE    pChar;
 
    //
    // Check for NULL pointer.

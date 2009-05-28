@@ -1,5 +1,8 @@
 //
 // Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
+// Portions Copyright (c) 2004, Pierre-Marie Baty.
+// Portions Copyright (c) 2009, netwan.
+//
 // All rights reserved.
 //
 // This file is part of SDLPAL.
@@ -19,9 +22,7 @@
 //
 
 #include "util.h"
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
+
 void
 trim(
    char *str
@@ -299,10 +300,10 @@ TerminateOnError(
    UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)TerminateOnError,"TerminateOnError",__FILE__, string);
    SDL_Delay(3000);
 #endif
-   
+
 #ifdef _DEBUG
    assert(!"TerminateOnError()"); // allows jumping to debugger
-#endif   
+#endif
 
 
 PAL_Shutdown();
@@ -415,54 +416,65 @@ UTIL_CloseFile(
    }
 }
 
-static FILE* pLogFile;
-FILE* UTIL_OpenLog(){
-     if (!(pLogFile = fopen(_PATH_LOG,"a+"))){
-         return NULL;
-     }
-     return pLogFile;
-}
+#ifdef ENABLE_LOG
 
+static FILE *pLogFile;
 
-int UTIL_CloseLog(){
-     int nErr = 0;
-     if (nErr = fclose(pLogFile)) {
-         return nErr;
-     }
-     return 0;
-}
-
-void 
-UTIL_WriteLog(
-		int Priority,
-		const char* Fmt,
-		...
+FILE *
+UTIL_OpenLog(
+   VOID
 )
 {
-#ifdef __SYMBIAN32__
-#ifdef ENABLE_LOG
-	va_list vaa;
-	time_t   lTime;
-	struct tm *curTime;
-	char szDateBuf[260];
-	time(&lTime);
-	if ((Priority < LOG_EMERG) || (Priority >= LOG_LAST_PRIORITY))
-	{
-         return;
-     }
-	
-     curTime   =   localtime(&lTime);   
-     strftime(   szDateBuf,   128,"%Y-%m-%d   %H:%M:%S",   curTime   );
-     szDateBuf[strlen(szDateBuf)-1]='\0'; //remove the 
- 
-     
-     va_start(vaa,Fmt);
-     
-     fprintf(pLogFile,"[%s]",szDateBuf);
-     vfprintf(pLogFile,Fmt,vaa);
-     fprintf(pLogFile,"\n");
-     fflush(pLogFile);
-     va_end(vaa);
-#endif
-#endif     
+   if ((pLogFile = fopen(_PATH_LOG, "a+")) == NULL)
+   {
+      return NULL;
+   }
+
+   return pLogFile;
 }
+
+VOID
+UTIL_CloseLog(
+   VOID
+)
+{
+   if (pLogFile != NULL)
+   {
+      fclose(pLogFile);
+   }
+}
+
+VOID
+UTIL_WriteLog(
+   int             Priority,
+   const char     *Fmt,
+   ...
+)
+{
+   va_list       vaa;
+   time_t        lTime;
+   struct tm    *curTime;
+   char          szDateBuf[260];
+
+   time(&lTime);
+
+   if ((Priority < LOG_EMERG) || (Priority >= LOG_LAST_PRIORITY))
+   {
+      return;
+   }
+
+   curTime = localtime(&lTime);
+   strftime(szDateBuf, 128, "%Y-%m-%d   %H:%M:%S", curTime);
+   szDateBuf[strlen(szDateBuf) - 1] = '\0'; //remove the
+
+   va_start(vaa,Fmt);
+
+   fprintf(pLogFile, "[%s]", szDateBuf);
+   vfprintf(pLogFile, Fmt, vaa);
+   fprintf(pLogFile, "\n");
+   fflush(pLogFile);
+
+   va_end(vaa);
+}
+
+#endif

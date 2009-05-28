@@ -29,12 +29,8 @@ SDL_Surface              *gpScreenBak        = NULL;
 // The real screen surface
 static SDL_Surface       *gpScreenReal       = NULL;
 
-#ifdef __SYMBIAN32__
-   #ifdef __S60_5X__
-      static BOOL bScaleScreen = TRUE;
-   #else
-      static BOOL bScaleScreen = FALSE;
-   #endif
+#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP)
+   static BOOL bScaleScreen = FALSE;
 #else
    static BOOL bScaleScreen = TRUE;
 #endif
@@ -79,8 +75,18 @@ VIDEO_Init(
    //
    // Create the screen surface.
    //
-#ifdef NDS
+#if defined (NDS)
    gpScreenReal = SDL_SetVideoMode(293, 196, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+#elif defined (__SYMBIAN32__)
+#ifdef __S60_5X__
+   gpScreenReal = SDL_SetVideoMode(640, 360, 8,
+      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+#else
+   gpScreenReal = SDL_SetVideoMode(320, 240, 8,
+      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+#endif
+#elif defined (PSP)
+   gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
 #else
    gpScreenReal = SDL_SetVideoMode(wScreenWidth, wScreenHeight, 8,
       SDL_HWSURFACE | SDL_RESIZABLE | (fFullScreen ? SDL_FULLSCREEN : 0));
@@ -88,21 +94,11 @@ VIDEO_Init(
 
    if (gpScreenReal == NULL)
    {
-#ifdef __SYMBIAN32__
-#ifdef __S60_5X__
-      gpScreenReal = SDL_SetVideoMode(640, 360, 8,
-         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#else
-      gpScreenReal = SDL_SetVideoMode(320, 240, 8,
-         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#endif
-#else
       //
       // Fall back to 640x480 software mode.
       //
       gpScreenReal = SDL_SetVideoMode(640, 480, 8,
          SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#endif
    }
 
    //

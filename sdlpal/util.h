@@ -23,22 +23,12 @@
 
 #include "common.h"
 
+//#define ENABLE_LOG 1
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/* define for log */
-#define  _PATH_LOG   "e:/data/pal/log.txt" 
-#define  LOG_EMERG   0 /* system is unusable */ 
-#define  LOG_ALERT   1 /* action must be taken immediately */ 
-#define  LOG_CRIT   2 /* critical conditions */ 
-#define  LOG_ERR   3 /* error conditions */ 
-#define  LOG_WARNING   4 /* warning conditions */ 
-#define  LOG_NOTICE   5 /* normal but significant condition */ 
-#define  LOG_INFO   6 /* informational */ 
-#define  LOG_DEBUG   7 /* debug-level messages */
-#define  LOG_LAST_PRIORITY 8 /* last level */
 
 void
 trim(
@@ -93,14 +83,45 @@ VOID
 UTIL_CloseFile(
    FILE                *fp
 );
-FILE* UTIL_OpenLog();
-int UTIL_CloseLog();
-void 
-UTIL_WriteLog(
-		int Priority,
-		const char* Fmt,
-		...
+
+#define _PATH_LOG           PAL_PREFIX "log.txt"
+#define LOG_EMERG           0 /* system is unusable */
+#define LOG_ALERT           1 /* action must be taken immediately */
+#define LOG_CRIT            2 /* critical conditions */
+#define LOG_ERR             3 /* error conditions */
+#define LOG_WARNING         4 /* warning conditions */
+#define LOG_NOTICE          5 /* normal but significant condition */
+#define LOG_INFO            6 /* informational */
+#define LOG_DEBUG           7 /* debug-level messages */
+#define LOG_LAST_PRIORITY   8 /* last level */
+
+#ifdef ENABLE_LOG
+
+FILE *
+UTIL_OpenLog(
+   VOID
 );
+
+VOID
+UTIL_CloseLog(
+   VOID
+);
+
+VOID
+UTIL_WriteLog(
+   int             Priority,
+   const char     *Fmt,
+   ...
+);
+
+#else
+
+#define UTIL_OpenLog()       ((void)(0))
+#define UTIL_CloseLog()      ((void)(0))
+#define UTIL_WriteLog(...)   ((void)(0))
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif

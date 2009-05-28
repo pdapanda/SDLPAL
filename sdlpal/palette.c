@@ -179,6 +179,9 @@ PAL_FadeOut(
 
       UTIL_Delay(10);
    }
+
+   memset(newpalette, 0, sizeof(newpalette));
+   VIDEO_SetPalette(newpalette);
 }
 
 VOID

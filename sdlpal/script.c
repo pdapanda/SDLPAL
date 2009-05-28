@@ -26,8 +26,6 @@
 BOOL            g_fScriptSuccess = TRUE;
 static int      g_iCurEquipPart = -1;
 
-//#define SCRIPT_TRACE 1
-
 static BOOL
 PAL_NPCWalkTo(
    WORD           wEventObjectID,
@@ -520,7 +518,9 @@ PAL_AdditionalCredits(
    LPCSTR rgszStrings[] = {
       "SDLPAL (http://sdlpal.codeplex.com)",
 #ifdef PAL_CLASSIC
-      "                  (\xB8\x67\xA8\xE5\xAF\x53\xA7\x4F\xBD\x67)",
+      "         (\xB8\x67\xA8\xE5\xAF\x53\xA7\x4F\xBD\x67  " __DATE__ ")",
+#else
+      "                    (" __DATE__ ")",
 #endif
       " ",
       "  (c) 2009, Wei Mingzhi",
@@ -2984,18 +2984,9 @@ PAL_RunTriggerScript(
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
 
-#ifdef SCRIPT_TRACE
-      {
-         FILE *fp = fopen("log.txt", "a");
-         if (fp != NULL)
-         {
-            fprintf(fp, "%.4x: %.4x %.4x %.4x %.4x\n", wScriptEntry,
-               pScript->wOperation, pScript->rgwOperand[0], pScript->rgwOperand[1],
-               pScript->rgwOperand[2], pScript->rgwOperand[3]);
-            fclose(fp);
-         }
-      }
-#endif
+      UTIL_WriteLog(LOG_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x\n", wScriptEntry,
+         pScript->wOperation, pScript->rgwOperand[0], pScript->rgwOperand[1],
+         pScript->rgwOperand[2], pScript->rgwOperand[3]);
 
       switch (pScript->wOperation)
       {

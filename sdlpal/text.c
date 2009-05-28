@@ -90,7 +90,9 @@ PAL_InitText(
 {
    FILE       *fpMsg, *fpWord;
    int         i;
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_InitText,"PAL_InitText",__FILE__, "entry");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_InitText, "PAL_InitText", __FILE__, "entry");
+
    //
    // Open the message and word data files.
    //
@@ -174,7 +176,8 @@ PAL_InitText(
    g_TextLib.fUserSkip = FALSE;
 
    PAL_MKFReadChunk(g_TextLib.bufDialogIcons, 282, 12, gpGlobals->f.fpDATA);
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_InitText,"PAL_InitText",__FILE__, "end");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_InitText, "PAL_InitText", __FILE__, "end");
    return 0;
 }
 
@@ -197,7 +200,8 @@ PAL_FreeText(
 
 --*/
 {
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_FreeText,"PAL_FreeText",__FILE__, "entry");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_FreeText, "PAL_FreeText", __FILE__, "entry");
+
    if (g_TextLib.lpMsgBuf != NULL)
    {
       free(g_TextLib.lpMsgBuf);
@@ -215,7 +219,8 @@ PAL_FreeText(
       free(g_TextLib.lpWordBuf);
       g_TextLib.lpWordBuf = NULL;
    }
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_FreeText,"PAL_FreeText",__FILE__, "end");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_FreeText, "PAL_FreeText", __FILE__, "end");
 }
 
 LPCSTR
@@ -238,8 +243,9 @@ PAL_GetWord(
 --*/
 {
    static char buf[WORD_LENGTH + 1];
-   
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_GetWord,"PAL_GetWord",__FILE__, "entry");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_GetWord, "PAL_GetWord", __FILE__, "entry");
+
    if (wNumWord >= PAL_ADDITIONAL_WORD_FIRST)
    {
       return g_rgszAdditionalWords[wNumWord - PAL_ADDITIONAL_WORD_FIRST];
@@ -250,7 +256,6 @@ PAL_GetWord(
       return NULL;
    }
 
-   //memcpy(buf, g_TextLib.lpWordBuf + wNumWord * WORD_LENGTH, WORD_LENGTH);
    memcpy(buf, &g_TextLib.lpWordBuf[wNumWord * WORD_LENGTH], WORD_LENGTH);
    buf[WORD_LENGTH] = '\0';
 
@@ -259,7 +264,7 @@ PAL_GetWord(
    //
    trim(buf);
 
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_GetWord,"PAL_GetWord",__FILE__, buf);
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_GetWord, "PAL_GetWord", __FILE__, buf);
    return buf;
 }
 
@@ -285,7 +290,8 @@ PAL_GetMsg(
    static char    buf[256];
    DWORD          dwOffset, dwSize;
 
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_GetMsg,"PAL_GetMsg",__FILE__, "entry");
+   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s", (long)PAL_GetMsg, "PAL_GetMsg", __FILE__, "entry");
+
    if (wNumMsg >= g_TextLib.nMsgs)
    {
       return NULL;
@@ -295,11 +301,10 @@ PAL_GetMsg(
    dwSize = SWAP32(g_TextLib.lpMsgOffset[wNumMsg + 1]) - dwOffset;
    assert(dwSize < 255);
 
-   //memcpy(buf, g_TextLib.lpMsgBuf + dwOffset, dwSize);
    memcpy(buf, &g_TextLib.lpMsgBuf[dwOffset], dwSize);
    buf[dwSize] = '\0';
 
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_GetMsg,"PAL_GetMsg",__FILE__, "end");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_GetMsg, "PAL_GetMsg", __FILE__, "end");
    return buf;
 }
 
@@ -335,9 +340,10 @@ PAL_DrawText(
 --*/
 {
    SDL_Rect   rect, urect;
+   WORD       wChar;
 
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_DrawText,"PAL_DrawText",__FILE__, "entry");
-   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_DrawText, "PAL_DrawText", __FILE__, "entry");
+
    rect.x = PAL_X(pos);
    rect.y = PAL_Y(pos);
 
@@ -345,8 +351,6 @@ PAL_DrawText(
    urect.y = rect.y;
    urect.h = 16;
    urect.w = 0;
-   
-   
 
    while (*lpszText)
    {
@@ -358,12 +362,13 @@ PAL_DrawText(
          //
          // BIG-5 Chinese Character
          //
+         wChar = SWAP16(((LPBYTE)lpszText)[0] | (((LPBYTE)lpszText)[1] << 8));
          if (fShadow)
          {
-            PAL_DrawCharOnSurface(*((WORD *)lpszText), gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0);
-            PAL_DrawCharOnSurface(*((WORD *)lpszText), gpScreen, PAL_XY(rect.x + 1, rect.y), 0);
+            PAL_DrawCharOnSurface(wChar, gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0);
+            PAL_DrawCharOnSurface(wChar, gpScreen, PAL_XY(rect.x + 1, rect.y), 0);
          }
-         PAL_DrawCharOnSurface(*((WORD *)lpszText), gpScreen, PAL_XY(rect.x, rect.y), bColor);
+         PAL_DrawCharOnSurface(wChar, gpScreen, PAL_XY(rect.x, rect.y), bColor);
          lpszText += 2;
          rect.x += 16;
          urect.w += 16;
@@ -392,7 +397,8 @@ PAL_DrawText(
    {
       VIDEO_UpdateScreen(&urect);
    }
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_DrawText,"PAL_DrawText",__FILE__, "end");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_DrawText, "PAL_DrawText", __FILE__, "end");
 }
 
 VOID
@@ -448,7 +454,8 @@ PAL_StartDialog(
    PAL_LARGE BYTE buf[16384];
    SDL_Rect       rect;
 
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_StartDialog,"PAL_StartDialog",__FILE__, "entry");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_StartDialog, "PAL_StartDialog", __FILE__, "entry");
+
    if (gpGlobals->fInBattle && !g_fUpdatedInBattle)
    {
       //
@@ -569,7 +576,7 @@ PAL_StartDialog(
    }
 
    g_TextLib.bDialogPosition = bDialogLocation;
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_StartDialog,"PAL_StartDialog",__FILE__, "end");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_StartDialog, "PAL_StartDialog", __FILE__, "end");
 }
 
 static VOID
@@ -594,8 +601,9 @@ PAL_DialogWaitForKey(
    PAL_LARGE SDL_Color   palette[256];
    SDL_Color   *pCurrentPalette, t;
    int         i;
-   
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_DialogWaitForKey,"PAL_DialogWaitForKey",__FILE__, "entry");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_DialogWaitForKey, "PAL_DialogWaitForKey", __FILE__, "entry");
+
    //
    // get the current palette
    //
@@ -660,7 +668,7 @@ PAL_DialogWaitForKey(
    PAL_ClearKeyState();
 
    g_TextLib.fUserSkip = FALSE;
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_DialogWaitForKey,"PAL_DialogWaitForKey",__FILE__, "end");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_DialogWaitForKey, "PAL_DialogWaitForKey", __FILE__, "end");
 }
 
 VOID
@@ -684,9 +692,9 @@ PAL_ShowDialogText(
 {
    SDL_Rect        rect;
    int             x, y, len = strlen(lpszText);
-   
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_ShowDialogText,"PAL_ShowDialogText",__FILE__, "entry");
-   
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_ShowDialogText, "PAL_ShowDialogText", __FILE__, "entry");
+
    PAL_ClearKeyState();
    g_TextLib.bIcon = 0;
 
@@ -872,7 +880,8 @@ PAL_ShowDialogText(
             default:
                if (*lpszText & 0x80)
                {
-                  (*(WORD *)text) = *(WORD *)lpszText;
+                  text[0] = lpszText[0];
+                  text[1] = lpszText[1];
                   text[2] = '\0';
                   lpszText += 2;
                }
@@ -906,7 +915,8 @@ PAL_ShowDialogText(
          g_TextLib.nCurrentDialogLine++;
       }
    }
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_ShowDialogText,"PAL_ShowDialogText",__FILE__, "end");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_ShowDialogText, "PAL_ShowDialogText", __FILE__, "end");
 }
 
 VOID
@@ -928,7 +938,8 @@ PAL_ClearDialog(
 
 --*/
 {
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_ClearDialog,"PAL_ClearDialog",__FILE__, "entry");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_ClearDialog, "PAL_ClearDialog", __FILE__, "entry");
+
    if (g_TextLib.nCurrentDialogLine > 0 && fWaitForKey)
    {
       PAL_DialogWaitForKey();
@@ -943,7 +954,8 @@ PAL_ClearDialog(
       g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
       g_TextLib.bDialogPosition = kDialogUpper;
    }
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_ClearDialog,"PAL_ClearDialog",__FILE__, "end");
+
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_ClearDialog, "PAL_ClearDialog", __FILE__, "end");
 }
 
 VOID
@@ -965,7 +977,8 @@ PAL_EndDialog(
 
 --*/
 {
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_EndDialog,"PAL_EndDialog",__FILE__, "entry");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_EndDialog, "PAL_EndDialog", __FILE__, "entry");
+
    PAL_ClearDialog(TRUE);
 
    //
@@ -978,8 +991,8 @@ PAL_EndDialog(
    g_TextLib.bDialogPosition = kDialogUpper;
    g_TextLib.fUserSkip = FALSE;
    g_TextLib.fPlayingRNG = FALSE;
-   
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_EndDialog,"PAL_EndDialog",__FILE__, "end");
+
+   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s", (long)PAL_EndDialog, "PAL_EndDialog", __FILE__, "end");
 }
 
 BOOL
