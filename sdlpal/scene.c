@@ -435,8 +435,10 @@ PAL_ApplyWave(
          // Do a shift on the current line with the calculated offset.
          //
          memcpy(buf, p, b);
-         memmove(p, p + b, 320 - b);
-         memcpy(p + 320 - b, buf, b);
+         //memmove(p, p + b, 320 - b);
+         memmove(p, &p[b], 320 - b);
+         //memcpy(p + 320 - b, buf, b);
+         memcpy(&p[320 - b], buf, b);
       }
 
       a = (a + 1) % 32;

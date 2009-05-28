@@ -250,7 +250,8 @@ PAL_GetWord(
       return NULL;
    }
 
-   memcpy(buf, g_TextLib.lpWordBuf + wNumWord * WORD_LENGTH, WORD_LENGTH);
+   //memcpy(buf, g_TextLib.lpWordBuf + wNumWord * WORD_LENGTH, WORD_LENGTH);
+   memcpy(buf, &g_TextLib.lpWordBuf[wNumWord * WORD_LENGTH], WORD_LENGTH);
    buf[WORD_LENGTH] = '\0';
 
    //
@@ -258,7 +259,7 @@ PAL_GetWord(
    //
    trim(buf);
 
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_GetWord,"PAL_GetWord",__FILE__, "end");
+   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_GetWord,"PAL_GetWord",__FILE__, buf);
    return buf;
 }
 
@@ -294,7 +295,8 @@ PAL_GetMsg(
    dwSize = SWAP32(g_TextLib.lpMsgOffset[wNumMsg + 1]) - dwOffset;
    assert(dwSize < 255);
 
-   memcpy(buf, g_TextLib.lpMsgBuf + dwOffset, dwSize);
+   //memcpy(buf, g_TextLib.lpMsgBuf + dwOffset, dwSize);
+   memcpy(buf, &g_TextLib.lpMsgBuf[dwOffset], dwSize);
    buf[dwSize] = '\0';
 
    UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)PAL_GetMsg,"PAL_GetMsg",__FILE__, "end");
