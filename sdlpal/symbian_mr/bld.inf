@@ -32,5 +32,4 @@ PRJ_EXPORTS
 .\data\WORD.DAT \epoc32\winscw\e\data\pal\WORD.DAT
 
 PRJ_MMPFILES
-sdlpal_mr.mmp
-gnumakefile pal_icons_mr.mk
+sdlpal.mmp

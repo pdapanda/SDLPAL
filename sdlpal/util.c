@@ -415,12 +415,30 @@ UTIL_CloseFile(
    }
 }
 
+static FILE* pLogFile;
+FILE* UTIL_OpenLog(){
+     if (!(pLogFile = fopen(_PATH_LOG,"a+"))){
+         return NULL;
+     }
+     return pLogFile;
+}
+
+
+int UTIL_CloseLog(){
+     int nErr = 0;
+     if (nErr = fclose(pLogFile)) {
+         return nErr;
+     }
+     return 0;
+}
+
 void 
 UTIL_WriteLog(
 		int Priority,
 		const char* Fmt,
 		...
-){
+)
+{
 #ifdef __SYMBIAN32__
 #ifdef ENABLE_LOG
 	va_list vaa;
@@ -447,19 +465,4 @@ UTIL_WriteLog(
      va_end(vaa);
 #endif
 #endif     
-}
-
-FILE* UTIL_OpenLog(){
-     if (!(pLogFile = fopen(_PATH_LOG,"a+"))){
-         return NULL;
-     }
-     return pLogFile;
-}
-
-int UTIL_CloseLog(){
-     int nErr = 0;
-     if (nErr = fclose(pLogFile)) {
-         return nErr;
-     }
-     return 0;
 }

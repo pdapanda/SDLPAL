@@ -449,7 +449,9 @@ main(
    WORD          wScreenWidth = 0, wScreenHeight = 0;
    int           c;
    BOOL          fFullScreen = FALSE;
+#ifdef __SYMBIAN32__
    UTIL_OpenLog();
+#endif   
 #ifdef _WIN32
    putenv("SDL_VIDEODRIVER=directx");
 #endif
@@ -526,8 +528,10 @@ main(
    // Run the main game routine
    //
    PAL_GameMain();
-   
+
+#ifdef __SYMBIAN32__
    UTIL_CloseLog();
+#endif     
    //
    // Should not really reach here...
    //
