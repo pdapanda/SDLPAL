@@ -296,8 +296,8 @@ TerminateOnError(
 #endif
 
 #if defined(__SYMBIAN32__)
-   fprintf(stdout, "\nFATAL ERROR: %s\n", string);
-   SDL_Delay(30000);
+   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)TerminateOnError,"TerminateOnError",__FILE__, string);
+   SDL_Delay(3000);
 #endif
    
 #ifdef _DEBUG
@@ -414,9 +414,13 @@ UTIL_CloseFile(
       fclose(fp);
    }
 }
-static FILE* pLogFile;
-#define ENABLE_LOG 1
-void UTIL_WriteLog(int Priority,const char* Fmt,...){
+
+void 
+UTIL_WriteLog(
+		int Priority,
+		const char* Fmt,
+		...
+){
 #ifdef __SYMBIAN32__
 #ifdef ENABLE_LOG
 	va_list vaa;
@@ -424,12 +428,11 @@ void UTIL_WriteLog(int Priority,const char* Fmt,...){
 	struct tm *curTime;
 	char szDateBuf[260];
 	time(&lTime);
-	if (Priority < LOG_EMERG || Priority >= LOG_LAST_PRIORITY) {
+	if ((Priority < LOG_EMERG) || (Priority >= LOG_LAST_PRIORITY))
+	{
          return;
      }
-     if (!(pLogFile = fopen(_PATH_LOG,"a+"))) {
-        return ;
-     } 
+	
      curTime   =   localtime(&lTime);   
      strftime(   szDateBuf,   128,"%Y-%m-%d   %H:%M:%S",   curTime   );
      szDateBuf[strlen(szDateBuf)-1]='\0'; //remove the 
@@ -442,13 +445,12 @@ void UTIL_WriteLog(int Priority,const char* Fmt,...){
      fprintf(pLogFile,"\n");
      fflush(pLogFile);
      va_end(vaa);
-     fclose(pLogFile);
 #endif
 #endif     
 }
 
-FILE* UTIL_OpenLog(char* pszLogFileName){
-     if (!(pLogFile = fopen(pszLogFileName,"a+"))){
+FILE* UTIL_OpenLog(){
+     if (!(pLogFile = fopen(_PATH_LOG,"a+"))){
          return NULL;
      }
      return pLogFile;

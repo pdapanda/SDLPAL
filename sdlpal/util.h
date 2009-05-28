@@ -27,7 +27,7 @@
 extern "C"
 {
 #endif
-
+FILE* pLogFile;
 /* define for log */
 #define  _PATH_LOG   "e:/data/pal/log.txt" 
 #define  LOG_EMERG   0 /* system is unusable */ 
@@ -93,8 +93,10 @@ VOID
 UTIL_CloseFile(
    FILE                *fp
 );
-
-void SDL_WriteLog(
+FILE* UTIL_OpenLog();
+int UTIL_CloseLog();
+void 
+UTIL_WriteLog(
 		int Priority,
 		const char* Fmt,
 		...
