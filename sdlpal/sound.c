@@ -78,7 +78,7 @@ SOUND_LoadVOCFromBuffer(
    //
    // Length is 3 bytes long
    //
-   len = SWAP16(*(LPWORD)lpVOC);
+   len = lpVOC[0] | (lpVOC[1] << 8);
    lpVOC += 2;
    x = *(lpVOC++);
    x <<= 16;
