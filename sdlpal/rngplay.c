@@ -175,8 +175,7 @@ PAL_RNGBlitToSurface(
    INT                   dst_ptr     = 0;
    BYTE                  data        = 0;
    WORD                  wdata       = 0;
-   INT                   x, y, i, n;//, m;
-//   LPBYTE                prng        = NULL;
+   INT                   x, y, i, n;
    LPBYTE                rng         = NULL;
    LPBYTE                buf         = NULL;
 
@@ -241,12 +240,6 @@ PAL_RNGBlitToSurface(
          break;
 
       case 0x04:
-/*    	 for(i =0,prng=rng; i < ptr; i++)
-    	 {
-			 prng ++;
-    	 }
-         wdata = SWAP16(*(LPWORD)prng);*/
-         //wdata = SWAP16(*(LPWORD)(rng + ptr));
          wdata = rng[ptr] | (rng[ptr + 1] << 8);
          ptr += 2;
          dst_ptr += ((unsigned int)wdata + 1) * 2;
@@ -331,13 +324,6 @@ PAL_RNGBlitToSurface(
          break;
 
       case 0x0c:
-/*    	 for(i =0,prng=rng; i < ptr; i++)
-		 {
-			 prng ++;
-		 }
-
-    	 wdata = SWAP16(*(LPWORD)prng);*/
-    	 //wdata = SWAP16(*(LPWORD)(rng + ptr));
          wdata = rng[ptr] | (rng[ptr + 1] << 8);
          ptr += 2;
          for (i = 0; i <= wdata; i++)
@@ -394,14 +380,6 @@ PAL_RNGBlitToSurface(
          break;
 
       case 0x12:
-/*
-    	 for(i =0,prng=rng; i < ptr; i++)
-		 {
-			 prng ++;
-		 }
-
-    	 n = SWAP16(*prng) + 1;*/
-    	 //n = SWAP16(*(LPWORD)(rng + ptr)) + 1;
          n = (rng[ptr] | (rng[ptr + 1] << 8)) + 1;
          ptr += 2;
          for (i = 0; i < n; i++)
