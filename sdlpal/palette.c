@@ -605,6 +605,16 @@ PAL_FadeToRed(
    palette = PAL_GetPalette(gpGlobals->wNumPalette, gpGlobals->fNightPalette);
    memcpy(newpalette, palette, sizeof(newpalette));
 
+   for (i = 0; i < gpScreen->pitch * gpScreen->h; i++)
+   {
+      if (((LPBYTE)(gpScreen->pixels))[i] == 0x4F)
+      {
+         ((LPBYTE)(gpScreen->pixels))[i] = 0x4E; // HACKHACK
+      }
+   }
+
+   VIDEO_UpdateScreen(NULL);
+
    for (i = 0; i < 32; i++)
    {
       for (j = 0; j < 256; j++)
@@ -637,6 +647,6 @@ PAL_FadeToRed(
       }
 
       VIDEO_SetPalette(newpalette);
-      UTIL_Delay(80);
+      UTIL_Delay(75);
    }
 }
