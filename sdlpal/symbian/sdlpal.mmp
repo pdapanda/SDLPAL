@@ -68,7 +68,7 @@ SOURCE binfile.cpp binio.cpp emuopl.cpp fprovide.cpp player.cpp rix.cpp fmopl.c
 //MACRO SCRIPT_TRACE 
 //MACRO CALL_TRACE
 MACRO PAL_CLASSIC
-MACRO ENABLE_LOG 
+//MACRO ENABLE_LOG 
 //MACRO __S60_5X__
 //CAPABILITY LocalServices Location ReadUserData UserEnvironment WriteUserData
 CAPABILITY ReadUserData WriteUserData 

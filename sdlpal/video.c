@@ -715,7 +715,15 @@ VIDEO_FadeScreen(
    short             offset = 240 - 200;
    short             screenRealHeight = gpScreenReal->h;
    short             screenRealY = 0;
-
+   //
+   // Lock surface if needed
+   //
+   if (SDL_MUSTLOCK(gpScreenReal))
+   {
+	  if (SDL_LockSurface(gpScreenReal) < 0)
+		   return;
+   }
+   
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;
@@ -779,9 +787,9 @@ VIDEO_FadeScreen(
             srcrect.h = 200 - g_wShakeLevel;
 
             dstrect.x = 0;
-            dstrect.y = 0;
+            dstrect.y = screenRealY;
             dstrect.w = 320 * gpScreenReal->w / gpScreen->w;
-            dstrect.h = (200 - g_wShakeLevel) * gpScreenReal->h / gpScreen->h;
+            dstrect.h = (200 - g_wShakeLevel) * screenRealHeight / gpScreen->h;
 
             if (g_wShakeTime & 1)
             {
@@ -789,24 +797,27 @@ VIDEO_FadeScreen(
             }
             else
             {
-               dstrect.y = g_wShakeLevel * gpScreenReal->h / gpScreen->h;
+               dstrect.y = (screenRealY + g_wShakeLevel) * screenRealHeight / gpScreen->h;
             }
 
             SDL_SoftStretch(gpScreenBak, &srcrect, gpScreenReal, &dstrect);
 
             if (g_wShakeTime & 1)
             {
-               dstrect.y = (200 - g_wShakeLevel) * gpScreenReal->h / gpScreen->h;
+               dstrect.y = (screenRealY + screenRealHeight - g_wShakeLevel) * screenRealHeight / gpScreen->h;
             }
             else
             {
-               dstrect.y = 0;
+               dstrect.y = screenRealY;
             }
 
-            dstrect.h = g_wShakeLevel * gpScreenReal->h / gpScreen->h;
+            dstrect.h = g_wShakeLevel * screenRealHeight / gpScreen->h;
 
             SDL_FillRect(gpScreenReal, &dstrect, 0);
-
+            if (SDL_MUSTLOCK(gpScreenReal))
+			{
+			   SDL_UnlockSurface(gpScreenReal);
+			}
             SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
             g_wShakeTime--;
          }
@@ -818,6 +829,10 @@ VIDEO_FadeScreen(
         	dstrect.h = screenRealHeight;
 
             SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
+            if (SDL_MUSTLOCK(gpScreenReal))
+			{
+			   SDL_UnlockSurface(gpScreenReal);
+			}
             SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
          }
       }

@@ -342,7 +342,7 @@ PAL_DrawText(
    SDL_Rect   rect, urect;
    WORD       wChar;
 
-   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_DrawText, "PAL_DrawText", __FILE__, "entry");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_DrawText, "PAL_DrawText", __FILE__, lpszText);
 
    rect.x = PAL_X(pos);
    rect.y = PAL_Y(pos);
@@ -693,7 +693,7 @@ PAL_ShowDialogText(
    SDL_Rect        rect;
    int             x, y, len = strlen(lpszText);
 
-   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_ShowDialogText, "PAL_ShowDialogText", __FILE__, "entry");
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_ShowDialogText, "PAL_ShowDialogText", __FILE__, lpszText);
 
    PAL_ClearKeyState();
    g_TextLib.bIcon = 0;
