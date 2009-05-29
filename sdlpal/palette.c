@@ -597,10 +597,10 @@ PAL_FadeToRed(
 
 --*/
 {
-   SDL_Color       *palette;
+   SDL_Color                 *palette;
    PAL_LARGE SDL_Color        newpalette[256];
-   int              i, j;
-   BYTE             color;
+   int                        i, j;
+   BYTE                       color;
 
    palette = PAL_GetPalette(gpGlobals->wNumPalette, gpGlobals->fNightPalette);
    memcpy(newpalette, palette, sizeof(newpalette));
