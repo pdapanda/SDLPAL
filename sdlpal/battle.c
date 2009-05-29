@@ -53,6 +53,8 @@ PAL_BattleMakeScene(
    LPBYTE       pSrc, pDst;
    BYTE         b;
 
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleMakeScene, "PAL_BattleMakeScene", __FILE__, "entry");
+   
    //
    // Draw the background
    //
@@ -192,6 +194,7 @@ PAL_BattleMakeScene(
          }
       }
    }
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleMakeScene, "PAL_BattleMakeScene", __FILE__, "end");
 }
 
 VOID
@@ -239,7 +242,9 @@ PAL_BattleFadeScene(
    DWORD             time;
    BYTE              a, b;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleFadeScene, "PAL_BattleFadeScene", __FILE__, "entry");
+   
    time = SDL_GetTicks();
 
    for (i = 0; i < 12; i++)
@@ -295,6 +300,8 @@ PAL_BattleFadeScene(
    PAL_BattleUIUpdate();
 
    VIDEO_UpdateScreen(NULL);
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleFadeScene, "PAL_BattleFadeScene", __FILE__, "end");
 }
 
 static BATTLERESULT
@@ -318,6 +325,8 @@ PAL_BattleMain(
 {
    int         i;
    DWORD       dwTime;
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleMain, "PAL_BattleMain", __FILE__, "entry");
 
    VIDEO_BackupScreen();
 
@@ -417,7 +426,9 @@ PAL_BattleMain(
       //
       VIDEO_UpdateScreen(NULL);
    }
-
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleMain, "PAL_BattleMain", __FILE__, "end");
+   
    //
    // Return the battle result
    //
@@ -445,6 +456,8 @@ PAL_FreeBattleSprites(
 {
    int         i;
 
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_FreeBattleSprites, "PAL_FreeBattleSprites", __FILE__, "start");
+   
    //
    // Free all the loaded sprites
    //
@@ -471,6 +484,8 @@ PAL_FreeBattleSprites(
       free(g_Battle.lpSummonSprite);
    }
    g_Battle.lpSummonSprite = NULL;
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_FreeBattleSprites, "PAL_FreeBattleSprites", __FILE__, "end");
 }
 
 VOID
@@ -494,7 +509,9 @@ PAL_LoadBattleSprites(
 {
    int           i, l, x, y, s;
    FILE         *fp;
-
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_LoadBattleSprites, "PAL_LoadBattleSprites", __FILE__, "start");
+   
    PAL_FreeBattleSprites();
 
    fp = UTIL_OpenRequiredFile("abc.mkf");
@@ -564,6 +581,8 @@ PAL_LoadBattleSprites(
    }
 
    fclose(fp);
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_LoadBattleSprites, "PAL_LoadBattleSprites", __FILE__, "end");
 }
 
 static VOID
@@ -586,7 +605,9 @@ PAL_LoadBattleBackground(
 --*/
 {
    PAL_LARGE BYTE           buf[320 * 200];
-
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_LoadBattleBackground, "PAL_LoadBattleBackground", __FILE__, "start");
+   
    //
    // Create the surface
    //
@@ -609,6 +630,8 @@ PAL_LoadBattleBackground(
    // Draw the picture to the surface.
    //
    PAL_FBPBlitToSurface(buf, g_Battle.lpBackground);
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_LoadBattleBackground, "PAL_LoadBattleBackground", __FILE__, "end");
 }
 
 static VOID
@@ -638,7 +661,9 @@ PAL_BattleWon(
    WORD             w;
    BOOL             fLevelUp;
    PLAYERROLES      OrigPlayerRoles;
-
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleWon, "PAL_BattleWon", __FILE__, "start");
+   
    //
    // Backup the initial player stats
    //
@@ -964,6 +989,7 @@ PAL_BattleWon(
       }
 #endif
    }
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleWon, "PAL_BattleWon", __FILE__, "end");
 }
 
 VOID
@@ -987,7 +1013,9 @@ PAL_BattleEnemyEscape(
 {
    int j, x, y, w;
    BOOL f = TRUE;
-
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleEnemyEscape, "PAL_BattleEnemyEscape", __FILE__, "start");
+   
    SOUND_Play(45);
 
    //
@@ -1026,6 +1054,8 @@ PAL_BattleEnemyEscape(
 
    UTIL_Delay(500);
    g_Battle.BattleResult = kBattleResultTerminated;
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleEnemyEscape, "PAL_BattleEnemyEscape", __FILE__, "end");
 }
 
 VOID
@@ -1049,6 +1079,8 @@ PAL_BattlePlayerEscape(
 {
    int         i, j;
    WORD        wPlayerRole;
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattlePlayerEscape, "PAL_BattlePlayerEscape", __FILE__, "start");
 
    SOUND_Play(45);
 
@@ -1119,6 +1151,8 @@ PAL_BattlePlayerEscape(
    PAL_BattleDelay(1, 0, FALSE);
 
    g_Battle.BattleResult = kBattleResultFleed;
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattlePlayerEscape, "PAL_BattlePlayerEscape", __FILE__, "end");
 }
 
 BATTLERESULT
@@ -1146,6 +1180,8 @@ PAL_StartBattle(
    int            i;
    WORD           w, wPrevWaveLevel;
    SHORT          sPrevWaveProgression;
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - [%d],[%d]", (long)PAL_StartBattle, "PAL_StartBattle", __FILE__, wEnemyTeam, fIsBoss);
 
    //
    // Set the screen waving effects
@@ -1457,5 +1493,7 @@ PAL_StartBattle(
    gpGlobals->sWaveProgression = sPrevWaveProgression;
    gpGlobals->wScreenWave = wPrevWaveLevel;
 
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_StartBattle, "PAL_StartBattle", __FILE__, "end");
+   
    return i;
 }

@@ -1054,13 +1054,16 @@ PAL_BattleStartFrame(
    WORD                     wPlayerRole;
    WORD                     wDexterity;
    BOOL                     fOnlyPuppet = TRUE;
+   
 #ifdef PAL_CLASSIC
    int                      j;
 #else
    FLOAT                    flMax;
    BOOL                     fMoved = FALSE;
 #endif
-
+   
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleStartFrame, "PAL_BattleStartFrame", __FILE__, "start");
+   
    PAL_BattleUpdateFighters();
 
    //
@@ -1669,7 +1672,9 @@ PAL_BattleStartFrame(
    // Update the battle UI
    //
    PAL_BattleUIUpdate();
+   
 #endif
+   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleStartFrame, "PAL_BattleStartFrame", __FILE__, "end");
 }
 
 VOID
