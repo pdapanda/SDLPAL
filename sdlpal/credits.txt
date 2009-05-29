@@ -1,8 +1,8 @@
 SPECIAL THANKS
 --------------
 
-Many of the ideas of this program are based on PALX Project by palxex.
-(http://code.google.com/p/palx)
+Many of the ideas of this program are based on documents from PAL
+Research Project (http://code.google.com/p/palresearch).
 
 Portions of the code are based on the work done by Baldur and louyihua.
 
