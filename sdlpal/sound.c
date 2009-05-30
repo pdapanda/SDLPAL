@@ -78,11 +78,8 @@ SOUND_LoadVOCFromBuffer(
    //
    // Length is 3 bytes long
    //
-   len = lpVOC[0] | (lpVOC[1] << 8);
-   lpVOC += 2;
-   x = *(lpVOC++);
-   x <<= 16;
-   len += x - 2;
+   len = (lpVOC[0] | (lpVOC[1] << 8) | (lpVOC[2] << 16)) - 2;
+   lpVOC += 3;
 
    //
    // One byte for frequency
@@ -106,11 +103,7 @@ SOUND_LoadVOCFromBuffer(
    for (i = 0; i < x; i++)
    {
       l = (INT)(i * (freq / 22050.0));
-      if (l < 0)
-      {
-         l = 0;
-      }
-      else if (l >= len)
+      if (l >= len)
       {
          l = len - 1;
       }
