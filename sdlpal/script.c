@@ -2068,10 +2068,13 @@ PAL_InterpretInstruction(
       {
          if (pScript->rgwOperand[i] != 0)
          {
-            gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex++].wPlayerRole =
+            gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex].wPlayerRole =
                pScript->rgwOperand[i] - 1;
 
-            g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttack;
+            g_Battle.rgPlayer[gpGlobals->wMaxPartyMemberIndex].action.ActionType =
+               kBattleActionAttack;
+
+            gpGlobals->wMaxPartyMemberIndex++;
          }
       }
       gpGlobals->wMaxPartyMemberIndex--;
