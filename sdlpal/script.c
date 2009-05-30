@@ -2070,6 +2070,8 @@ PAL_InterpretInstruction(
          {
             gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex++].wPlayerRole =
                pScript->rgwOperand[i] - 1;
+
+            g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttack;
          }
       }
       gpGlobals->wMaxPartyMemberIndex--;

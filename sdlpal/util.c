@@ -418,7 +418,7 @@ UTIL_CloseFile(
 
 #ifdef ENABLE_LOG
 
-static FILE *pLogFile;
+static FILE *pLogFile = NULL;
 
 FILE *
 UTIL_OpenLog(
