@@ -31,11 +31,10 @@ compilation. Then you dont statically link  sdlmain.lib or  sdlmaint.lib librari
 
 GLREF_C TInt E32Main()
     {
-#ifdef __S60_50__
-    return SDLEnv::SetMain(SDL_main, CSDL::EEnableFocusStop | CSDL::EImageResizeZoomOut
-
-                | CSDL::EAutoOrientation | CSDL::EAllowImageResizeKeepRatio | CSDL::EDrawModeGdi,
-         NULL /*,SDLEnv::EParamQuery | SDLEnv::EEnableVirtualMouseMoveEvents*/);
+#ifdef __S60_5X__
+    return SDLEnv::SetMain(SDL_main,CSDL::EEnableFocusStop
+                    | CSDL::EAutoOrientation /*| CSDL::EAllowImageResizeKeepRatio | CSDL::EDrawModeGdi*/,
+             NULL/*, SDLEnv::EParamQuery | SDLEnv::EEnableVirtualMouseMoveEvents*/);
 #else
     return SDLEnv::SetMain(SDL_main,CSDL::EEnableFocusStop
                 | CSDL::EAutoOrientation | CSDL::EAllowImageResizeKeepRatio /*| CSDL::EDrawModeGdi*/,

@@ -311,23 +311,23 @@ PAL_MouseEventFilter(
          g_InputState.dir = kDirEast;
          break;
       case 1:
-    	 g_InputState.prevdir = g_InputState.dir;
-    	 g_InputState.dir = kDirNorth;
+    	 //g_InputState.prevdir = g_InputState.dir;
+    	 //g_InputState.dir = kDirNorth;
          g_InputState.dwKeyPress |= kKeyUp;
          break;
       case 7:
-    	 g_InputState.prevdir = g_InputState.dir;
-    	 g_InputState.dir = kDirSouth; 
+    	 //g_InputState.prevdir = g_InputState.dir;
+    	 //g_InputState.dir = kDirSouth; 
          g_InputState.dwKeyPress |= kKeyDown;
          break;
       case 3:
-    	 g_InputState.prevdir = g_InputState.dir;
-    	 g_InputState.dir = kDirWest;
+    	 //g_InputState.prevdir = g_InputState.dir;
+    	 //g_InputState.dir = kDirWest;
     	 g_InputState.dwKeyPress |= kKeyLeft;
          break;
       case 5:
-         g_InputState.prevdir = g_InputState.dir;
-         g_InputState.dir = kDirEast;
+         //g_InputState.prevdir = g_InputState.dir;
+         //g_InputState.dir = kDirEast;
          g_InputState.dwKeyPress |= kKeyRight;
          break;
       }
@@ -377,17 +377,35 @@ PAL_MouseEventFilter(
 		 {
 			 SOUND_AdjustVolume(0);
 			 break;
-		 } 
+		 }
+      case 7:
+    	  if (isRightMouseClick) //repeat attack
+    	  {
+    	     g_InputState.dwKeyPress |= kKeyRepeat;
+    	     break;
+    	  }
       case 8:
          g_InputState.dir = kDirUnknown;
          g_InputState.prevdir = kDirUnknown;
          break;
       case 1:
-    	 if( isLeftMouseDBClick )
+    	 if( isRightMouseClick )
 		 {
 			 g_InputState.dwKeyPress |= kKeyForce;
 		 }
     	 break;
+      case 3:
+    	 if( isRightMouseClick )
+		 {
+			 g_InputState.dwKeyPress |= kKeyAuto;
+		 }
+    	 break;
+      case 5:
+    	 if( isRightMouseClick )
+		 {
+			 g_InputState.dwKeyPress |= kKeyDefend;
+		 }
+		 break;
       case 4:
 		if (isRightMouseClick) // menu
 		{
@@ -397,10 +415,7 @@ PAL_MouseEventFilter(
 		{
 		   g_InputState.dwKeyPress |= kKeySearch;
 		}
-		else if (isLeftMouseDBClick) //repeat attack
-		{
-		   g_InputState.dwKeyPress |= kKeyRepeat;	
-		}
+		
         break;
       }
       break;
