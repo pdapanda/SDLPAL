@@ -3148,9 +3148,11 @@ PAL_RunTriggerScript(
 
             for (i = 0; i < (pScript->rgwOperand[0] ? pScript->rgwOperand[0] : 1); i++)
             {
+               PAL_ProcessEvent();
                while (SDL_GetTicks() < time)
                {
-                  UTIL_Delay(1);
+                  PAL_ProcessEvent();
+                  SDL_Delay(1);
                }
 
                time = SDL_GetTicks() + FRAME_TIME;
