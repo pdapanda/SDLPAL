@@ -2085,6 +2085,7 @@ PAL_InterpretInstruction(
       PAL_SetLoadFlags(kLoadPlayerSprite);
       PAL_LoadResources();
 
+      memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
       PAL_UpdateEquipments();
       break;
 
