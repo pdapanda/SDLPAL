@@ -91,9 +91,9 @@ SOUND_LoadVOCFromBuffer(
    lpVOC += 2;
 
    //
-   // Convert the sample to 22050Hz manually, as SDL doesn't like "strange" sample rates.
+   // Convert the sample manually, as SDL doesn't like "strange" sample rates.
    //
-   x = (INT)(len * (22050.0 / freq));
+   x = (INT)(len * ((FLOAT)PAL_SAMPLE_RATE / freq));
 
    *lppBuffer = (LPBYTE)calloc(1, x);
    if (*lppBuffer == NULL)
@@ -102,7 +102,7 @@ SOUND_LoadVOCFromBuffer(
    }
    for (i = 0; i < x; i++)
    {
-      l = (INT)(i * (freq / 22050.0));
+      l = (INT)(i * (freq / (FLOAT)PAL_SAMPLE_RATE));
       if (l >= len)
       {
          l = len - 1;
@@ -112,7 +112,7 @@ SOUND_LoadVOCFromBuffer(
 
    lpSpec->channels = 1;
    lpSpec->format = AUDIO_U8;
-   lpSpec->freq = 22050;
+   lpSpec->freq = PAL_SAMPLE_RATE;
    lpSpec->size = x;
 
 #else
@@ -256,7 +256,7 @@ SOUND_OpenAudio(
    //
    // Open the sound subsystem.
    //
-   gSndPlayer.spec.freq = 22050;
+   gSndPlayer.spec.freq = PAL_SAMPLE_RATE;
    gSndPlayer.spec.format = AUDIO_S16;
    gSndPlayer.spec.channels = 1;
    gSndPlayer.spec.samples = 1024;

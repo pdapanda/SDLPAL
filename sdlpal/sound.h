@@ -23,6 +23,8 @@
 
 #include "common.h"
 
+#define PAL_SAMPLE_RATE     22050
+
 #ifdef __cplusplus
 extern "C"
 {

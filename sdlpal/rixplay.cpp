@@ -24,9 +24,11 @@
 extern "C" BOOL g_fNoMusic;
 extern "C" INT  g_iVolume;
 
+#include "sound.h"
+
 typedef struct tagRIXPLAYER
 {
-   tagRIXPLAYER() : opl(22050, true, false), rix(&opl), iCurrentMusic(-1) {}
+   tagRIXPLAYER() : opl(PAL_SAMPLE_RATE, true, false), rix(&opl), iCurrentMusic(-1) {}
    CEmuopl                    opl;
    CrixPlayer                 rix;
    INT                        iCurrentMusic; // current playing music number
@@ -36,7 +38,7 @@ typedef struct tagRIXPLAYER
    enum { FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fLoop;
    BOOL                       fNextLoop;
-   BYTE                       buf[22050 / 70 * 2];
+   BYTE                       buf[PAL_SAMPLE_RATE / 70 * 2];
    LPBYTE                     pos;
 } RIXPLAYER, *LPRIXPLAYER;
 
@@ -156,7 +158,7 @@ RIX_FillBuffer(
    while (len > 0)
    {
       if (gpRixPlayer->pos == NULL ||
-         gpRixPlayer->pos - gpRixPlayer->buf >= 22050 / 70 * 2)
+         gpRixPlayer->pos - gpRixPlayer->buf >= PAL_SAMPLE_RATE / 70 * 2)
       {
          gpRixPlayer->pos = gpRixPlayer->buf;
          if (!gpRixPlayer->rix.update())
@@ -179,10 +181,10 @@ RIX_FillBuffer(
                return;
             }
          }
-         gpRixPlayer->opl.update((short *)(gpRixPlayer->buf), 22050 / 70);
+         gpRixPlayer->opl.update((short *)(gpRixPlayer->buf), PAL_SAMPLE_RATE / 70);
       }
 
-      l = (22050 / 70 * 2) - (gpRixPlayer->pos - gpRixPlayer->buf);
+      l = (PAL_SAMPLE_RATE / 70 * 2) - (gpRixPlayer->pos - gpRixPlayer->buf);
       if (len < l)
       {
          l = len;
