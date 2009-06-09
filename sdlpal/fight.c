@@ -3998,7 +3998,7 @@ PAL_BattlePlayerPerformAction(
 #ifdef PAL_CLASSIC
          g_Battle.iHidingTime = -g_Battle.iHidingTime;
 #else
-         g_Battle.iHidingTime = -g_Battle.iHidingTime * 30;
+         g_Battle.iHidingTime = -g_Battle.iHidingTime * 20;
 
          if (gpGlobals->bBattleSpeed > 1)
          {
