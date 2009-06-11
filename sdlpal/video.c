@@ -360,9 +360,9 @@ VIDEO_Resize(
 
 --*/
 {
-   DWORD          flags;
+   DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
-   int            i;
+   int                      i;
 
    //
    // Get the original palette.
@@ -722,13 +722,14 @@ VIDEO_FadeScreen(
    short             offset = 240 - 200;
    short             screenRealHeight = gpScreenReal->h;
    short             screenRealY = 0;
+
    //
    // Lock surface if needed
    //
    if (SDL_MUSTLOCK(gpScreenReal))
    {
 	  if (SDL_LockSurface(gpScreenReal) < 0)
-		   return;
+         return;
    }
 
    if (!bScaleScreen)
@@ -746,10 +747,10 @@ VIDEO_FadeScreen(
    {
       for (j = 0; j < 6; j++)
       {
-         while (SDL_PollEvent(NULL));
+         PAL_ProcessEvent();
          while (SDL_GetTicks() <= time)
          {
-            while (SDL_PollEvent(NULL));
+            PAL_ProcessEvent();
             SDL_Delay(5);
          }
          time = SDL_GetTicks() + wSpeed;
@@ -821,10 +822,6 @@ VIDEO_FadeScreen(
             dstrect.h = g_wShakeLevel * screenRealHeight / gpScreen->h;
 
             SDL_FillRect(gpScreenReal, &dstrect, 0);
-            if (SDL_MUSTLOCK(gpScreenReal))
-			{
-			   SDL_UnlockSurface(gpScreenReal);
-			}
             SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
             g_wShakeTime--;
          }
@@ -836,13 +833,14 @@ VIDEO_FadeScreen(
         	dstrect.h = screenRealHeight;
 
             SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
-            if (SDL_MUSTLOCK(gpScreenReal))
-			{
-			   SDL_UnlockSurface(gpScreenReal);
-			}
             SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
          }
       }
+   }
+
+   if (SDL_MUSTLOCK(gpScreenReal))
+   {
+      SDL_UnlockSurface(gpScreenReal);
    }
 
    //
