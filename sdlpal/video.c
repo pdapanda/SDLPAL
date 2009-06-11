@@ -325,13 +325,15 @@ VIDEO_SetPalette(
 
 --*/
 {
-   static UINT32 time = 0;
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
 #if (defined (__SYMBIAN32__))
-   if(SDL_GetTicks() - time >50)
-   {	   
-	   SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
-	   time = SDL_GetTicks();
+   {
+      static UINT32 time = 0;
+      if (SDL_GetTicks() - time > 50)
+      {
+	      SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+	      time = SDL_GetTicks();
+      }
    }
 #endif
 }
@@ -728,7 +730,7 @@ VIDEO_FadeScreen(
 	  if (SDL_LockSurface(gpScreenReal) < 0)
 		   return;
    }
-   
+
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;
