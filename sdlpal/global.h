@@ -519,7 +519,7 @@ typedef struct tagGLOBALVARS
    BOOL             fInBattle;           // TRUE if in battle
    BOOL             fAutoBattle;         // TRUE if auto-battle
 #ifndef PAL_CLASSIC
-   BYTE             bBattleSpeed;        // Battle Speed (0 = Wait, 1 = Fastest, 5 = Slowest)
+   BYTE             bBattleSpeed;        // Battle Speed (1 = Fastest, 5 = Slowest)
 #endif
    WORD             wLastUnequippedItem; // last unequipped item
 

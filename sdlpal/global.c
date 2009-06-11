@@ -398,7 +398,7 @@ PAL_LoadGame(
    gpGlobals->dwCash = s.dwCash;
 #ifndef PAL_CLASSIC
    gpGlobals->bBattleSpeed = s.wBattleSpeed;
-   if (gpGlobals->bBattleSpeed > 5)
+   if (gpGlobals->bBattleSpeed > 5 || gpGlobals->bBattleSpeed == 0)
    {
       gpGlobals->bBattleSpeed = 2;
    }

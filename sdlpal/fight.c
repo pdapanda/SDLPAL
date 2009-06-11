@@ -410,11 +410,6 @@ PAL_GetTimeChargingSpeed(
       return 0;
    }
 
-   if (gpGlobals->bBattleSpeed == 0 && g_Battle.UI.state != kBattleUIWait)
-   {
-      return 0;
-   }
-
    //
    // The battle should be faster when using Auto-Battle
    //
@@ -1810,11 +1805,8 @@ PAL_BattleCommitAction(
    case kBattleActionFlee:
    case kBattleActionUseItem:
    case kBattleActionThrowItem:
-      if (gpGlobals->bBattleSpeed > 0)
-      {
-         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 5;
-         break;
-      }
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 5;
+      break;
 
    default:
       //
@@ -3129,7 +3121,7 @@ PAL_BattlePlayerValidateAction(
             gpGlobals->rgPlayerStatus[w][kStatusSilence] > 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusSleep] > 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusConfused] > 0 ||
-            (g_Battle.rgPlayer[i].flTimeMeter < 100 && gpGlobals->bBattleSpeed > 0) ||
+            g_Battle.rgPlayer[i].flTimeMeter < 100 ||
             (g_Battle.rgPlayer[i].state == kFighterAct && i != wPlayerIndex))
 #endif
          {
@@ -3603,7 +3595,7 @@ PAL_BattlePlayerPerformAction(
          g_Battle.rgPlayer[i].state = kFighterWait;
 #else
          g_Battle.rgPlayer[i].flTimeMeter = 0;
-         g_Battle.rgPlayer[i].flTimeSpeedModifier = (gpGlobals->bBattleSpeed > 0 ? 2 : 1);
+         g_Battle.rgPlayer[i].flTimeSpeedModifier = 2;
 #endif
       }
 

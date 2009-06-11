@@ -317,7 +317,7 @@ PAL_BattleUIIsActionValid(
             gpGlobals->rgPlayerStatus[w][kStatusSleep] != 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusConfused] != 0 ||
             gpGlobals->rgPlayerStatus[w][kStatusSilence] != 0 ||
-            (g_Battle.rgPlayer[i].flTimeMeter < 100 && gpGlobals->bBattleSpeed > 0) ||
+            g_Battle.rgPlayer[i].flTimeMeter < 100 ||
             g_Battle.rgPlayer[i].state == kFighterAct)
 #else
          if (gpGlobals->g.PlayerRoles.rgwHP[w] < gpGlobals->g.PlayerRoles.rgwMaxHP[w] / 5 ||
@@ -1238,7 +1238,7 @@ PAL_BattleUIUpdate(
                }
             }
 #else
-            else if (g_InputState.dwKeyPress & kKeyMenu && gpGlobals->bBattleSpeed > 0)
+            else if (g_InputState.dwKeyPress & kKeyMenu)
             {
                float flMin = -1;
                j = -1;
@@ -1405,21 +1405,17 @@ PAL_BattleUIUpdate(
          }
       }
 
-      //
-      // Don't bother selecting when only 1 enemy left unless
-      // in Active-Time Battle mode
-      //
 #ifdef PAL_CLASSIC
+      //
+      // Don't bother selecting when only 1 enemy left
+      //
       if (y == 1)
-#else
-      if (gpGlobals->bBattleSpeed == 0 && y == 1)
-#endif
       {
          g_Battle.UI.wPrevEnemyTarget = (WORD)x;
          PAL_BattleCommitAction(FALSE);
          break;
       }
-
+#endif
       if (g_Battle.UI.wSelectedIndex > x)
       {
          g_Battle.UI.wSelectedIndex = x;
@@ -1488,20 +1484,16 @@ PAL_BattleUIUpdate(
       break;
 
    case kBattleUISelectTargetPlayer:
-#ifndef PAL_CLASSIC
-      if (gpGlobals->bBattleSpeed == 0)
-#endif
+#ifdef PAL_CLASSIC
+      //
+      // Don't bother selecting when only 1 player is in the party
+      //
+      if (gpGlobals->wMaxPartyMemberIndex == 0)
       {
-         //
-         // Don't bother selecting unless using Active-Time Battle
-         // when only 1 player is in the party
-         //
-         if (gpGlobals->wMaxPartyMemberIndex == 0)
-         {
-            g_Battle.UI.wSelectedIndex = 0;
-            PAL_BattleCommitAction(FALSE);
-         }
+         g_Battle.UI.wSelectedIndex = 0;
+         PAL_BattleCommitAction(FALSE);
       }
+#endif
 
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;
       if (s_iFrame & 1)
@@ -1539,21 +1531,17 @@ PAL_BattleUIUpdate(
             g_Battle.UI.wSelectedIndex++;
          }
       }
+
       break;
 
    case kBattleUISelectTargetEnemyAll:
-#ifndef PAL_CLASSIC
-      if (gpGlobals->bBattleSpeed == 0)
-#endif
-      {
-         //
-         // Don't bother selecting unless using Active-Time Battle
-         //
-         g_Battle.UI.wSelectedIndex = (WORD)-1;
-         PAL_BattleCommitAction(FALSE);
-         break;
-      }
-
+#ifdef PAL_CLASSIC
+      //
+      // Don't bother selecting
+      //
+      g_Battle.UI.wSelectedIndex = (WORD)-1;
+      PAL_BattleCommitAction(FALSE);
+#else
       if (g_Battle.UI.wActionType == kBattleActionCoopMagic)
       {
          if (!PAL_BattleUIIsActionValid(kBattleActionCoopMagic))
@@ -1594,21 +1582,17 @@ PAL_BattleUIUpdate(
          g_Battle.UI.wSelectedIndex = (WORD)-1;
          PAL_BattleCommitAction(FALSE);
       }
+#endif
       break;
 
    case kBattleUISelectTargetPlayerAll:
-#ifndef PAL_CLASSIC
-      if (gpGlobals->bBattleSpeed == 0)
-#endif
-      {
-         //
-         // Don't bother selecting unless using Active-Time Battle
-         //
-         g_Battle.UI.wSelectedIndex = (WORD)-1;
-         PAL_BattleCommitAction(FALSE);
-         break;
-      }
-
+#ifdef PAL_CLASSIC
+      //
+      // Don't bother selecting
+      //
+      g_Battle.UI.wSelectedIndex = (WORD)-1;
+      PAL_BattleCommitAction(FALSE);
+#else
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;
       if (s_iFrame & 1)
       {
@@ -1645,6 +1629,7 @@ PAL_BattleUIUpdate(
          g_Battle.UI.wSelectedIndex = (WORD)-1;
          PAL_BattleCommitAction(FALSE);
       }
+#endif
       break;
    }
 
