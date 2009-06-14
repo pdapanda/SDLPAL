@@ -220,8 +220,8 @@ PAL_ItemSelectMenuUpdate(
    //
    if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
    {
-      char szDesc[512], *d, *next;
-      d = (char *)PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
+      char szDesc[512], *next;
+      const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
 
       if (d != NULL)
       {
