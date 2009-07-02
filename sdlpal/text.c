@@ -536,33 +536,12 @@ PAL_StartDialog(
          //
          if (PAL_MKFReadChunk(buf, 16384, iNumCharFace, gpGlobals->f.fpRGM) > 0)
          {
-            rect.w = PAL_RLEGetWidth((LPCBITMAPRLE)buf);
-            rect.h = PAL_RLEGetHeight((LPCBITMAPRLE)buf);
-            rect.x = 270 - rect.w / 2;
-            rect.y = 144 - rect.h / 2;
-
-            if (rect.x + rect.w > 320)
-            {
-               rect.w = 320 - rect.x;
-            }
-
-            if (rect.y + rect.h > 200)
-            {
-               rect.h = 200 - rect.y;
-            }
+            rect.x = 270 - PAL_RLEGetWidth((LPCBITMAPRLE)buf) / 2;
+            rect.y = 144 - PAL_RLEGetHeight((LPCBITMAPRLE)buf) / 2;
 
             PAL_RLEBlitToSurface((LPCBITMAPRLE)buf, gpScreen, PAL_XY(rect.x, rect.y));
 
-            if (rect.x < 0)
-            {
-               rect.x = 0;
-            }
-            if (rect.y < 0)
-            {
-               rect.y = 0;
-            }
-
-            VIDEO_UpdateScreen(&rect);
+            VIDEO_UpdateScreen(NULL);
          }
       }
       g_TextLib.posDialogTitle = PAL_XY(iNumCharFace > 0 ? 4 : 12, 108);
