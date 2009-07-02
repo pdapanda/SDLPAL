@@ -526,11 +526,11 @@ PAL_JoystickEventFilter(
       switch (lpEvent->jbutton.button & 1)
       {
       case 0:
-         g_InputState.dwKeyPress |= kKeySearch;
+         g_InputState.dwKeyPress |= kKeyMenu;
          break;
 
       case 1:
-         g_InputState.dwKeyPress |= kKeyMenu;
+         g_InputState.dwKeyPress |= kKeySearch;
          break;
       }
       break;
