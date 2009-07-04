@@ -975,7 +975,7 @@ PAL_BattleWon(
       else if (g_Battle.iExpGained > 0)
       {
          FLOAT f =
-            (gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel] / 4.0f) / g_Battle.iExpGained;
+            (gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel] / 5.0f) / g_Battle.iExpGained;
 
          if (f < 2)
          {
