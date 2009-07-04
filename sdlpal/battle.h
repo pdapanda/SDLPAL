@@ -113,6 +113,9 @@ typedef struct tagBATTLEPLAYER
    BOOL               fDefending;           // TRUE if player is defending
    WORD               wPrevHP;              // HP value prior to action
    WORD               wPrevMP;              // MP value prior to action
+#ifndef PAL_CLASSIC
+   SHORT              sTurnOrder;           // turn order
+#endif
 } BATTLEPLAYER;
 
 typedef struct tagSUMMON

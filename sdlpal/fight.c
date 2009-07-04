@@ -1045,16 +1045,15 @@ PAL_BattleStartFrame(
 
 --*/
 {
-   int                      i;
+   int                      i, j;
    WORD                     wPlayerRole;
    WORD                     wDexterity;
    BOOL                     fOnlyPuppet = TRUE;
 
-#ifdef PAL_CLASSIC
-   int                      j;
-#else
+#ifndef PAL_CLASSIC
    FLOAT                    flMax;
    BOOL                     fMoved = FALSE;
+   SHORT                    sMax, sMaxIndex;
 #endif
 
    UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleStartFrame, "PAL_BattleStartFrame", __FILE__, "start");
@@ -1241,6 +1240,7 @@ PAL_BattleStartFrame(
          g_Battle.rgPlayer[i].state = kFighterWait;
          g_Battle.rgPlayer[i].flTimeMeter = 0;
          g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
+         g_Battle.rgPlayer[i].sTurnOrder = -1;
          continue;
       }
 
@@ -1275,19 +1275,66 @@ PAL_BattleStartFrame(
          wDexterity = PAL_GetPlayerActualDexterity(wPlayerRole);
          g_Battle.rgPlayer[i].action.flRemainingTime -= PAL_GetTimeChargingSpeed(wDexterity);
 
-         if (g_Battle.rgPlayer[i].action.flRemainingTime < 0 && !fMoved)
+         if (g_Battle.rgPlayer[i].action.flRemainingTime <= 0 &&
+            g_Battle.rgPlayer[i].sTurnOrder == -1)
          {
-            //
-            // Perform the action for this player.
-            //
-            PAL_BattlePlayerPerformAction(i);
+	        sMax = -1;
 
-            fMoved = TRUE;
+	        for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+	        {
+		       if (g_Battle.rgPlayer[j].sTurnOrder > sMax)
+		       {
+			      sMax = g_Battle.rgPlayer[j].sTurnOrder;
+		       }
+	        }
 
-            g_Battle.rgPlayer[i].flTimeMeter = 0;
-            g_Battle.rgPlayer[i].flTimeSpeedModifier = 1.0f;
+	        g_Battle.rgPlayer[i].sTurnOrder = sMax + 1;
          }
+
          break;
+      }
+   }
+
+   //
+   // Preform action for player
+   //
+   if (!fMoved)
+   {
+      sMax = 9999;
+      sMaxIndex = -1;
+
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
+
+         //
+         // Skip dead players
+         //
+         if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 &&
+            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] == 0)
+         {
+            continue;
+         }
+
+         if (g_Battle.rgPlayer[i].state == kFighterAct &&
+            g_Battle.rgPlayer[i].sTurnOrder != -1 &&
+            g_Battle.rgPlayer[i].sTurnOrder < sMax)
+         {
+	        sMax = g_Battle.rgPlayer[i].sTurnOrder;
+	        sMaxIndex = i;
+         }
+      }
+
+      if (sMaxIndex != -1)
+      {
+         //
+         // Perform the action for this player.
+         //
+         PAL_BattlePlayerPerformAction(sMaxIndex);
+
+         g_Battle.rgPlayer[sMaxIndex].flTimeMeter = 0;
+         g_Battle.rgPlayer[sMaxIndex].flTimeSpeedModifier = 1.0f;
+         g_Battle.rgPlayer[sMaxIndex].sTurnOrder = -1;
       }
    }
 #else
@@ -1805,9 +1852,6 @@ PAL_BattleCommitAction(
    case kBattleActionFlee:
    case kBattleActionUseItem:
    case kBattleActionThrowItem:
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime = 5;
-      break;
-
    default:
       //
       // Other actions take no time
@@ -1824,6 +1868,27 @@ PAL_BattleCommitAction(
 
    g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].state = kFighterAct;
    g_Battle.UI.state = kBattleUIWait;
+
+#ifndef PAL_CLASSIC
+   if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.flRemainingTime <= 0)
+   {
+	  SHORT sMax = -1;
+
+	  for (w = 0; w <= gpGlobals->wMaxPartyMemberIndex; w++)
+	  {
+		 if (g_Battle.rgPlayer[w].sTurnOrder > sMax)
+		 {
+			sMax = g_Battle.rgPlayer[w].sTurnOrder;
+		 }
+	  }
+
+	  g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].sTurnOrder = sMax + 1;
+   }
+   else
+   {
+	  g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].sTurnOrder = -1;
+   }
+#endif
 }
 
 static VOID
