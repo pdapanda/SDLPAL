@@ -415,7 +415,7 @@ PAL_GetTimeChargingSpeed(
    //
    if (gpGlobals->fAutoBattle)
    {
-   	  wDexterity *= 3;
+      wDexterity *= 3;
    }
 
    return g_Battle.flTimeChargingUnit * wDexterity;
