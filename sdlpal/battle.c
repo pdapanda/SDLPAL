@@ -714,16 +714,16 @@ PAL_BattleWon(
       dwExp = gpGlobals->Exp.rgPrimaryExp[w].wExp;
       dwExp += g_Battle.iExpGained;
 
-      if (gpGlobals->Exp.rgPrimaryExp[w].wLevel > MAX_LEVELS)
+      if (gpGlobals->g.PlayerRoles.rgwLevel[w] > MAX_LEVELS)
       {
-         gpGlobals->Exp.rgPrimaryExp[w].wLevel = MAX_LEVELS;
+         gpGlobals->g.PlayerRoles.rgwLevel[w] = MAX_LEVELS;
       }
 
-      while (dwExp >= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel])
+      while (dwExp >= gpGlobals->g.rgLevelUpExp[gpGlobals->g.PlayerRoles.rgwLevel[w]])
       {
-         dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel];
+         dwExp -= gpGlobals->g.rgLevelUpExp[gpGlobals->g.PlayerRoles.rgwLevel[w]];
 
-         if (gpGlobals->Exp.rgPrimaryExp[w].wLevel < MAX_LEVELS)
+         if (gpGlobals->g.PlayerRoles.rgwLevel[w] < MAX_LEVELS)
          {
             fLevelUp = TRUE;
             PAL_PlayerLevelUp(w, 1);
@@ -922,7 +922,7 @@ PAL_BattleWon(
       while (j < gpGlobals->g.nLevelUpMagic)
       {
          if (gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic == 0 ||
-            gpGlobals->g.lprgLevelUpMagic[j].m[w].wLevel > gpGlobals->Exp.rgPrimaryExp[w].wLevel)
+            gpGlobals->g.lprgLevelUpMagic[j].m[w].wLevel > gpGlobals->g.PlayerRoles.rgwLevel[w])
          {
             j++;
             continue;
@@ -975,7 +975,7 @@ PAL_BattleWon(
       else if (g_Battle.iExpGained > 0)
       {
          FLOAT f =
-            (gpGlobals->g.rgLevelUpExp[gpGlobals->Exp.rgPrimaryExp[w].wLevel] / 5.0f) / g_Battle.iExpGained;
+            (gpGlobals->g.rgLevelUpExp[gpGlobals->g.PlayerRoles.rgwLevel[w]] / 5.0f) / g_Battle.iExpGained;
 
          if (f < 2)
          {
