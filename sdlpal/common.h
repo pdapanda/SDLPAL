@@ -80,6 +80,7 @@ extern "C"
 #define PAL_HAS_JOYSTICKS     1
 #ifndef _WIN32_WCE
 #define PAL_ALLOW_KEYREPEAT   1
+#define PAL_HAS_CD            1
 #endif
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"

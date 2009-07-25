@@ -19,6 +19,7 @@
 //
 
 #include "palcommon.h"
+#include "common.h"
 #include "sound.h"
 #include "rixplay.h"
 #include "util.h"
@@ -38,6 +39,9 @@ typedef struct tagSNDPLAYER
    SDL_AudioSpec             spec;
    LPBYTE                    buf[2], pos[2];
    INT                       audio_len[2];
+#ifdef PAL_HAS_CD
+   SDL_CD                   *pCD;
+#endif
 } SNDPLAYER;
 
 static SNDPLAYER gSndPlayer;
@@ -287,6 +291,25 @@ SOUND_OpenAudio(
    //
    RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf"));
 
+#ifdef PAL_HAS_CD
+   //
+   // Initialize the CD audio.
+   //
+   {
+      int i;
+      gSndPlayer.pCD = NULL;
+
+      for (i = 0; i < SDL_CDNumDrives(); i++)
+      {
+         gSndPlayer.pCD = SDL_CDOpen(i);
+         if (gSndPlayer.pCD != NULL)
+         {
+            break;
+         }
+      }
+   }
+#endif
+
    //
    // Let the callback function run so that musics will be played.
    //
@@ -335,13 +358,21 @@ SOUND_CloseAudio(
    }
 
    RIX_Shutdown();
+
+#ifdef PAL_HAS_CD
+   if (gSndPlayer.pCD != NULL)
+   {
+      SOUND_PlayCDA(-1);
+      SDL_CDClose(gSndPlayer.pCD);
+   }
+#endif
 }
 
 #ifdef __SYMBIAN32__
 
 VOID
 SOUND_AdjustVolume(
-   INT iDirectory
+   INT    iDirectory
 )
 /*++
   Purpose:
@@ -487,4 +518,46 @@ SOUND_PlayChannel(
    gSndPlayer.buf[iChannel] = wavecvt.buf;
    gSndPlayer.audio_len[iChannel] = wavecvt.len * wavecvt.len_mult;
    gSndPlayer.pos[iChannel] = wavecvt.buf;
+}
+
+BOOL
+SOUND_PlayCDA(
+   INT    iNumTrack
+)
+/*++
+  Purpose:
+
+    Play a CD Audio Track.
+
+  Parameters:
+
+    [IN]  iNumTrack - number of the CD Audio Track.
+
+  Return value:
+
+    TRUE if the track can be played, FALSE if not.
+
+--*/
+{
+#ifdef PAL_HAS_CD
+   if (gSndPlayer.pCD != NULL)
+   {
+      if (CD_INDRIVE(SDL_CDStatus(gSndPlayer.pCD)))
+      {
+         SDL_CDStop(gSndPlayer.pCD);
+
+         if (iNumTrack != -1)
+         {
+            RIX_Play(-1, FALSE, 0);
+
+            if (SDL_CDPlayTracks(gSndPlayer.pCD, iNumTrack - 1, 0, 1, 0) == 0)
+            {
+               return TRUE;
+            }
+         }
+      }
+   }
+#endif
+
+   return FALSE;
 }

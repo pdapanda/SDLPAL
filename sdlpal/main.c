@@ -65,7 +65,7 @@ PAL_Init(
    //
    // Initialize defaults, video and audio
    //
-   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
+   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
    {
 #ifdef _WIN32
       //
@@ -213,6 +213,7 @@ PAL_SplashScreen(
    LPBYTE         buf, buf2;
    int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0, iTitleHeight;
    DWORD          dwTime, dwBeginTime;
+   BOOL           fUseCD = TRUE;
 
    if (palette == NULL)
    {
@@ -269,7 +270,11 @@ PAL_SplashScreen(
    //
    // Play the title music
    //
-   RIX_Play(NUM_RIX_TITLE, TRUE, 2);
+   if (!SOUND_PlayCDA(7))
+   {
+      fUseCD = FALSE;
+      RIX_Play(NUM_RIX_TITLE, TRUE, 2);
+   }
 
    //
    // Clear all of the events and key states
@@ -422,7 +427,11 @@ PAL_SplashScreen(
    SDL_FreeSurface(lpBitmapUp);
    free(buf);
 
-   RIX_Play(0, FALSE, 1);
+   if (!fUseCD)
+   {
+      RIX_Play(0, FALSE, 1);
+   }
+
    PAL_FadeOut(1);
 }
 

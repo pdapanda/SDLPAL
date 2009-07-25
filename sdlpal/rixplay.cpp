@@ -316,6 +316,11 @@ RIX_Play(
       return;
    }
 
+   //
+   // Stop the current CD music.
+   //
+   SOUND_PlayCDA(-1);
+
    DWORD t = SDL_GetTicks();
    gpRixPlayer->fNextLoop = fLoop;
 

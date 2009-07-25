@@ -2880,9 +2880,12 @@ PAL_InterpretInstruction(
 
    case 0x00A3:
       //
-      // Play CD music. Just use the RIX music here.
+      // Play CD music. Use the RIX music for fallback.
       //
-      RIX_Play(pScript->rgwOperand[1], TRUE, 0);
+      if (!SOUND_PlayCDA(pScript->rgwOperand[0]))
+      {
+         RIX_Play(pScript->rgwOperand[1], TRUE, 0);
+      }
       break;
 
    case 0x00A4:

@@ -49,9 +49,14 @@ SOUND_PlayChannel(
 #ifdef __SYMBIAN32__
 VOID
 SOUND_AdjustVolume(
-   INT iDirectory
+   INT    iDirectory
 );
 #endif
+
+BOOL
+SOUND_PlayCDA(
+   INT    iNumTrack
+);
 
 #define SOUND_Play(i) SOUND_PlayChannel((i), 0)
 
