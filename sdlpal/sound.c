@@ -304,7 +304,15 @@ SOUND_OpenAudio(
          gSndPlayer.pCD = SDL_CDOpen(i);
          if (gSndPlayer.pCD != NULL)
          {
-            break;
+            if (!CD_INDRIVE(SDL_CDStatus(gSndPlayer.pCD)))
+            {
+               SDL_CDClose(gSndPlayer.pCD);
+               gSndPlayer.pCD = NULL;
+            }
+            else
+            {
+               break;
+            }
          }
       }
    }
