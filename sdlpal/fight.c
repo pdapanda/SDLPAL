@@ -234,7 +234,10 @@ PAL_CalcPhysicalAttackDamage(
    SHORT             sDamage;
 
    sDamage = PAL_CalcBaseDamage(wAttackStrength, wDefense);
-   sDamage /= wAttackResistance;
+   if (wAttackResistance != 0)
+   {
+      sDamage /= wAttackResistance;
+   }
 
    return sDamage;
 }
