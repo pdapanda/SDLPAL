@@ -728,7 +728,7 @@ VIDEO_FadeScreen(
    //
    if (SDL_MUSTLOCK(gpScreenReal))
    {
-	  if (SDL_LockSurface(gpScreenReal) < 0)
+      if (SDL_LockSurface(gpScreenReal) < 0)
          return;
    }
 
@@ -827,10 +827,10 @@ VIDEO_FadeScreen(
          }
          else
          {
-			dstrect.x = 0;
-        	dstrect.y = screenRealY;
-        	dstrect.w = gpScreenReal->w;
-        	dstrect.h = screenRealHeight;
+            dstrect.x = 0;
+            dstrect.y = screenRealY;
+            dstrect.w = gpScreenReal->w;
+            dstrect.h = screenRealHeight;
 
             SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
             SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
