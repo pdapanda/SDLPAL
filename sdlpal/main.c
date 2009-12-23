@@ -508,7 +508,7 @@ main(
 #endif
 
    //
-   // Default resolution is 640x400.
+   // Default resolution is 640x400 (windowed) or 640x480 (fullscreen).
    //
    if (wScreenWidth == 0)
    {
@@ -522,7 +522,7 @@ main(
 #endif
 #else
       wScreenWidth = 640;
-      wScreenHeight = 400;
+      wScreenHeight = fFullScreen ? 480 : 400;
 #endif
    }
 
