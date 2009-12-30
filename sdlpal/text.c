@@ -263,7 +263,7 @@ PAL_GetWord(
    //
    trim(buf);
 
-   if (buf[strlen(buf) - 1] == '1')
+   if ((strlen(buf) & 1) != 0 && buf[strlen(buf) - 1] == '1')
    {
       buf[strlen(buf) - 1] = '\0';
    }
