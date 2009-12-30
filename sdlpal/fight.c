@@ -4337,14 +4337,15 @@ PAL_BattleEnemyPerformAction(
          g_Battle.rgPlayer[sTarget].wCurrentFrame = 3;
       }
 
+#ifndef PAL_CLASSIC
+      PAL_BattleDelay(10, (WORD)(-((SHORT)wMagic)), FALSE);
+#endif
+
       gpGlobals->g.rgObject[wMagic].magic.wScriptOnUse =
          PAL_RunTriggerScript(gpGlobals->g.rgObject[wMagic].magic.wScriptOnUse, wPlayerRole);
 
       if (g_fScriptSuccess)
       {
-#ifndef PAL_CLASSIC
-         PAL_BattleDelay(10, (WORD)(-((SHORT)wMagic)), FALSE);
-#endif
          PAL_BattleShowEnemyMagicAnim(wMagic, sTarget);
 
          gpGlobals->g.rgObject[wMagic].magic.wScriptOnSuccess =
