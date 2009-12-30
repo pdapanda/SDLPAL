@@ -263,6 +263,11 @@ PAL_GetWord(
    //
    trim(buf);
 
+   if (buf[strlen(buf) - 1] == '1')
+   {
+      buf[strlen(buf) - 1] = '\0';
+   }
+
    UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_GetWord, "PAL_GetWord", __FILE__, buf);
    return buf;
 }

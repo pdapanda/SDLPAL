@@ -510,6 +510,11 @@ PAL_BattleDelay(
             PAL_DrawText(PAL_GetWord(wObjectID), PAL_XY(130, 75),
                15, TRUE, FALSE);
          }
+         else if ((SHORT)wObjectID < 0)
+         {
+            PAL_DrawText(PAL_GetWord(-((SHORT)wObjectID)), PAL_XY(190, 45),
+               DESCTEXT_COLOR, TRUE, FALSE);
+         }
          else
          {
             PAL_DrawText(PAL_GetWord(wObjectID), PAL_XY(210, 50),
@@ -4337,6 +4342,9 @@ PAL_BattleEnemyPerformAction(
 
       if (g_fScriptSuccess)
       {
+#ifndef PAL_CLASSIC
+         PAL_BattleDelay(10, (WORD)(-((SHORT)wMagic)), FALSE);
+#endif
          PAL_BattleShowEnemyMagicAnim(wMagic, sTarget);
 
          gpGlobals->g.rgObject[wMagic].magic.wScriptOnSuccess =
