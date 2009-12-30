@@ -512,7 +512,7 @@ PAL_BattleDelay(
          }
          else if ((SHORT)wObjectID < 0)
          {
-            PAL_DrawText(PAL_GetWord(-((SHORT)wObjectID)), PAL_XY(190, 45),
+            PAL_DrawText(PAL_GetWord(-((SHORT)wObjectID)), PAL_XY(170, 45),
                DESCTEXT_COLOR, TRUE, FALSE);
          }
          else
