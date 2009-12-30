@@ -4338,7 +4338,7 @@ PAL_BattleEnemyPerformAction(
       }
 
 #ifndef PAL_CLASSIC
-      PAL_BattleDelay(9, (WORD)(-((SHORT)wMagic)), FALSE);
+//      PAL_BattleDelay(12, (WORD)(-((SHORT)wMagic)), FALSE);
 #endif
 
       gpGlobals->g.rgObject[wMagic].magic.wScriptOnUse =
