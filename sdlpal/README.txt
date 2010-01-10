@@ -38,8 +38,11 @@ To compile, type:
 
 make CONF=Release
 
-You need to have SDL development files installed.
-The compiled executable should be found at dist/Release/GNU-Linux-x86/sdlpal.
+You need to have SDL development files installed. The compiled executable
+should be found at dist/Release/GNU-Linux-x86/sdlpal.
+
+SDLPAL should also be able to run under other UNIX-like systems, however
+it's not tested.
 
 
 COMPILE UNDER MAC OS X
@@ -63,3 +66,14 @@ turn-based battle system, uncomment the following line:
 
 in the file global.h and recompile. This will build a "classic" build which is
 100% the same as the original game.
+
+
+RUNNING THE GAME
+================
+
+The data files required for running the game are not included with the source
+package due to copyright issues. You need to obtain them from the original CD.
+
+To run the game, copy all the files on the original CD to a directory, then
+copy the SDLPAL executable to the same directory, and run the executable. Note
+that the filenames of data files should be in lower-case under GNU/Linux.
