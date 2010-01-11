@@ -510,7 +510,19 @@ VIDEO_ToggleFullscreen(
    //
    // ... and create a new one
    //
-   gpScreenReal = SDL_SetVideoMode(g_wInitialWidth, g_wInitialHeight, 8, flags);
+   if (g_wInitialWidth == 640 && g_wInitialHeight == 400 && (flags & SDL_FULLSCREEN))
+   {
+      gpScreenReal = SDL_SetVideoMode(640, 480, 8, flags);
+   }
+   if (g_wInitialWidth == 640 && g_wInitialHeight == 480 && !(flags & SDL_FULLSCREEN))
+   {
+      gpScreenReal = SDL_SetVideoMode(640, 400, 8, flags);
+   }
+   else
+   {
+      gpScreenReal = SDL_SetVideoMode(g_wInitialWidth, g_wInitialHeight, 8, flags);
+   }
+
    VIDEO_SetPalette(palette);
 
    //
