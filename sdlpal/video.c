@@ -514,7 +514,7 @@ VIDEO_ToggleFullscreen(
    {
       gpScreenReal = SDL_SetVideoMode(640, 480, 8, flags);
    }
-   if (g_wInitialWidth == 640 && g_wInitialHeight == 480 && !(flags & SDL_FULLSCREEN))
+   else if (g_wInitialWidth == 640 && g_wInitialHeight == 480 && !(flags & SDL_FULLSCREEN))
    {
       gpScreenReal = SDL_SetVideoMode(640, 400, 8, flags);
    }
