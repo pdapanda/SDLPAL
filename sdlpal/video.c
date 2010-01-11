@@ -442,9 +442,9 @@ VIDEO_ToggleScaleScreen(
 --*/
 {
 #ifdef __SYMBIAN32__
-	bScaleScreen = !bScaleScreen;
-	VIDEO_Resize(320, 240);
-	VIDEO_UpdateScreen(NULL);
+   bScaleScreen = !bScaleScreen;
+   VIDEO_Resize(320, 240);
+   VIDEO_UpdateScreen(NULL);
 #endif
 }
 
