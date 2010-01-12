@@ -962,7 +962,7 @@ PAL_BattleWon(
    {
       w = gpGlobals->rgParty[i].wPlayerRole;
 
-#ifdef PAL_CLASSIC
+#if 1//def PAL_CLASSIC
       gpGlobals->g.PlayerRoles.rgwHP[w] +=
          (gpGlobals->g.PlayerRoles.rgwMaxHP[w] - gpGlobals->g.PlayerRoles.rgwHP[w]) / 2;
       gpGlobals->g.PlayerRoles.rgwMP[w] +=
