@@ -77,7 +77,7 @@ PAL_ShutdownInput(
    VOID
 );
 
-extern BOOL g_fEnableJoystick;
+extern BOOL g_fUseJoystick;
 
 #ifdef __cplusplus
 }

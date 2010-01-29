@@ -25,6 +25,7 @@
 
 PALINPUTSTATE            g_InputState;
 static SDL_Joystick     *g_pJoy = NULL;
+BOOL                     g_fUseJoystick = TRUE;
 
 static VOID
 PAL_KeyboardEventFilter(
@@ -635,7 +636,7 @@ PAL_InitInput(
    // Check for joystick
    //
 #ifdef PAL_HAS_JOYSTICKS
-   if (SDL_NumJoysticks() > 0)
+   if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
    {
       g_pJoy = SDL_JoystickOpen(0);
       if (g_pJoy != NULL)

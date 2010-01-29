@@ -471,7 +471,7 @@ main(
    //
    // Parse parameters.
    //
-   while ((c = getopt(argc, argv, "w:h:f")) != -1)
+   while ((c = getopt(argc, argv, "w:h:fj")) != -1)
    {
       switch (c)
       {
@@ -502,6 +502,13 @@ main(
          // Fullscreen Mode
          //
          fFullScreen = TRUE;
+         break;
+
+      case 'j':
+         //
+         // Disable joystick
+         //
+         g_fUseJoystick = FALSE;
          break;
       }
    }
