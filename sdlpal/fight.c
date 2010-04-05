@@ -380,7 +380,7 @@ PAL_UpdateTimeChargingUnit(
    }
    else
    {
-      g_Battle.flTimeChargingUnit /= 1.2;
+      g_Battle.flTimeChargingUnit /= 1.2f;
    }
 }
 

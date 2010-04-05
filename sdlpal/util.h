@@ -118,7 +118,11 @@ UTIL_WriteLog(
 
 #define UTIL_OpenLog()       ((void)(0))
 #define UTIL_CloseLog()      ((void)(0))
+#ifdef _MSC_VER
+__forceinline VOID UTIL_WriteLog(int i, const char *p, ...) {}
+#else
 #define UTIL_WriteLog(...)   ((void)(0))
+#endif
 
 #endif
 
