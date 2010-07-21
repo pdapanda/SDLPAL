@@ -639,7 +639,11 @@ PAL_BattleUIUseItem(
          }
          else
          {
+#ifdef PAL_CLASSIC
+            g_Battle.UI.wSelectedIndex = 0;
+#else
             g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
+#endif
             g_Battle.UI.state = kBattleUISelectTargetPlayer;
          }
       }
@@ -1519,17 +1523,33 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
       {
+#ifdef PAL_CLASSIC
+         g_Battle.UI.wSelectedIndex--;
+         if ((int)g_Battle.UI.wSelectedIndex < 0)
+         {
+            g_Battle.UI.wSelectedIndex = gpGlobals->wMaxPartyMemberIndex;
+         }
+#else
          if (g_Battle.UI.wSelectedIndex != 0)
          {
             g_Battle.UI.wSelectedIndex--;
          }
+#endif
       }
       else if (g_InputState.dwKeyPress & (kKeyRight | kKeyUp))
       {
+#ifdef PAL_CLASSIC
+         g_Battle.UI.wSelectedIndex++;
+         if (g_Battle.UI.wSelectedIndex < gpGlobals->wMaxPartyMemberIndex)
+         {
+            g_Battle.UI.wSelectedIndex = 0;
+         }
+#else
          if (g_Battle.UI.wSelectedIndex < gpGlobals->wMaxPartyMemberIndex)
          {
             g_Battle.UI.wSelectedIndex++;
          }
+#endif
       }
 
       break;
