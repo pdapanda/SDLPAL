@@ -1523,31 +1523,27 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
       {
-#ifdef PAL_CLASSIC
-         g_Battle.UI.wSelectedIndex--;
-         if ((int)g_Battle.UI.wSelectedIndex < 0)
-         {
-            g_Battle.UI.wSelectedIndex = gpGlobals->wMaxPartyMemberIndex;
-         }
-#else
          if (g_Battle.UI.wSelectedIndex != 0)
          {
             g_Battle.UI.wSelectedIndex--;
+         }
+#ifdef PAL_CLASSIC
+         else
+         {
+            g_Battle.UI.wSelectedIndex = gpGlobals->wMaxPartyMemberIndex;
          }
 #endif
       }
       else if (g_InputState.dwKeyPress & (kKeyRight | kKeyUp))
       {
-#ifdef PAL_CLASSIC
-         g_Battle.UI.wSelectedIndex++;
-         if (g_Battle.UI.wSelectedIndex < gpGlobals->wMaxPartyMemberIndex)
-         {
-            g_Battle.UI.wSelectedIndex = 0;
-         }
-#else
          if (g_Battle.UI.wSelectedIndex < gpGlobals->wMaxPartyMemberIndex)
          {
             g_Battle.UI.wSelectedIndex++;
+         }
+#ifdef PAL_CLASSIC
+         else
+         {
+            g_Battle.UI.wSelectedIndex = 0;
          }
 #endif
       }
