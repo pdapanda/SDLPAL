@@ -1119,7 +1119,11 @@ PAL_BattleUIUpdate(
                      }
                      else
                      {
+#ifdef PAL_CLASSIC
+                        g_Battle.UI.wSelectedIndex = 0;
+#else
                         g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
+#endif
                         g_Battle.UI.state = kBattleUISelectTargetPlayer;
                      }
                   }
@@ -1305,7 +1309,11 @@ PAL_BattleUIUpdate(
                      }
                      else
                      {
+#ifdef PAL_CLASSIC
+                        g_Battle.UI.wSelectedIndex = 0;
+#else
                         g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
+#endif
                         g_Battle.UI.state = kBattleUISelectTargetPlayer;
                      }
                   }
