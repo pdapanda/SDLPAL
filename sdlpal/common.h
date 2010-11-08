@@ -80,7 +80,9 @@ extern "C"
 #define PAL_HAS_JOYSTICKS     1
 #ifndef _WIN32_WCE
 #define PAL_ALLOW_KEYREPEAT   1
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 #define PAL_HAS_CD            1
+#endif
 #endif
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"
@@ -89,6 +91,10 @@ extern "C"
 #define PAL_SAVE_PREFIX       "./"
 #endif
 
+#endif
+
+#ifndef SDL_INIT_CDROM
+#define SDL_INIT_CDROM        0
 #endif
 
 #ifdef _WIN32

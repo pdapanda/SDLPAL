@@ -67,7 +67,7 @@ PAL_Init(
    //
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
    {
-#ifdef _WIN32
+#if defined (_WIN32) && SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
       //
       // Try the WINDIB driver if DirectX failed.
       //
@@ -464,7 +464,11 @@ main(
    UTIL_OpenLog();
 
 #ifdef _WIN32
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
    putenv("SDL_VIDEODRIVER=directx");
+#else
+   putenv("SDL_VIDEODRIVER=win32");
+#endif
 #endif
 
 #ifndef __SYMBIAN32__

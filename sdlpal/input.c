@@ -539,10 +539,18 @@ PAL_JoystickEventFilter(
 #endif
 }
 
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 static int SDLCALL
 PAL_EventFilter(
    const SDL_Event       *lpEvent
 )
+#else
+static int SDLCALL
+PAL_EventFilter(
+   void                  *userdata,
+   const SDL_Event       *lpEvent
+)
+#endif
 /*++
   Purpose:
 
@@ -630,7 +638,11 @@ PAL_InitInput(
    memset(&g_InputState, 0, sizeof(g_InputState));
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
    SDL_SetEventFilter(PAL_EventFilter);
+#else
+   SDL_SetEventFilter(PAL_EventFilter, NULL);
+#endif
 
    //
    // Check for joystick
