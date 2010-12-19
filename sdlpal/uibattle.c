@@ -360,6 +360,16 @@ PAL_BattleUIDrawMiscMenu(
    int           i;
    BYTE          bColor;
 
+#ifdef PAL_CLASSIC
+   MENUITEM rgMenuItem[] = {
+      // value   label                     enabled   position
+      {  0,      BATTLEUI_LABEL_AUTO,      TRUE,     PAL_XY(16, 32)  },
+      {  1,      BATTLEUI_LABEL_INVENTORY, TRUE,     PAL_XY(16, 50)  },
+      {  2,      BATTLEUI_LABEL_DEFEND,    TRUE,     PAL_XY(16, 68)  },
+      {  3,      BATTLEUI_LABEL_FLEE,      TRUE,     PAL_XY(16, 86)  },
+      {  4,      BATTLEUI_LABEL_STATUS,    TRUE,     PAL_XY(16, 104) }
+   };
+#else
    MENUITEM rgMenuItem[] = {
       // value   label                   enabled   position
       {  0,      BATTLEUI_LABEL_ITEM,    TRUE,     PAL_XY(16, 32)  },
@@ -368,6 +378,7 @@ PAL_BattleUIDrawMiscMenu(
       {  3,      BATTLEUI_LABEL_FLEE,    TRUE,     PAL_XY(16, 86)  },
       {  4,      BATTLEUI_LABEL_STATUS,  TRUE,     PAL_XY(16, 104) }
    };
+#endif
 
    //
    // Draw the box
@@ -430,7 +441,7 @@ PAL_BattleUIMiscMenuUpdate(
       g_iCurMiscMenuItem--;
       if (g_iCurMiscMenuItem < 0)
       {
-         g_iCurMiscMenuItem = 0;
+         g_iCurMiscMenuItem = 4;
       }
    }
    else if (g_InputState.dwKeyPress & (kKeyDown | kKeyRight))
@@ -438,7 +449,7 @@ PAL_BattleUIMiscMenuUpdate(
       g_iCurMiscMenuItem++;
       if (g_iCurMiscMenuItem > 4)
       {
-         g_iCurMiscMenuItem = 4;
+         g_iCurMiscMenuItem = 0;
       }
    }
    else if (g_InputState.dwKeyPress & kKeySearch)
@@ -1338,17 +1349,29 @@ PAL_BattleUIUpdate(
 
                switch (w)
                {
+#ifdef PAL_CLASSIC
+               case 2: // item
+#else
                case 1: // item
+#endif
                   g_Battle.UI.MenuState = kBattleMenuMiscItemSubMenu;
                   g_iCurSubMenuItem = 0;
                   break;
 
+#ifdef PAL_CLASSIC
+               case 3: // defend
+#else
                case 2: // defend
+#endif
                   g_Battle.UI.wActionType = kBattleActionDefend;
                   PAL_BattleCommitAction(FALSE);
                   break;
 
+#ifdef PAL_CLASSIC
+               case 1: // auto
+#else
                case 3: // auto
+#endif
                   g_Battle.UI.fAutoAttack = TRUE;
                   break;
 
@@ -1535,12 +1558,10 @@ PAL_BattleUIUpdate(
          {
             g_Battle.UI.wSelectedIndex--;
          }
-#ifdef PAL_CLASSIC
          else
          {
             g_Battle.UI.wSelectedIndex = gpGlobals->wMaxPartyMemberIndex;
          }
-#endif
       }
       else if (g_InputState.dwKeyPress & (kKeyRight | kKeyUp))
       {
@@ -1548,12 +1569,10 @@ PAL_BattleUIUpdate(
          {
             g_Battle.UI.wSelectedIndex++;
          }
-#ifdef PAL_CLASSIC
          else
          {
             g_Battle.UI.wSelectedIndex = 0;
          }
-#endif
       }
 
       break;

@@ -80,13 +80,6 @@
     <None Include="adplug\opl.h" />
     <None Include="adplug\player.h" />
     <None Include="adplug\rix.h" />
-    <None Include="rixplay.cpp" />
-    <None Include="adplug\binfile.cpp" />
-    <None Include="adplug\binio.cpp" />
-    <None Include="adplug\emuopl.cpp" />
-    <None Include="adplug\fprovide.cpp" />
-    <None Include="adplug\player.cpp" />
-    <None Include="adplug\rix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="battle.c" />
@@ -117,5 +110,12 @@
     <Compile Include="video.c" />
     <Compile Include="yj1.c" />
     <Compile Include="adplug\fmopl.c" />
+    <Compile Include="rixplay.cpp" />
+    <Compile Include="adplug\binfile.cpp" />
+    <Compile Include="adplug\binio.cpp" />
+    <Compile Include="adplug\emuopl.cpp" />
+    <Compile Include="adplug\fprovide.cpp" />
+    <Compile Include="adplug\player.cpp" />
+    <Compile Include="adplug\rix.cpp" />
   </ItemGroup>
 </Project>

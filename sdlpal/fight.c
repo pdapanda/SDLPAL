@@ -1066,7 +1066,10 @@ PAL_BattleStartFrame(
 
    UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleStartFrame, "PAL_BattleStartFrame", __FILE__, "start");
 
-   PAL_BattleUpdateFighters();
+   if (!g_Battle.fEnemyCleared)
+   {
+      PAL_BattleUpdateFighters();
+   }
 
    //
    // Update the scene

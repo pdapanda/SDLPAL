@@ -598,7 +598,13 @@ PAL_InterpretInstruction(
    }
    else
    {
-      pCurrent = &(gpGlobals->g.lprgEventObject[pScript->rgwOperand[0] - 1]);
+      i = pScript->rgwOperand[0] - 1;
+      if (i > 0x9000)
+      {
+         // HACK for Dream 2.11 to avoid crash
+         i -= 0x9000;
+      }
+      pCurrent = &(gpGlobals->g.lprgEventObject[i]);
       wCurEventObjectID = pScript->rgwOperand[0];
    }
 

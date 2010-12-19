@@ -70,6 +70,7 @@ typedef enum tagBATTLEUIACTION
 #define BATTLEUI_LABEL_ITEM              5
 #define BATTLEUI_LABEL_DEFEND            58
 #define BATTLEUI_LABEL_AUTO              56
+#define BATTLEUI_LABEL_INVENTORY         57
 #define BATTLEUI_LABEL_FLEE              59
 #define BATTLEUI_LABEL_STATUS            60
 
