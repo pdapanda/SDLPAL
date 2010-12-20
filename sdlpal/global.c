@@ -912,7 +912,7 @@ PAL_RemoveEquipmentEffect(
       //
       // Remove all poisons leveled 99
       //
-      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      for (i = 0; i <= (short)gpGlobals->wMaxPartyMemberIndex; i++)
       {
          if (gpGlobals->rgParty[i].wPlayerRole == wPlayerRole)
          {
@@ -921,7 +921,7 @@ PAL_RemoveEquipmentEffect(
          }
       }
 
-      if (i <= gpGlobals->wMaxPartyMemberIndex)
+      if (i <= (short)gpGlobals->wMaxPartyMemberIndex)
       {
          j = 0;
 

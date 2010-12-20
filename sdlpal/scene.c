@@ -206,7 +206,7 @@ PAL_SceneDrawSprites(
    //
    // Players
    //
-   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex + gpGlobals->nFollower; i++)
+   for (i = 0; i <= (short)gpGlobals->wMaxPartyMemberIndex + gpGlobals->nFollower; i++)
    {
       LPCBITMAPRLE lpBitmap =
          PAL_SpriteGetFrame(PAL_GetPlayerSprite((BYTE)i), gpGlobals->rgParty[i].wFrame);
@@ -661,7 +661,7 @@ PAL_UpdatePartyGestures(
       //
       // Update the gestures and positions for other party members
       //
-      for (i = 1; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      for (i = 1; i <= (short)gpGlobals->wMaxPartyMemberIndex; i++)
       {
          gpGlobals->rgParty[i].x = gpGlobals->rgTrail[1].x - PAL_X(gpGlobals->viewport);
          gpGlobals->rgParty[i].y = gpGlobals->rgTrail[1].y - PAL_Y(gpGlobals->viewport);
@@ -728,7 +728,7 @@ PAL_UpdatePartyGestures(
       }
       gpGlobals->rgParty[0].wFrame = gpGlobals->wPartyDirection * i;
 
-      for (i = 1; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      for (i = 1; i <= (short)gpGlobals->wMaxPartyMemberIndex; i++)
       {
          int f = gpGlobals->g.PlayerRoles.rgwWalkFrames[gpGlobals->rgParty[i].wPlayerRole];
          if (f == 0)

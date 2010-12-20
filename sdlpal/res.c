@@ -300,7 +300,7 @@ PAL_LoadResources(
       //
       PAL_FreePlayerSprites();
 
-      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      for (i = 0; i <= (short)gpGlobals->wMaxPartyMemberIndex; i++)
       {
          wPlayerID = gpGlobals->rgParty[i].wPlayerRole;
          assert(wPlayerID < MAX_PLAYER_ROLES);
