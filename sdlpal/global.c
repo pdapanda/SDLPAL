@@ -1035,7 +1035,7 @@ PAL_CurePoisonByKind(
 
 --*/
 {
-   int i, j, index;
+   int i, index;
 
    for (index = 0; index <= gpGlobals->wMaxPartyMemberIndex; index++)
    {
@@ -1050,23 +1050,13 @@ PAL_CurePoisonByKind(
       return; // don't go further
    }
 
-   j = 0;
-
    for (i = 0; i < MAX_POISONS; i++)
    {
-      if (gpGlobals->rgPoisonStatus[i][index].wPoisonID != wPoisonID)
+      if (gpGlobals->rgPoisonStatus[i][index].wPoisonID == wPoisonID)
       {
-         gpGlobals->rgPoisonStatus[j][index].wPoisonID = gpGlobals->rgPoisonStatus[i][index].wPoisonID;
-         gpGlobals->rgPoisonStatus[j][index].wPoisonScript = gpGlobals->rgPoisonStatus[i][index].wPoisonScript;
-         j++;
+         gpGlobals->rgPoisonStatus[i][index].wPoisonID = 0;
+         gpGlobals->rgPoisonStatus[i][index].wPoisonScript = 0;
       }
-   }
-
-   while (j < MAX_POISONS)
-   {
-      gpGlobals->rgPoisonStatus[j][index].wPoisonID = 0;
-      gpGlobals->rgPoisonStatus[j][index].wPoisonScript = 0;
-      j++;
    }
 }
 
