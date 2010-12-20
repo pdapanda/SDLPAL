@@ -1082,7 +1082,7 @@ PAL_CurePoisonByLevel(
 
 --*/
 {
-   int        i, j, index;
+   int        i, index;
    WORD       w;
 
    for (index = 0; index <= gpGlobals->wMaxPartyMemberIndex; index++)
@@ -1098,25 +1098,15 @@ PAL_CurePoisonByLevel(
       return; // don't go further
    }
 
-   j = 0;
-
    for (i = 0; i < MAX_POISONS; i++)
    {
       w = gpGlobals->rgPoisonStatus[i][index].wPoisonID;
-      w = gpGlobals->g.rgObject[w].poison.wPoisonLevel;
 
-      if (w > wMaxLevel)
+      if (gpGlobals->g.rgObject[w].poison.wPoisonLevel <= wMaxLevel)
       {
-         gpGlobals->rgPoisonStatus[j][index] = gpGlobals->rgPoisonStatus[i][index];
-         j++;
+         gpGlobals->rgPoisonStatus[i][index].wPoisonID = 0;
+         gpGlobals->rgPoisonStatus[i][index].wPoisonScript = 0;
       }
-   }
-
-   while (j < MAX_POISONS)
-   {
-      gpGlobals->rgPoisonStatus[j][index].wPoisonID = 0;
-      gpGlobals->rgPoisonStatus[j][index].wPoisonScript = 0;
-      j++;
    }
 }
 
