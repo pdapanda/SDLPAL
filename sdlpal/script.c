@@ -1399,11 +1399,19 @@ PAL_InterpretInstruction(
       {
          char s[256];
 
+#ifdef PAL_CLASSIC
+         i = RandomLong(1, gpGlobals->wCollectValue);
+         if (i > 9)
+         {
+            i = 9;
+         }
+#else
          i = RandomLong(1, 9);
          if (i > gpGlobals->wCollectValue)
          {
             i = gpGlobals->wCollectValue;
          }
+#endif
 
          gpGlobals->wCollectValue -= i;
          i--;
