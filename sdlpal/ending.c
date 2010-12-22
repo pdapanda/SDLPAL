@@ -369,9 +369,9 @@ PAL_EndingAnimation(
       // Draw the girl
       //
       yPosGirl -= i & 1;
-      if (yPosGirl < 35)
+      if (yPosGirl < 80)
       {
-         yPosGirl = 35;
+         yPosGirl = 80;
       }
 
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(bufGirl, (SDL_GetTicks() / 50) % 4),
