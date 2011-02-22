@@ -8,7 +8,7 @@ SDLPAL is an SDL-based reimplementation of the classic Chinese-language RPG
 LICENSE
 =======
 
-SDLPAL is Copyrighted (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
+SDLPAL is Copyrighted (c) 2009-2011 Wei Mingzhi <whistler@openoffice.org>.
 All rights reserved.
 
 SDLPAL is distributed under the terms of GNU General Public License, version 3
@@ -16,6 +16,9 @@ SDLPAL is distributed under the terms of GNU General Public License, version 3
 gpl.txt for details.
 
 Also see credits.txt for additional credits.
+
+This program does NOT include any code or data files of the original game,
+which is proprietary and copyrighted by SoftStar Inc.
 
 
 COMPILE UNDER WINDOWS
@@ -49,7 +52,7 @@ COMPILE UNDER MAC OS X
 ======================
 
 To compile, open the project Pal.xcodeproj with Xcode, and click Build. You
-need to have SDL development files installed.
+need to have SDL framework installed at /Library/Frameworks.
 
 The compiled bundle should work as a "universal" binary which works on both
 Intel and PowerPC.
@@ -72,8 +75,13 @@ RUNNING THE GAME
 ================
 
 The data files required for running the game are not included with the source
-package due to copyright issues. You need to obtain them from the original CD.
+package due to copyright issues. You must obtain them from the original CD.
 
 To run the game, copy all the files on the original CD to a directory, then
-copy the SDLPAL executable to the same directory, and run the executable. Note
-that the filenames of data files should be in lower-case under GNU/Linux.
+copy the SDLPAL executable to the same directory, and run the executable.
+
+Note that the filenames of data files should be in lower-case under GNU/Linux
+(or other UNIX-like operating systems).
+
+
+-END OF FILE-
