@@ -495,8 +495,11 @@ PAL_BattleUIMiscItemSubMenuUpdate(
    //
    // Draw the menu
    //
+#ifdef PAL_CLASSIC
+   PAL_BattleUIDrawMiscMenu(1, TRUE);
+#else
    PAL_BattleUIDrawMiscMenu(0, TRUE);
-
+#endif
    PAL_CreateBox(PAL_XY(30, 50), 1, 1, 0, FALSE);
 
    //
