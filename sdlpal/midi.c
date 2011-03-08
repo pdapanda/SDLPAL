@@ -118,11 +118,6 @@ MIDI_CheckLoop(
    VOID
 )
 {
-   if (g_fNoMusic)
-   {
-      MIDI_Play(0, FALSE);
-   }
-
    if (fMidLoop && g_pMid != NULL && !native_midi_active())
    {
       MIDI_Play(iMidCurrent, TRUE);

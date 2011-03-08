@@ -619,6 +619,14 @@ PAL_SystemMenu(
       // Music
       //
       g_fNoMusic = !PAL_SwitchMenu(!g_fNoMusic);
+      if (g_fNoMusic)
+      {
+         PAL_PlayMUS(0, FALSE, 0);
+      }
+      else
+      {
+         PAL_PlayMUS(gpGlobals->wNumMusic, TRUE, 0);
+      }
       break;
 
    case 4:
