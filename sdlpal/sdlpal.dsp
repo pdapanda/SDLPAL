@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib sdl.lib sdlmain.lib /nologo /subsystem:windows /machine:I386 /libpath:"d:\sdl\lib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib sdl.lib sdlmain.lib /nologo /subsystem:windows /machine:I386 /libpath:"d:\sdl\lib"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "sdlpal - Win32 Debug"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib sdl.lib sdlmain.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept /libpath:"d:\sdl\lib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib sdl.lib sdlmain.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept /libpath:"d:\sdl\lib"
 
 !ENDIF 
 
@@ -138,6 +138,10 @@ SOURCE=.\main.c
 # Begin Source File
 
 SOURCE=.\map.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\midi.c
 # End Source File
 # Begin Source File
 
@@ -262,6 +266,10 @@ SOURCE=.\main.h
 # Begin Source File
 
 SOURCE=.\map.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\midi.h
 # End Source File
 # Begin Source File
 
@@ -398,6 +406,26 @@ SOURCE=.\sdlpal.ico
 # Begin Source File
 
 SOURCE=.\sdlpal.rc
+# End Source File
+# End Group
+# Begin Group "native_midi"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\native_midi\native_midi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\native_midi\native_midi_common.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\native_midi\native_midi_common.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\native_midi\native_midi_win32.c
 # End Source File
 # End Group
 # End Target
