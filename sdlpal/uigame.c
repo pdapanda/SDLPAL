@@ -185,7 +185,7 @@ PAL_SaveSlotMenu(
    //
    for (i = 1; i <= 5; i++)
    {
-	  fp = fopen(va("%s%d%s", PAL_SAVE_PREFIX, i, ".rpg"), "rb");
+      fp = fopen(va("%s%d%s", PAL_SAVE_PREFIX, i, ".rpg"), "rb");
       if (fp == NULL)
       {
          wSavedTimes = 0;
@@ -619,14 +619,19 @@ PAL_SystemMenu(
       // Music
       //
       g_fNoMusic = !PAL_SwitchMenu(!g_fNoMusic);
-      if (g_fNoMusic)
+#ifdef PAL_HAS_NATIVEMIDI
+      if (g_fUseMidi)
       {
-         PAL_PlayMUS(0, FALSE, 0);
+         if (g_fNoMusic)
+         {
+            PAL_PlayMUS(0, FALSE, 0);
+         }
+         else
+         {
+            PAL_PlayMUS(gpGlobals->wNumMusic, TRUE, 0);
+         }
       }
-      else
-      {
-         PAL_PlayMUS(gpGlobals->wNumMusic, TRUE, 0);
-      }
+#endif
       break;
 
    case 4:
