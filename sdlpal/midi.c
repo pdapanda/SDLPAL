@@ -62,7 +62,7 @@ MIDI_Play(
    g_pMid = NULL;
    iMidCurrent = -1;
 
-   if (g_fNoMusic || iNumRIX <= 0 || iNumRIX > PAL_MKFGetChunkCount(fp))
+   if (g_fNoMusic || iNumRIX <= 0)
    {
       return;
    }
@@ -70,6 +70,12 @@ MIDI_Play(
    fp = fopen(PAL_PREFIX "midi.mkf", "rb");
    if (fp == NULL)
    {
+      return;
+   }
+
+   if (iNumRIX > PAL_MKFGetChunkCount(fp))
+   {
+      fclose(fp);
       return;
    }
 
@@ -83,6 +89,7 @@ MIDI_Play(
    buf = (unsigned char *)UTIL_malloc(size);
 
    PAL_MKFReadChunk((LPBYTE)buf, size, iNumRIX, fp);
+   fclose(fp);
 
    rw = SDL_RWFromConstMem((const void *)buf, size);
 
