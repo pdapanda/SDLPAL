@@ -103,6 +103,7 @@ MIDI_Play(
    }
 
    SDL_RWclose(rw);
+   free(buf);
 }
 
 VOID
