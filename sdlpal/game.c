@@ -46,7 +46,7 @@ PAL_GameStart(
       //
       // Fade in music if the player has loaded an old game.
       //
-      RIX_Play(gpGlobals->wNumMusic, TRUE, 1);
+      PAL_PlayMUS(gpGlobals->wNumMusic, TRUE, 1);
    }
 
    gpGlobals->fNeedToFadeIn = TRUE;

@@ -48,6 +48,10 @@
 #include "play.h"
 #include "game.h"
 
+#ifdef PAL_HAS_NATIVEMIDI
+#include "midi.h"
+#endif
+
 VOID
 PAL_Shutdown(
    VOID

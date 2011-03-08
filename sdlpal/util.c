@@ -23,6 +23,10 @@
 
 #include "util.h"
 
+#ifdef PAL_HAS_NATIVEMIDI
+#include "midi.h"
+#endif
+
 void
 trim(
    char *str
@@ -265,6 +269,10 @@ UTIL_Delay(
       SDL_Delay(1);
       while (SDL_PollEvent(NULL));
    }
+
+#ifdef PAL_HAS_NATIVEMIDI
+   MIDI_CheckLoop();
+#endif
 }
 
 void

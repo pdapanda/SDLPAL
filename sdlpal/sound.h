@@ -53,6 +53,13 @@ SOUND_AdjustVolume(
 );
 #endif
 
+VOID
+PAL_PlayMUS(
+   INT       iNumRIX,
+   BOOL      fLoop,
+   FLOAT     flFadeTime
+);
+
 BOOL
 SOUND_PlayCDA(
    INT    iNumTrack
@@ -62,6 +69,9 @@ SOUND_PlayCDA(
 
 extern BOOL       g_fNoSound;
 extern BOOL       g_fNoMusic;
+#ifdef PAL_HAS_NATIVEMIDI
+extern BOOL       g_fUseMidi;
+#endif
 
 #ifdef __cplusplus
 }

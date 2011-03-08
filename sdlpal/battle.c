@@ -339,7 +339,7 @@ PAL_BattleMain(
    //
    // Fade out the music and delay for a while
    //
-   RIX_Play(0, FALSE, 1);
+   PAL_PlayMUS(0, FALSE, 1);
    UTIL_Delay(200);
 
    //
@@ -350,7 +350,7 @@ PAL_BattleMain(
    //
    // Play the battle music
    //
-   RIX_Play(gpGlobals->wNumBattleMusic, TRUE, 0);
+   PAL_PlayMUS(gpGlobals->wNumBattleMusic, TRUE, 0);
 
    //
    // Fade in the screen when needed
@@ -674,7 +674,7 @@ PAL_BattleWon(
       //
       // Play the "battle win" music
       //
-      RIX_Play(g_Battle.fIsBoss ? 2 : 3, FALSE, 0);
+      PAL_PlayMUS(g_Battle.fIsBoss ? 2 : 3, FALSE, 0);
 
       //
       // Show the message about the total number of exp. and cash gained
@@ -1486,7 +1486,7 @@ PAL_StartBattle(
 
    gpGlobals->fInBattle = FALSE;
 
-   RIX_Play(gpGlobals->wNumMusic, TRUE, 1);
+   PAL_PlayMUS(gpGlobals->wNumMusic, TRUE, 1);
 
    //
    // Restore the screen waving effects

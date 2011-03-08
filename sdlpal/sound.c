@@ -24,10 +24,18 @@
 #include "rixplay.h"
 #include "util.h"
 
+#ifdef PAL_HAS_NATIVEMIDI
+#include "midi.h"
+#endif
+
 static BOOL gSndOpened = FALSE;
 
 BOOL       g_fNoSound = FALSE;
 BOOL       g_fNoMusic = FALSE;
+
+#ifdef PAL_HAS_NATIVEMIDI
+BOOL       g_fUseMidi = FALSE;
+#endif
 
 #ifdef __SYMBIAN32__
 INT        g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
@@ -374,6 +382,10 @@ SOUND_CloseAudio(
       SDL_CDClose(gSndPlayer.pCD);
    }
 #endif
+
+#ifdef PAL_HAS_NATIVEMIDI
+   MIDI_Play(0, FALSE);
+#endif
 }
 
 #ifdef __SYMBIAN32__
@@ -528,6 +540,24 @@ SOUND_PlayChannel(
    gSndPlayer.pos[iChannel] = wavecvt.buf;
 }
 
+VOID
+PAL_PlayMUS(
+   INT       iNumRIX,
+   BOOL      fLoop,
+   FLOAT     flFadeTime
+)
+{
+#ifdef PAL_HAS_NATIVEMIDI
+   if (g_fUseMidi)
+   {
+      MIDI_Play(iNumRIX, fLoop);
+      return;
+   }
+#endif
+
+   RIX_Play(iNumRIX, fLoop, flFadeTime);
+}
+
 BOOL
 SOUND_PlayCDA(
    INT    iNumTrack
@@ -556,7 +586,7 @@ SOUND_PlayCDA(
 
          if (iNumTrack != -1)
          {
-            RIX_Play(-1, FALSE, 0);
+            PAL_PlayMUS(-1, FALSE, 0);
 
             if (SDL_CDPlayTracks(gSndPlayer.pCD, iNumTrack - 1, 0, 1, 0) == 0)
             {

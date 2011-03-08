@@ -273,7 +273,7 @@ PAL_SplashScreen(
    if (!SOUND_PlayCDA(7))
    {
       fUseCD = FALSE;
-      RIX_Play(NUM_RIX_TITLE, TRUE, 2);
+      PAL_PlayMUS(NUM_RIX_TITLE, TRUE, 2);
    }
 
    //
@@ -429,7 +429,7 @@ PAL_SplashScreen(
 
    if (!fUseCD)
    {
-      RIX_Play(0, FALSE, 1);
+      PAL_PlayMUS(0, FALSE, 1);
    }
 
    PAL_FadeOut(1);
@@ -475,7 +475,7 @@ main(
    //
    // Parse parameters.
    //
-   while ((c = getopt(argc, argv, "w:h:fj")) != -1)
+   while ((c = getopt(argc, argv, "w:h:fjm")) != -1)
    {
       switch (c)
       {
@@ -514,6 +514,15 @@ main(
          //
          g_fUseJoystick = FALSE;
          break;
+
+#ifdef PAL_HAS_NATIVEMIDI
+      case 'm':
+         //
+         // Use MIDI music
+         //
+         g_fUseMidi = TRUE;
+         break;
+#endif
       }
    }
 #endif

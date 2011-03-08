@@ -7,10 +7,10 @@ Type=1
 Compiler=
 CppCompiler=
 Includes=g:\sdl\include
-Linker=-lmingw32 -lstdc++ -lSDLmain -lSDL -lstdc++ -mwindows_@@_
+Linker=-lmingw32 -lstdc++ -lSDLmain -lSDL -lstdc++ -lwinmm -mwindows_@@_
 Libs=g:\sdl\lib
-UnitCount=73
-Folders=adplug,"Header Files","Resource Files","Source Files"
+UnitCount=79
+Folders=adplug,"Header Files",native_midi,"Resource Files","Source Files"
 ObjFiles=
 PrivateResource=sdlpal_private.rc
 ResourceIncludes=
@@ -772,6 +772,66 @@ FileName=sdlpal.rc
 Folder=Resource Files
 Compile=1
 Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit74]
+FileName=native_midi\native_midi.h
+CompileCpp=1
+Folder=native_midi
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit75]
+FileName=native_midi\native_midi_common.c
+CompileCpp=0
+Folder=native_midi
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit76]
+FileName=native_midi\native_midi_common.h
+CompileCpp=1
+Folder=native_midi
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit77]
+FileName=native_midi\native_midi_win32.c
+CompileCpp=0
+Folder=native_midi
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit78]
+FileName=midi.c
+CompileCpp=0
+Folder=Source Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit79]
+FileName=midi.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=

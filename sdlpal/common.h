@@ -120,6 +120,8 @@ extern "C"
 typedef const BYTE *LPCBYTE;
 #endif
 
+#define PAL_HAS_NATIVEMIDI  1
+
 #else
 
 #include <unistd.h>

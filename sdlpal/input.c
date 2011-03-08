@@ -707,5 +707,8 @@ PAL_ProcessEvent(
 
 --*/
 {
+#ifdef PAL_HAS_NATIVEMIDI
+   MIDI_CheckLoop();
+#endif
    while (SDL_PollEvent(NULL));
 }

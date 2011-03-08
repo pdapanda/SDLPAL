@@ -92,7 +92,7 @@ PAL_OpeningMenu(
    //
    // Play the background music
    //
-   RIX_Play(RIX_NUM_OPENINGMENU, TRUE, 1);
+   PAL_PlayMUS(RIX_NUM_OPENINGMENU, TRUE, 1);
 
    //
    // Draw the background
@@ -132,7 +132,7 @@ PAL_OpeningMenu(
    //
    // Fade out the screen and the music
    //
-   RIX_Play(0, FALSE, 1);
+   PAL_PlayMUS(0, FALSE, 1);
    PAL_FadeOut(1);
 
    return (INT)wItemSelected;
@@ -608,7 +608,7 @@ PAL_SystemMenu(
       iSlot = PAL_SaveSlotMenu(gpGlobals->bCurrentSaveSlot);
       if (iSlot != MENUITEM_VALUE_CANCELLED)
       {
-         RIX_Play(0, FALSE, 1);
+         PAL_PlayMUS(0, FALSE, 1);
          PAL_FadeOut(1);
          PAL_InitGameData(iSlot);
       }
@@ -645,7 +645,7 @@ PAL_SystemMenu(
       //
       if (PAL_ConfirmMenu())
       {
-         RIX_Play(0, FALSE, 2);
+         PAL_PlayMUS(0, FALSE, 2);
          PAL_FadeOut(2);
          PAL_Shutdown();
          exit(0);
