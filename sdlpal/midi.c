@@ -25,26 +25,6 @@ static BOOL fMidLoop = FALSE;
 
 static NativeMidiSong *g_pMid = NULL;
 
-/*
-#ifdef USE_NATIVE_MIDI
-
-
-#endif
-
-static VOID
-MIDI_Play(
-   INT       iNumRIX,
-   BOOL      fLoop
-)
-{
-#ifdef USE_NATIVE_MIDI
-
-#endif
-}
-
-
-*/
-
 VOID
 MIDI_Play(
    INT       iNumRIX,
@@ -67,12 +47,12 @@ MIDI_Play(
 
 --*/
 {
-   FILE *fp = fopen(PAL_PREFIX "midi.mkf", "rb");
-   unsigned char *buf;
-   int size;
-   SDL_RWops *rw;
+   FILE            *fp;
+   unsigned char   *buf;
+   int              size;
+   SDL_RWops       *rw;
 
-   if (fp == NULL)
+   if (g_pMid != NULL && iNumRIX == iMidCurrent && native_midi_active())
    {
       return;
    }
@@ -84,7 +64,12 @@ MIDI_Play(
 
    if (g_fNoMusic || iNumRIX <= 0 || iNumRIX > PAL_MKFGetChunkCount(fp))
    {
-      fclose(fp);
+      return;
+   }
+
+   fp = fopen(PAL_PREFIX "midi.mkf", "rb");
+   if (fp == NULL)
+   {
       return;
    }
 
