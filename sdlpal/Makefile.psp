@@ -3,7 +3,7 @@ TARGET = sdlpal
 OBJS = adplug/binfile.o adplug/emuopl.o adplug/fprovide.o adplug/rix.o \
 	adplug/binio.o adplug/fmopl.o adplug/player.o \
 	battle.o getopt.o main.o play.o script.o uigame.o ending.o \
-	global.o map.o res.o sound.o util.o fight.o input.o palcommon.o \
+	global.o map.o res.o sound.o util.o fight.o input_PSP.o palcommon.o \
 	rixplay.o text.o video.o font.o itemmenu.o palette.o rngplay.o \
 	uibattle.o yj1.o game.o magicmenu.o scene.o ui.o
 

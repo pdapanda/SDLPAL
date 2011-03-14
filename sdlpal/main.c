@@ -25,6 +25,10 @@
 #include "fat.h"
 #endif
 
+#ifdef PSP
+#include "main_PSP.h"
+#endif
+
 #define BITMAPNUM_SPLASH_UP         0x26
 #define BITMAPNUM_SPLASH_DOWN       0x27
 #define SPRITENUM_SPLASH_TITLE      0x47
@@ -549,6 +553,9 @@ main(
    //
    // Initialize everything
    //
+#ifdef PSP
+   sdlpal_psp_init();
+#endif
    PAL_Init(wScreenWidth, wScreenHeight, fFullScreen);
 
    //
