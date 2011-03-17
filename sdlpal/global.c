@@ -506,7 +506,7 @@ PAL_SaveGame(
       return;
    }
 
-   i = PAL_MKFGetChunkSize(4, gpGlobals->f.fpSSS);
+   i = PAL_MKFGetChunkSize(0, gpGlobals->f.fpSSS);
    i += sizeof(SAVEDGAME) - sizeof(EVENTOBJECT) * MAX_EVENT_OBJECTS;
 
    fwrite(&s, i, 1, fp);
