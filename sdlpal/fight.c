@@ -2514,11 +2514,6 @@ PAL_BattleShowPlayerOffMagicAnim(
 
    n = PAL_SpriteGetNumFrames(lpSpriteEffect);
 
-   if (wPlayerIndex != (WORD)-1)
-   {
-      g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
-   }
-
    PAL_BattleDelay(1, 0, TRUE);
 
    l = n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
@@ -2532,6 +2527,11 @@ PAL_BattleShowPlayerOffMagicAnim(
    for (i = 0; i < l; i++)
    {
       LPCBITMAPRLE b;
+
+      if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay && wPlayerIndex != (WORD)-1)
+      {
+         g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+      }
 
       blow = ((g_Battle.iBlow > 0) ? RandomLong(0, g_Battle.iBlow) : RandomLong(g_Battle.iBlow, 0));
 
@@ -2563,7 +2563,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
          b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
-#if 0
+#ifdef PAL_CLASSIC
          if ((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
          {
             SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
