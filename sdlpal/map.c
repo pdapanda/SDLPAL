@@ -116,7 +116,7 @@ PAL_LoadMap(
    free(buf);
 
    //
-   // Adjust the endianness the decompressed data.
+   // Adjust the endianness of the decompressed data.
    //
    for (i = 0; i < 128; i++)
    {

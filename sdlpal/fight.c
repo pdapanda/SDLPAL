@@ -1064,8 +1064,6 @@ PAL_BattleStartFrame(
    SHORT                    sMax, sMaxIndex;
 #endif
 
-   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleStartFrame, "PAL_BattleStartFrame", __FILE__, "start");
-
    if (!g_Battle.fEnemyCleared)
    {
       PAL_BattleUpdateFighters();
@@ -1727,7 +1725,6 @@ PAL_BattleStartFrame(
    PAL_BattleUIUpdate();
 
 #endif
-   UTIL_WriteLog(LOG_DEBUG, "[0x%08x][%s][%s] - %s", (long)PAL_BattleStartFrame, "PAL_BattleStartFrame", __FILE__, "end");
 }
 
 VOID
