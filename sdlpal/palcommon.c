@@ -916,7 +916,7 @@ PAL_MKFDecompressChunk(
 
    PAL_MKFReadChunk(buf, len, uiChunkNum, fp);
 
-   len = DecodeYJ1(buf, lpBuffer, uiBufferSize);
+   len = Decompress(buf, lpBuffer, uiBufferSize);
    free(buf);
 
    return len;

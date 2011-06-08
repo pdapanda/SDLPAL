@@ -30,11 +30,7 @@ extern "C"
 {
 #endif
 
-#if defined(GPH) || defined(DINGOO)
-	#define PAL_CLASSIC           1
-#else
-//	#define PAL_CLASSIC           1
-#endif
+//#define PAL_CLASSIC           1
 
 //
 // SOME NOTES ON "AUTO SCRIPT" AND "TRIGGER SCRIPT":

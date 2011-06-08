@@ -12,7 +12,7 @@ FILES = rixplay.cpp adplug/rix.cpp text.c font.c adplug/player.cpp \
 	adplug/binfile.cpp video.c palette.c sound.c res.c battle.c \
 	yj1.c
 
-CFLAGS = -g -Wall -O3 -Os -DDINGOO
+CFLAGS = -g -Wall -O3 -Os -DDINGOO -DPAL_CLASSIC
 LDFLAGS = `sdl-config --libs` -lstdc++
 
 $(TARGET):

@@ -211,7 +211,7 @@ PAL_RNGBlitToSurface(
       free(buf);
       return -1;
    }
-   DecodeYJ1(buf, rng, 65000);
+   Decompress(buf, rng, 65000);
    free(buf);
 
    //

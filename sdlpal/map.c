@@ -103,7 +103,7 @@ PAL_LoadMap(
    //
    // Decompress the tile data.
    //
-   if (DecodeYJ1(buf, (LPBYTE)(map->Tiles), sizeof(map->Tiles)) < 0)
+   if (Decompress(buf, (LPBYTE)(map->Tiles), sizeof(map->Tiles)) < 0)
    {
       free(map);
       free(buf);

@@ -138,6 +138,8 @@ DecodeYJ1(
    INT          DestSize
 );
 
+#define Decompress DecodeYJ1
+
 #ifdef __cplusplus
 }
 #endif

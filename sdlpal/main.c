@@ -254,16 +254,16 @@ PAL_SplashScreen(
    // Read the bitmaps
    //
    PAL_MKFReadChunk(buf, 320 * 200, BITMAPNUM_SPLASH_UP, gpGlobals->f.fpFBP);
-   DecodeYJ1(buf, buf2, 320 * 200);
+   Decompress(buf, buf2, 320 * 200);
    PAL_FBPBlitToSurface(buf2, lpBitmapUp);
    PAL_MKFReadChunk(buf, 320 * 200, BITMAPNUM_SPLASH_DOWN, gpGlobals->f.fpFBP);
-   DecodeYJ1(buf, buf2, 320 * 200);
+   Decompress(buf, buf2, 320 * 200);
    PAL_FBPBlitToSurface(buf2, lpBitmapDown);
    PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_TITLE, gpGlobals->f.fpMGO);
-   DecodeYJ1(buf, buf2, 32000);
+   Decompress(buf, buf2, 32000);
    lpBitmapTitle = (LPBITMAPRLE)PAL_SpriteGetFrame(buf2, 0);
    PAL_MKFReadChunk(buf, 32000, SPRITENUM_SPLASH_CRANE, gpGlobals->f.fpMGO);
-   DecodeYJ1(buf, lpSpriteCrane, 32000);
+   Decompress(buf, lpSpriteCrane, 32000);
 
    iTitleHeight = PAL_RLEGetHeight(lpBitmapTitle);
    lpBitmapTitle[2] = 0;
