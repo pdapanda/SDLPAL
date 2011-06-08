@@ -34,6 +34,10 @@
 #include "native_midi.h"
 #include "native_midi_common.h"
 
+#ifndef DWORD_PTR
+#define DWORD_PTR DWORD
+#endif
+
 struct _NativeMidiSong {
   int MusicLoaded;
   int MusicPlaying;
