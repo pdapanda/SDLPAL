@@ -67,7 +67,7 @@ turn-based battle system, uncomment the following line:
 
 //#define PAL_CLASSIC           1
 
-in the file global.h and recompile. This will build a "classic" build which is
+in the file common.h and recompile. This will build a "classic" build which is
 100% the same as the original game.
 
 
