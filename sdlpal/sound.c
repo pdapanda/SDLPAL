@@ -28,17 +28,19 @@
 #include "midi.h"
 #endif
 
-static BOOL gSndOpened = FALSE;
+static BOOL  gSndOpened = FALSE;
 
-BOOL       g_fNoSound = FALSE;
-BOOL       g_fNoMusic = FALSE;
+BOOL         g_fNoSound = FALSE;
+BOOL         g_fNoMusic = FALSE;
 
 #ifdef PAL_HAS_NATIVEMIDI
-BOOL       g_fUseMidi = FALSE;
+BOOL         g_fUseMidi = FALSE;
 #endif
 
+static BOOL  g_fUseWav = FALSE;
+
 #ifdef __SYMBIAN32__
-INT        g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
+INT          g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
 #endif
 
 typedef struct tagSNDPLAYER
@@ -57,6 +59,7 @@ static SNDPLAYER gSndPlayer;
 static SDL_AudioSpec *
 SOUND_LoadVOCFromBuffer(
    LPCBYTE                lpVOC,
+   DWORD                  dwLen,
    SDL_AudioSpec         *lpSpec,
    LPBYTE                *lppBuffer
 )
@@ -68,6 +71,8 @@ SOUND_LoadVOCFromBuffer(
   Parameters:
 
     [IN]  lpVOC - pointer to the buffer of the VOC file.
+
+    [IN]  dwLen - length of the buffer of the VOC file.
 
     [OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
                    some basic information about the VOC file.
@@ -81,71 +86,85 @@ SOUND_LoadVOCFromBuffer(
 --*/
 {
    INT freq, len, x, i, l;
+   SDL_RWops *rw;
 
-   //
-   // Skip header
-   //
-   lpVOC += 0x1B;
+   if (g_fUseWav)
+   {
+      rw = SDL_RWFromConstMem(lpVOC, dwLen);
+      if (rw == NULL) return NULL;
 
-   //
-   // Length is 3 bytes long
-   //
-   len = (lpVOC[0] | (lpVOC[1] << 8) | (lpVOC[2] << 16)) - 2;
-   lpVOC += 3;
+      SDL_LoadWAV_RW(rw, 1, lpSpec, lppBuffer, (Uint32 *)&len);
+      lpSpec->size = len;
 
-   //
-   // One byte for frequency
-   //
-   freq = 1000000 / (256 - *lpVOC);
+      return lpSpec;
+   }
+   else
+   {
+      //
+      // Skip header
+      //
+      lpVOC += 0x1B;
+
+      //
+      // Length is 3 bytes long
+      //
+      len = (lpVOC[0] | (lpVOC[1] << 8) | (lpVOC[2] << 16)) - 2;
+      lpVOC += 3;
+
+      //
+      // One byte for frequency
+      //
+      freq = 1000000 / (256 - *lpVOC);
 
 #if 1
 
-   lpVOC += 2;
+      lpVOC += 2;
 
-   //
-   // Convert the sample manually, as SDL doesn't like "strange" sample rates.
-   //
-   x = (INT)(len * ((FLOAT)PAL_SAMPLE_RATE / freq));
+      //
+      // Convert the sample manually, as SDL doesn't like "strange" sample rates.
+      //
+      x = (INT)(len * ((FLOAT)PAL_SAMPLE_RATE / freq));
 
-   *lppBuffer = (LPBYTE)calloc(1, x);
-   if (*lppBuffer == NULL)
-   {
-      return NULL;
-   }
-   for (i = 0; i < x; i++)
-   {
-      l = (INT)(i * (freq / (FLOAT)PAL_SAMPLE_RATE));
-      if (l >= len)
+      *lppBuffer = (LPBYTE)calloc(1, x);
+      if (*lppBuffer == NULL)
       {
-         l = len - 1;
+         return NULL;
       }
-      (*lppBuffer)[i] = lpVOC[l];
-   }
+      for (i = 0; i < x; i++)
+      {
+         l = (INT)(i * (freq / (FLOAT)PAL_SAMPLE_RATE));
+         if (l >= len)
+         {
+            l = len - 1;
+         }
+         (*lppBuffer)[i] = lpVOC[l];
+      }
 
-   lpSpec->channels = 1;
-   lpSpec->format = AUDIO_U8;
-   lpSpec->freq = PAL_SAMPLE_RATE;
-   lpSpec->size = x;
+      lpSpec->channels = 1;
+      lpSpec->format = AUDIO_U8;
+      lpSpec->freq = PAL_SAMPLE_RATE;
+      lpSpec->size = x;
 
 #else
 
-   *lppBuffer = (unsigned char *)malloc(len);
-   if (*lppBuffer == NULL)
-   {
-      return NULL;
-   }
+      *lppBuffer = (unsigned char *)malloc(len);
+      if (*lppBuffer == NULL)
+      {
+         return NULL;
+      }
 
-   lpSpec->channels = 1;
-   lpSpec->format = AUDIO_U8;
-   lpSpec->freq = freq;
-   lpSpec->size = len;
+      lpSpec->channels = 1;
+      lpSpec->format = AUDIO_U8;
+      lpSpec->freq = freq;
+      lpSpec->size = len;
 
-   lpVOC += 2;
-   memcpy(*lppBuffer, lpVOC, len);
+      lpVOC += 2;
+      memcpy(*lppBuffer, lpVOC, len);
 
 #endif
 
-   return lpSpec;
+      return lpSpec;
+   }
 }
 
 static VOID SDLCALL
@@ -262,7 +281,16 @@ SOUND_OpenAudio(
    gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "voc.mkf"), "rb");
    if (gSndPlayer.mkf == NULL)
    {
-      return -2;
+      gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "sounds.mkf"), "rb");
+      if (gSndPlayer.mkf == NULL)
+      {
+         return -2;
+      }
+      g_fUseWav = TRUE;
+   }
+   else
+   {
+      g_fUseWav = FALSE;
    }
 
    //
@@ -503,7 +531,7 @@ SOUND_PlayChannel(
    //
    PAL_MKFReadChunk(buf, len, iSoundNum, gSndPlayer.mkf);
 
-   SOUND_LoadVOCFromBuffer(buf, &wavespec, &bufdec);
+   SOUND_LoadVOCFromBuffer(buf, len, &wavespec, &bufdec);
    free(buf);
 
    //
