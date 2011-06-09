@@ -93,6 +93,8 @@ SOUND_LoadVOCFromBuffer(
       rw = SDL_RWFromConstMem(lpVOC, dwLen);
       if (rw == NULL) return NULL;
 
+      len = dwLen;
+
       SDL_LoadWAV_RW(rw, 1, lpSpec, lppBuffer, (Uint32 *)&len);
       lpSpec->size = len;
 
