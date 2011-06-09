@@ -132,13 +132,11 @@ PAL_MKFDecompressChunk(
 
 // From yj1.c:
 INT
-DecodeYJ1(
+Decompress(
    LPCVOID      Source,
    LPVOID       Destination,
    INT          DestSize
 );
-
-#define Decompress DecodeYJ1
 
 #ifdef __cplusplus
 }
