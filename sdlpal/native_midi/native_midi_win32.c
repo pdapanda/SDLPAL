@@ -34,10 +34,6 @@
 #include "native_midi.h"
 #include "native_midi_common.h"
 
-#ifndef DWORD_PTR
-#define DWORD_PTR DWORD
-#endif
-
 struct _NativeMidiSong {
   int MusicLoaded;
   int MusicPlaying;
@@ -162,17 +158,17 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *evntlist)
   song->MusicLoaded=1;
 }
 
-void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
-                        DWORD_PTR dwParam1, DWORD_PTR dwParam2 )
+void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, unsigned long dwInstance,
+                        unsigned long dwParam1, unsigned long dwParam2 )
 {
     switch( uMsg )
     {
     case MOM_DONE:
-      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr))
+      if ((currentsong->MusicLoaded) && (dwParam1 == (unsigned long)&currentsong->MidiStreamHdr))
         BlockOut(currentsong);
       break;
     case MOM_POSITIONCB:
-      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr))
+      if ((currentsong->MusicLoaded) && (dwParam1 == (unsigned long)&currentsong->MidiStreamHdr))
         currentsong->MusicPlaying=0;
       break;
     default:
@@ -185,7 +181,7 @@ int native_midi_detect()
   MMRESULT merr;
   HMIDISTRM MidiStream;
 
-  merr=midiStreamOpen(&MidiStream,&MidiDevice,(DWORD)1,(DWORD_PTR)MidiProc,(DWORD_PTR)0,CALLBACK_FUNCTION);
+  merr=midiStreamOpen(&MidiStream,&MidiDevice,(DWORD)1,(unsigned long)MidiProc,(unsigned long)0,CALLBACK_FUNCTION);
   if (merr!=MMSYSERR_NOERROR)
     return 0;
   midiStreamClose(MidiStream);
