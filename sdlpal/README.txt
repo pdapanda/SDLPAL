@@ -8,7 +8,7 @@ SDLPAL is an SDL-based reimplementation of the classic Chinese-language RPG
 LICENSE
 =======
 
-SDLPAL is Copyrighted (c) 2009-2011 Wei Mingzhi <whistler@openoffice.org>.
+SDLPAL is Copyrighted (c) 2009-2011 Wei Mingzhi <whistler_wmz@users.sf.net>.
 All rights reserved.
 
 SDLPAL is distributed under the terms of GNU General Public License, version 3

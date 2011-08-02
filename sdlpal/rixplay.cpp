@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2008, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // All rights reserved.
 //
 // This program is free software: you can redistribute it and/or modify

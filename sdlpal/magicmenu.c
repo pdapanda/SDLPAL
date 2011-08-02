@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // All rights reserved.
 //
 // This file is part of SDLPAL.

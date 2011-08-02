@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2009, Wei Mingzhi <whistler@openoffice.org>.
+// Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // Portions Copyright (c) 2004, Pierre-Marie Baty.
 // Portions Copyright (c) 2009, netwan.
 //
