@@ -428,5 +428,129 @@ SOURCE=.\native_midi\native_midi_common.h
 SOURCE=.\native_midi\native_midi_win32.c
 # End Source File
 # End Group
+# Begin Group "libmad"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\libmad\bit.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\bit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\D.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\decoder.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\decoder.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\fixed.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\fixed.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\frame.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\frame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\huffman.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\huffman.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\imdct_s.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\layer12.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\layer12.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\layer3.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\layer3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\libmad_config.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\mad.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\qc_table.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\rq_table.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\sf_table.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\stream.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\stream.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\synth.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\synth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\timer.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\timer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\version.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\version.h
+# End Source File
+# End Group
 # End Target
 # End Project
