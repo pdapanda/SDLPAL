@@ -21,7 +21,7 @@
 
 #include "libmad_config.h"
 
-# include "global.h"
+# include "libmad_global.h"
 
 # ifdef HAVE_LIMITS_H
 #  include <limits.h>

@@ -469,7 +469,7 @@ SOURCE=.\libmad\frame.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\libmad\global.h
+SOURCE=.\libmad\libmad_global.h
 # End Source File
 # Begin Source File
 

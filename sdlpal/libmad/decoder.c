@@ -21,7 +21,7 @@
 
 # include "libmad_config.h"
 
-# include "global.h"
+# include "libmad_global.h"
 
 # ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>

@@ -926,7 +926,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit89]
-FileName=libmad\global.h
+FileName=libmad\libmad_global.h
 CompileCpp=1
 Folder=libmad
 Compile=1
