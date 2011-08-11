@@ -80,6 +80,25 @@
     <None Include="adplug\opl.h" />
     <None Include="adplug\player.h" />
     <None Include="adplug\rix.h" />
+    <None Include="libmad\bit.h" />
+    <None Include="libmad\D.dat" />
+    <None Include="libmad\decoder.h" />
+    <None Include="libmad\fixed.h" />
+    <None Include="libmad\frame.h" />
+    <None Include="libmad\huffman.h" />
+    <None Include="libmad\imdct_s.dat" />
+    <None Include="libmad\layer3.h" />
+    <None Include="libmad\layer12.h" />
+    <None Include="libmad\libmad_config.h" />
+    <None Include="libmad\libmad_global.h" />
+    <None Include="libmad\mad.h" />
+    <None Include="libmad\qc_table.dat" />
+    <None Include="libmad\rq_table.dat" />
+    <None Include="libmad\sf_table.dat" />
+    <None Include="libmad\stream.h" />
+    <None Include="libmad\synth.h" />
+    <None Include="libmad\timer.h" />
+    <None Include="libmad\version.h" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="battle.c" />
@@ -117,5 +136,16 @@
     <Compile Include="adplug\fprovide.cpp" />
     <Compile Include="adplug\player.cpp" />
     <Compile Include="adplug\rix.cpp" />
+    <Compile Include="libmad\bit.c" />
+    <Compile Include="libmad\decoder.c" />
+    <Compile Include="libmad\fixed.c" />
+    <Compile Include="libmad\frame.c" />
+    <Compile Include="libmad\huffman.c" />
+    <Compile Include="libmad\layer3.c" />
+    <Compile Include="libmad\layer12.c" />
+    <Compile Include="libmad\stream.c" />
+    <Compile Include="libmad\synth.c" />
+    <Compile Include="libmad\timer.c" />
+    <Compile Include="libmad\version.c" />
   </ItemGroup>
 </Project>
