@@ -86,7 +86,9 @@ extern "C"
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 #define PAL_HAS_CD            1
 #endif
+#if !defined (DINGOO) && !defined (GPH)
 #define PAL_HAS_MP3           1
+#endif
 #endif
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"

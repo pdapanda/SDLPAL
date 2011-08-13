@@ -209,6 +209,7 @@ SOUND_FillAudio(
    //
    if (!g_fNoMusic)
    {
+#ifdef PAL_HAS_MP3
       if (gSndPlayer.pMP3 != NULL)
       {
          mad_getSamples(gSndPlayer.pMP3, stream, len);
@@ -221,10 +222,8 @@ SOUND_FillAudio(
             mad_getSamples(gSndPlayer.pMP3, stream, len);
          }
       }
-      else
-      {
-         RIX_FillBuffer(stream, len);
-      }
+#endif
+      RIX_FillBuffer(stream, len);
    }
 
    //
