@@ -211,13 +211,15 @@ SOUND_FillAudio(
    {
       if (gSndPlayer.pMP3 != NULL)
       {
+         mad_getSamples(gSndPlayer.pMP3, stream, len);
+
          if (!mad_isPlaying(gSndPlayer.pMP3) && gSndPlayer.fMP3Loop)
          {
-	        mad_seek(gSndPlayer.pMP3, 0);
-	        mad_start(gSndPlayer.pMP3);
-         }
+            mad_seek(gSndPlayer.pMP3, 0);
+            mad_start(gSndPlayer.pMP3);
 
-         mad_getSamples(gSndPlayer.pMP3, stream, len);
+            mad_getSamples(gSndPlayer.pMP3, stream, len);
+         }
       }
       else
       {
