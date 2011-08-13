@@ -99,6 +99,7 @@
     <None Include="libmad\synth.h" />
     <None Include="libmad\timer.h" />
     <None Include="libmad\version.h" />
+    <None Include="libmad\music_mad.h" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="battle.c" />
@@ -147,5 +148,6 @@
     <Compile Include="libmad\synth.c" />
     <Compile Include="libmad\timer.c" />
     <Compile Include="libmad\version.c" />
+    <Compile Include="libmad\music_mad.c" />
   </ItemGroup>
 </Project>

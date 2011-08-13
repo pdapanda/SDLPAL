@@ -28,6 +28,10 @@
 #include "midi.h"
 #endif
 
+#ifdef PAL_HAS_MP3
+#include "libmad/music_mad.h"
+#endif
+
 static BOOL  gSndOpened = FALSE;
 
 BOOL         g_fNoSound = FALSE;
@@ -51,6 +55,10 @@ typedef struct tagSNDPLAYER
    INT                       audio_len[2];
 #ifdef PAL_HAS_CD
    SDL_CD                   *pCD;
+#endif
+#ifdef PAL_HAS_MP3
+   mad_data                 *pMP3;
+   BOOL                      fMP3Loop;
 #endif
 } SNDPLAYER;
 
@@ -201,7 +209,20 @@ SOUND_FillAudio(
    //
    if (!g_fNoMusic)
    {
-      RIX_FillBuffer(stream, len);
+      if (gSndPlayer.pMP3 != NULL)
+      {
+         if (!mad_isPlaying(gSndPlayer.pMP3) && gSndPlayer.fMP3Loop)
+         {
+	        mad_seek(gSndPlayer.pMP3, 0);
+	        mad_start(gSndPlayer.pMP3);
+         }
+
+         mad_getSamples(gSndPlayer.pMP3, stream, len);
+      }
+      else
+      {
+         RIX_FillBuffer(stream, len);
+      }
    }
 
    //
@@ -403,6 +424,15 @@ SOUND_CloseAudio(
       gSndPlayer.mkf = NULL;
    }
 
+#ifdef PAL_HAS_MP3
+   if (gSndPlayer.pMP3 != NULL)
+   {
+      mad_stop(gSndPlayer.pMP3);
+      mad_closeFile(gSndPlayer.pMP3);
+      gSndPlayer.pMP3 = NULL;
+   }
+#endif
+
    RIX_Shutdown();
 
 #ifdef PAL_HAS_CD
@@ -581,6 +611,26 @@ PAL_PlayMUS(
    if (g_fUseMidi)
    {
       MIDI_Play(iNumRIX, fLoop);
+      return;
+   }
+#endif
+
+#ifdef PAL_HAS_MP3
+   if (gSndPlayer.pMP3 != NULL)
+   {
+      mad_stop(gSndPlayer.pMP3);
+      mad_closeFile(gSndPlayer.pMP3);
+
+      gSndPlayer.pMP3 = NULL;
+   }
+
+   gSndPlayer.pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNumRIX), &gSndPlayer.spec);
+   if (gSndPlayer.pMP3 != NULL)
+   {
+      RIX_Play(0, FALSE, flFadeTime);
+
+      mad_start(gSndPlayer.pMP3);
+      gSndPlayer.fMP3Loop = fLoop;
       return;
    }
 #endif
