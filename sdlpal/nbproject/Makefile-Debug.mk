@@ -32,10 +32,11 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/rixplay.o \
-	${OBJECTDIR}/libmad/timer.o \
 	${OBJECTDIR}/libmad/synth.o \
+	${OBJECTDIR}/libmad/timer.o \
 	${OBJECTDIR}/adplug/player.o \
 	${OBJECTDIR}/libmad/version.o \
+	${OBJECTDIR}/libmad/music_mad.o \
 	${OBJECTDIR}/palcommon.o \
 	${OBJECTDIR}/script.o \
 	${OBJECTDIR}/libmad/layer3.o \
@@ -107,15 +108,15 @@ ${OBJECTDIR}/rixplay.o: nbproject/Makefile-${CND_CONF}.mk rixplay.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/rixplay.o rixplay.cpp
 
-${OBJECTDIR}/libmad/timer.o: nbproject/Makefile-${CND_CONF}.mk libmad/timer.c 
-	${MKDIR} -p ${OBJECTDIR}/libmad
-	${RM} $@.d
-	$(COMPILE.c) -g -D_DEBUG -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/libmad/timer.o libmad/timer.c
-
 ${OBJECTDIR}/libmad/synth.o: nbproject/Makefile-${CND_CONF}.mk libmad/synth.c 
 	${MKDIR} -p ${OBJECTDIR}/libmad
 	${RM} $@.d
 	$(COMPILE.c) -g -D_DEBUG -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/libmad/synth.o libmad/synth.c
+
+${OBJECTDIR}/libmad/timer.o: nbproject/Makefile-${CND_CONF}.mk libmad/timer.c 
+	${MKDIR} -p ${OBJECTDIR}/libmad
+	${RM} $@.d
+	$(COMPILE.c) -g -D_DEBUG -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/libmad/timer.o libmad/timer.c
 
 ${OBJECTDIR}/adplug/player.o: nbproject/Makefile-${CND_CONF}.mk adplug/player.cpp 
 	${MKDIR} -p ${OBJECTDIR}/adplug
@@ -126,6 +127,11 @@ ${OBJECTDIR}/libmad/version.o: nbproject/Makefile-${CND_CONF}.mk libmad/version.
 	${MKDIR} -p ${OBJECTDIR}/libmad
 	${RM} $@.d
 	$(COMPILE.c) -g -D_DEBUG -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/libmad/version.o libmad/version.c
+
+${OBJECTDIR}/libmad/music_mad.o: nbproject/Makefile-${CND_CONF}.mk libmad/music_mad.c 
+	${MKDIR} -p ${OBJECTDIR}/libmad
+	${RM} $@.d
+	$(COMPILE.c) -g -D_DEBUG -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/libmad/music_mad.o libmad/music_mad.c
 
 ${OBJECTDIR}/palcommon.o: nbproject/Makefile-${CND_CONF}.mk palcommon.c 
 	${MKDIR} -p ${OBJECTDIR}

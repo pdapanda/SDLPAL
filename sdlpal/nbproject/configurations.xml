@@ -71,6 +71,8 @@
       <itemPath>libmad/libmad_config.h</itemPath>
       <itemPath>libmad/libmad_global.h</itemPath>
       <itemPath>libmad/mad.h</itemPath>
+      <itemPath>libmad/music_mad.c</itemPath>
+      <itemPath>libmad/music_mad.h</itemPath>
       <itemPath>libmad/qc_table.dat</itemPath>
       <itemPath>libmad/rq_table.dat</itemPath>
       <itemPath>libmad/sf_table.dat</itemPath>
