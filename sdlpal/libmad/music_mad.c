@@ -178,7 +178,6 @@ decode_frame(mad_data *mp3_mad) {
   unsigned int nchannels, nsamples;
   mad_fixed_t const *left_ch, *right_ch;
   unsigned char *out;
-  int ret;
 
   mad_synth_frame(&mp3_mad->synth, &mp3_mad->frame);
   pcm = &mp3_mad->synth.pcm;
@@ -190,7 +189,7 @@ decode_frame(mad_data *mp3_mad) {
 	/* The first frame determines some key properties of the stream.
 	   In particular, it tells us enough to set up the convert
 	   structure now. */
-	SDL_BuildAudioCVT(&mp3_mad->cvt, AUDIO_S16, pcm->channels, mp3_mad->frame.header.samplerate, mp3_mad->mixer.format, mp3_mad->mixer.channels, mp3_mad->mixer.freq);
+	SDL_BuildAudioCVT(&mp3_mad->cvt, AUDIO_S16, (Uint8)pcm->channels, mp3_mad->frame.header.samplerate, mp3_mad->mixer.format, mp3_mad->mixer.channels, mp3_mad->mixer.freq);
   }
 
   /* pcm->samplerate contains the sampling frequency */

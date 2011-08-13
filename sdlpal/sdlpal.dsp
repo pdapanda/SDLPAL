@@ -469,10 +469,6 @@ SOURCE=.\libmad\frame.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\libmad\libmad_global.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\libmad\huffman.c
 # End Source File
 # Begin Source File
@@ -505,7 +501,19 @@ SOURCE=.\libmad\libmad_config.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\libmad\libmad_global.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\libmad\mad.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\music_mad.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\libmad\music_mad.h
 # End Source File
 # Begin Source File
 
