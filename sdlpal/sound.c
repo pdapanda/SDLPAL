@@ -59,6 +59,7 @@ typedef struct tagSNDPLAYER
 #ifdef PAL_HAS_MP3
    mad_data                 *pMP3;
    BOOL                      fMP3Loop;
+   INT                       iCurrentMP3;
 #endif
 } SNDPLAYER;
 
@@ -378,6 +379,10 @@ SOUND_OpenAudio(
    }
 #endif
 
+#ifdef PAL_HAS_MP3
+   gSndPlayer.iCurrentMP3 = -1;
+#endif
+
    //
    // Let the callback function run so that musics will be played.
    //
@@ -619,20 +624,32 @@ PAL_PlayMUS(
 #ifdef PAL_HAS_MP3
    if (gSndPlayer.pMP3 != NULL)
    {
+      if (iNumRIX == gSndPlayer.iCurrentMP3 && !g_fNoMusic)
+      {
+         return;
+      }
+
       mad_stop(gSndPlayer.pMP3);
       mad_closeFile(gSndPlayer.pMP3);
 
       gSndPlayer.pMP3 = NULL;
    }
 
-   gSndPlayer.pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNumRIX), &gSndPlayer.spec);
-   if (gSndPlayer.pMP3 != NULL)
-   {
-      RIX_Play(0, FALSE, flFadeTime);
+   gSndPlayer.iCurrentMP3 = -1;
 
-      mad_start(gSndPlayer.pMP3);
-      gSndPlayer.fMP3Loop = fLoop;
-      return;
+   if (iNumRIX > 0)
+   {
+      gSndPlayer.pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNumRIX), &gSndPlayer.spec);
+      if (gSndPlayer.pMP3 != NULL)
+      {
+         RIX_Play(0, FALSE, flFadeTime);
+
+         mad_start(gSndPlayer.pMP3);
+         gSndPlayer.fMP3Loop = fLoop;
+         gSndPlayer.iCurrentMP3 = iNumRIX;
+
+         return;
+      }
    }
 #endif
 
