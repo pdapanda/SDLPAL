@@ -60,6 +60,7 @@ typedef struct tagSNDPLAYER
    mad_data                 *pMP3;
    BOOL                      fMP3Loop;
    INT                       iCurrentMP3;
+   SDL_mutex                *lock;
 #endif
 } SNDPLAYER;
 
@@ -213,6 +214,8 @@ SOUND_FillAudio(
 #ifdef PAL_HAS_MP3
       if (gSndPlayer.pMP3 != NULL)
       {
+         SDL_mutexP(gSndPlayer.lock);
+
          mad_getSamples(gSndPlayer.pMP3, stream, len);
 
          if (!mad_isPlaying(gSndPlayer.pMP3) && gSndPlayer.fMP3Loop)
@@ -222,6 +225,8 @@ SOUND_FillAudio(
 
             mad_getSamples(gSndPlayer.pMP3, stream, len);
          }
+
+         SDL_mutexV(gSndPlayer.lock);
       }
 #endif
       RIX_FillBuffer(stream, len);
@@ -381,6 +386,7 @@ SOUND_OpenAudio(
 
 #ifdef PAL_HAS_MP3
    gSndPlayer.iCurrentMP3 = -1;
+   gSndPlayer.lock = SDL_CreateMutex();
 #endif
 
    //
@@ -431,12 +437,16 @@ SOUND_CloseAudio(
    }
 
 #ifdef PAL_HAS_MP3
+   SDL_mutexP(gSndPlayer.lock);
+
    if (gSndPlayer.pMP3 != NULL)
    {
       mad_stop(gSndPlayer.pMP3);
       mad_closeFile(gSndPlayer.pMP3);
       gSndPlayer.pMP3 = NULL;
    }
+
+   SDL_DestroyMutex(gSndPlayer.lock);
 #endif
 
    RIX_Shutdown();
@@ -624,23 +634,27 @@ PAL_PlayMUS(
 #ifdef PAL_HAS_MP3
    if (gSndPlayer.pMP3 != NULL)
    {
-      mad_data *pMP3 = gSndPlayer.pMP3;
-
       if (iNumRIX == gSndPlayer.iCurrentMP3 && !g_fNoMusic)
       {
          return;
       }
 
+      SDL_mutexP(gSndPlayer.lock);
+
+      mad_stop(gSndPlayer.pMP3);
+      mad_closeFile(gSndPlayer.pMP3);
+
       gSndPlayer.pMP3 = NULL;
 
-      mad_stop(pMP3);
-      mad_closeFile(pMP3);
+      SDL_mutexV(gSndPlayer.lock);
    }
 
    gSndPlayer.iCurrentMP3 = -1;
 
    if (iNumRIX > 0)
    {
+      SDL_mutexP(gSndPlayer.lock);
+
       gSndPlayer.pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNumRIX), &gSndPlayer.spec);
       if (gSndPlayer.pMP3 != NULL)
       {
@@ -649,9 +663,12 @@ PAL_PlayMUS(
          mad_start(gSndPlayer.pMP3);
          gSndPlayer.fMP3Loop = fLoop;
          gSndPlayer.iCurrentMP3 = iNumRIX;
+         SDL_mutexV(gSndPlayer.lock);
 
          return;
       }
+
+      SDL_mutexV(gSndPlayer.lock);
    }
 #endif
 
