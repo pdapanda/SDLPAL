@@ -624,15 +624,17 @@ PAL_PlayMUS(
 #ifdef PAL_HAS_MP3
    if (gSndPlayer.pMP3 != NULL)
    {
+      mad_data *pMP3 = gSndPlayer.pMP3;
+
       if (iNumRIX == gSndPlayer.iCurrentMP3 && !g_fNoMusic)
       {
          return;
       }
 
-      mad_stop(gSndPlayer.pMP3);
-      mad_closeFile(gSndPlayer.pMP3);
-
       gSndPlayer.pMP3 = NULL;
+
+      mad_stop(pMP3);
+      mad_closeFile(pMP3);
    }
 
    gSndPlayer.iCurrentMP3 = -1;
