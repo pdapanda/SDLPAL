@@ -28,7 +28,7 @@
 #endif
 
 #ifndef PAL_CHANNELS
-#define PAL_CHANNELS        2
+#define PAL_CHANNELS        1
 #endif
 
 #ifdef __cplusplus
