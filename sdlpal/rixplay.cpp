@@ -67,12 +67,15 @@ RIX_FillBuffer(
 
 --*/
 {
-   INT       i, l, oldlen = len, volume = SDL_MIX_MAXVOLUME / 2;
+   INT       i, j, l, oldlen, volume = SDL_MIX_MAXVOLUME / 2;
    UINT      t = SDL_GetTicks();
 
 #ifdef __SYMBIAN32__
    volume = g_iVolume / 2;
 #endif
+
+   len /= PAL_CHANNELS;
+   oldlen = len;
 
    if (gpRixPlayer == NULL)
    {
@@ -197,8 +200,11 @@ RIX_FillBuffer(
       for (i = 0; i < (int)(l / sizeof(SHORT)); i++)
       {
          SHORT s = (*(SHORT *)(gpRixPlayer->pos));
-         *(SHORT *)(stream) = SWAP16(s * volume / SDL_MIX_MAXVOLUME);
-         stream += sizeof(SHORT);
+         for (j = 0; j < PAL_CHANNELS; j++)
+         {
+            *(SHORT *)(stream) = SWAP16(s * volume / SDL_MIX_MAXVOLUME);
+            stream += sizeof(SHORT);
+         }
          gpRixPlayer->pos += sizeof(SHORT);
       }
 
