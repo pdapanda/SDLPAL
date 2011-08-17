@@ -18,14 +18,15 @@
 
 #include "rixplay.h"
 
+#include "adplug/opl.h"
 #include "adplug/emuopl.h"
+#include "adplug/surroundopl.h"
 #include "adplug/rix.h"
 
 extern "C" BOOL g_fNoMusic;
 extern "C" INT  g_iVolume;
 
 #include "sound.h"
-#include "adplug/surroundopl.h"
 
 typedef struct tagRIXPLAYER
 {
@@ -68,14 +69,13 @@ RIX_FillBuffer(
 
 --*/
 {
-   INT       i, j, l, oldlen, volume = SDL_MIX_MAXVOLUME / 2;
+   INT       i, l, oldlen, volume = SDL_MIX_MAXVOLUME / 2;
    UINT      t = SDL_GetTicks();
 
 #ifdef __SYMBIAN32__
    volume = g_iVolume / 2;
 #endif
 
-//   len /= PAL_CHANNELS;
    oldlen = len;
 
    if (gpRixPlayer == NULL)

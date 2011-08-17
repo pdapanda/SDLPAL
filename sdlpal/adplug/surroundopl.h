@@ -26,7 +26,7 @@
 #ifndef H_ADPLUG_SURROUNDOPL
 #define H_ADPLUG_SURROUNDOPL
 
-#include <stdint.h> // for uintxx_t
+//#include <stdint.h> // for uintxx_t
 #include "opl.h"
 
 // The right-channel is increased in frequency by itself divided by this amount.
@@ -49,10 +49,10 @@ class CSurroundopl: public Copl
 		short bufsize;
 		short *lbuf, *rbuf;
 		Copl *a, *b;
-		uint8_t iFMReg[256];
-		uint8_t iTweakedFMReg[256];
-		uint8_t iCurrentTweakedBlock[9]; // Current value of the Block in the tweaked OPL chip
-		uint8_t iCurrentFNum[9];         // Current value of the FNum in the tweaked OPL chip
+		unsigned char iFMReg[256];
+		unsigned char iTweakedFMReg[256];
+		unsigned char iCurrentTweakedBlock[9]; // Current value of the Block in the tweaked OPL chip
+		unsigned char iCurrentFNum[9];         // Current value of the FNum in the tweaked OPL chip
 
 	public:
 

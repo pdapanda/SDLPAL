@@ -80,6 +80,7 @@
     <None Include="adplug\opl.h" />
     <None Include="adplug\player.h" />
     <None Include="adplug\rix.h" />
+    <None Include="adplug\surroundopl.h" />
     <None Include="libmad\bit.h" />
     <None Include="libmad\D.dat" />
     <None Include="libmad\decoder.h" />
@@ -137,6 +138,7 @@
     <Compile Include="adplug\fprovide.cpp" />
     <Compile Include="adplug\player.cpp" />
     <Compile Include="adplug\rix.cpp" />
+    <Compile Include="adplug\surroundopl.cpp" />
     <Compile Include="libmad\bit.c" />
     <Compile Include="libmad\decoder.c" />
     <Compile Include="libmad\fixed.c" />

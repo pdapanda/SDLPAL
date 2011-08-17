@@ -395,6 +395,14 @@ SOURCE=.\adplug\rix.cpp
 
 SOURCE=.\adplug\rix.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\adplug\surroundopl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\adplug\surroundopl.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 

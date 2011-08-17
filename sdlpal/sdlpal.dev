@@ -9,7 +9,7 @@ CppCompiler=
 Includes=g:\sdl\include
 Linker=-lmingw32 -lstdc++ -lSDLmain -lSDL -lstdc++ -lwinmm -mwindows_@@_
 Libs=g:\sdl\lib
-UnitCount=111
+UnitCount=113
 Folders=adplug,"Header Files",libmad,native_midi,"Resource Files","Source Files"
 ObjFiles=
 PrivateResource=sdlpal_private.rc
@@ -1150,4 +1150,24 @@ Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c music_mad.c -o music_mad.o $(CFLAGS)
+
+[Unit112]
+FileName=adplug\surroundopl.cpp
+CompileCpp=0
+Folder=adplug
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=$(CC) -c surroundopl.cpp -o surroundopl.o $(CFLAGS)
+
+[Unit113]
+FileName=adplug\surroundopl.h
+CompileCpp=1
+Folder=adplug
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 

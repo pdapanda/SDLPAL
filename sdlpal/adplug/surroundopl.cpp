@@ -95,13 +95,13 @@ void CSurroundopl::write(int reg, int val)
 	this->iFMReg[iRegister] = iValue;
 
 	if ((iChannel >= 0)) {// && (i == 1)) {
-		uint8_t iBlock = (this->iFMReg[0xB0 + iChannel] >> 2) & 0x07;
-		uint16_t iFNum = ((this->iFMReg[0xB0 + iChannel] & 0x03) << 8) | this->iFMReg[0xA0 + iChannel];
+		unsigned char iBlock = (this->iFMReg[0xB0 + iChannel] >> 2) & 0x07;
+		unsigned short iFNum = ((this->iFMReg[0xB0 + iChannel] & 0x03) << 8) | this->iFMReg[0xA0 + iChannel];
 		//double dbOriginalFreq = 50000.0 * (double)iFNum * pow(2, iBlock - 20);
 		double dbOriginalFreq = 49716.0 * (double)iFNum * pow(2, iBlock - 20);
 
-		uint8_t iNewBlock = iBlock;
-		uint16_t iNewFNum;
+		unsigned char iNewBlock = iBlock;
+		unsigned short iNewFNum;
 
 		// Adjust the frequency and calculate the new FNum
 		//double dbNewFNum = (dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (50000.0 * pow(2, iNewBlock - 20));
@@ -123,7 +123,7 @@ void CSurroundopl::write(int reg, int val)
 				iNewFNum = iFNum;
 			} else {
 				iNewBlock++;
-				iNewFNum = (uint16_t)calcFNum();
+				iNewFNum = (unsigned short)calcFNum();
 			}
 		} else if (dbNewFNum < 0 + NEWBLOCK_LIMIT) {
 			// It's too low, so move down one block (octave) and recalculate
@@ -138,11 +138,11 @@ void CSurroundopl::write(int reg, int val)
 				iNewFNum = iFNum;
 			} else {
 				iNewBlock--;
-				iNewFNum = (uint16_t)calcFNum();
+				iNewFNum = (unsigned short)calcFNum();
 			}
 		} else {
 			// Original calculation is within range, use that
-			iNewFNum = (uint16_t)dbNewFNum;
+			iNewFNum = (unsigned short)dbNewFNum;
 		}
 
 		// Sanity check
@@ -162,12 +162,12 @@ void CSurroundopl::write(int reg, int val)
 			iValue = (iValue & ~0x1F) | (iNewBlock << 2) | ((iNewFNum >> 8) & 0x03);
 
 			this->iCurrentTweakedBlock[iChannel] = iNewBlock; // save it so we don't have to update register 0xB0 later on
-			this->iCurrentFNum[iChannel] = iNewFNum;
+			this->iCurrentFNum[iChannel] = (unsigned char)iNewFNum;
 
 			if (this->iTweakedFMReg[0xA0 + iChannel] != (iNewFNum & 0xFF)) {
 				// Need to write out low bits
-				uint8_t iAdditionalReg = 0xA0 + iChannel;
-				uint8_t iAdditionalValue = iNewFNum & 0xFF;
+				unsigned char iAdditionalReg = 0xA0 + iChannel;
+				unsigned char iAdditionalValue = iNewFNum & 0xFF;
 				b->write(iAdditionalReg, iAdditionalValue);
 				this->iTweakedFMReg[iAdditionalReg] = iAdditionalValue;
 			}
@@ -177,7 +177,7 @@ void CSurroundopl::write(int reg, int val)
 			iValue = iNewFNum & 0xFF;
 
 			// See if we need to update the block number, which is stored in a different register
-			uint8_t iNewB0Value = (this->iFMReg[0xB0 + iChannel] & ~0x1F) | (iNewBlock << 2) | ((iNewFNum >> 8) & 0x03);
+			unsigned char iNewB0Value = (this->iFMReg[0xB0 + iChannel] & ~0x1F) | (iNewBlock << 2) | ((iNewFNum >> 8) & 0x03);
 			if (
 				(iNewB0Value & 0x20) && // but only update if there's a note currently playing (otherwise we can just wait
 				(this->iTweakedFMReg[0xB0 + iChannel] != iNewB0Value)   // until the next noteon and update it then)
@@ -185,7 +185,7 @@ void CSurroundopl::write(int reg, int val)
 //				AdPlug_LogWrite("OPL INFO: CH%d - FNum %d/B#%d -> FNum %d/B#%d == keyon register update!\n",
 //					iChannel, iFNum, iBlock, iNewFNum, iNewBlock);
 					// The note is already playing, so we need to adjust the upper bits too
-					uint8_t iAdditionalReg = 0xB0 + iChannel;
+					unsigned char iAdditionalReg = 0xB0 + iChannel;
 					b->write(iAdditionalReg, iNewB0Value);
 					this->iTweakedFMReg[iAdditionalReg] = iNewB0Value;
 			} // else the note is not playing, the upper bits will be set when the note is next played
