@@ -17,6 +17,8 @@
       <itemPath>adplug/player.h</itemPath>
       <itemPath>adplug/rix.cpp</itemPath>
       <itemPath>adplug/rix.h</itemPath>
+      <itemPath>adplug/surroundopl.cpp</itemPath>
+      <itemPath>adplug/surroundopl.h</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"

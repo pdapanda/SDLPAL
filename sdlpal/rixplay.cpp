@@ -25,12 +25,13 @@ extern "C" BOOL g_fNoMusic;
 extern "C" INT  g_iVolume;
 
 #include "sound.h"
+#include "adplug/surroundopl.h"
 
 typedef struct tagRIXPLAYER
 {
-   tagRIXPLAYER() : opl(PAL_SAMPLE_RATE, true, false), rix(&opl), iCurrentMusic(-1) {}
-   CEmuopl                    opl;
-   CrixPlayer                 rix;
+   tagRIXPLAYER() : iCurrentMusic(-1) {}
+   Copl                      *opl;
+   CrixPlayer                *rix;
    INT                        iCurrentMusic; // current playing music number
    INT                        iNextMusic; // the next music number to switch to
    DWORD                      dwStartFadeTime;
@@ -38,7 +39,7 @@ typedef struct tagRIXPLAYER
    enum { FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fLoop;
    BOOL                       fNextLoop;
-   BYTE                       buf[PAL_SAMPLE_RATE / 70 * 2];
+   BYTE                       buf[PAL_SAMPLE_RATE / 70 * 2 * PAL_CHANNELS];
    LPBYTE                     pos;
 } RIXPLAYER, *LPRIXPLAYER;
 
@@ -74,7 +75,7 @@ RIX_FillBuffer(
    volume = g_iVolume / 2;
 #endif
 
-   len /= PAL_CHANNELS;
+//   len /= PAL_CHANNELS;
    oldlen = len;
 
    if (gpRixPlayer == NULL)
@@ -116,7 +117,7 @@ RIX_FillBuffer(
             gpRixPlayer->dwEndFadeTime = t +
                (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
             gpRixPlayer->dwStartFadeTime = t;
-            gpRixPlayer->rix.rewind(gpRixPlayer->iCurrentMusic);
+            gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
             return;
          }
          else if (t >= gpRixPlayer->dwEndFadeTime)
@@ -137,7 +138,7 @@ RIX_FillBuffer(
                gpRixPlayer->dwEndFadeTime = t +
                   (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
                gpRixPlayer->dwStartFadeTime = t;
-               gpRixPlayer->rix.rewind(gpRixPlayer->iCurrentMusic);
+               gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
             }
             return;
          }
@@ -161,10 +162,10 @@ RIX_FillBuffer(
    while (len > 0)
    {
       if (gpRixPlayer->pos == NULL ||
-         gpRixPlayer->pos - gpRixPlayer->buf >= PAL_SAMPLE_RATE / 70 * 2)
+         gpRixPlayer->pos - gpRixPlayer->buf >= sizeof(gpRixPlayer->buf))
       {
          gpRixPlayer->pos = gpRixPlayer->buf;
-         if (!gpRixPlayer->rix.update())
+         if (!gpRixPlayer->rix->update())
          {
             if (!gpRixPlayer->fLoop)
             {
@@ -174,8 +175,8 @@ RIX_FillBuffer(
                gpRixPlayer->iCurrentMusic = -1;
                return;
             }
-            gpRixPlayer->rix.rewind(gpRixPlayer->iCurrentMusic);
-            if (!gpRixPlayer->rix.update())
+            gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
+            if (!gpRixPlayer->rix->update())
             {
                //
                // Something must be wrong
@@ -184,10 +185,10 @@ RIX_FillBuffer(
                return;
             }
          }
-         gpRixPlayer->opl.update((short *)(gpRixPlayer->buf), PAL_SAMPLE_RATE / 70);
+         gpRixPlayer->opl->update((short *)(gpRixPlayer->buf), PAL_SAMPLE_RATE / 70);
       }
 
-      l = (PAL_SAMPLE_RATE / 70 * 2) - (gpRixPlayer->pos - gpRixPlayer->buf);
+      l = sizeof(gpRixPlayer->buf) - (gpRixPlayer->pos - gpRixPlayer->buf);
       if (len < l)
       {
          l = len;
@@ -200,11 +201,9 @@ RIX_FillBuffer(
       for (i = 0; i < (int)(l / sizeof(SHORT)); i++)
       {
          SHORT s = (*(SHORT *)(gpRixPlayer->pos));
-         for (j = 0; j < PAL_CHANNELS; j++)
-         {
-            *(SHORT *)(stream) = SWAP16(s * volume / SDL_MIX_MAXVOLUME);
-            stream += sizeof(SHORT);
-         }
+         *(SHORT *)(stream) = SWAP16(s * volume / SDL_MIX_MAXVOLUME);
+
+         stream += sizeof(SHORT);
          gpRixPlayer->pos += sizeof(SHORT);
       }
 
@@ -239,13 +238,34 @@ RIX_Init(
       return -1;
    }
 
-   gpRixPlayer->opl.settype(Copl::TYPE_OPL2);
+#if PAL_CHANNELS == 2
+   gpRixPlayer->opl = new CSurroundopl(new CEmuopl(PAL_SAMPLE_RATE, true, false),
+      new CEmuopl(PAL_SAMPLE_RATE, true, false), true);
+#else
+   gpRixPlayer->opl = new CEmuopl(PAL_SAMPLE_RATE, true, false);
+#endif
+
+   if (gpRixPlayer->opl == NULL)
+   {
+      delete gpRixPlayer;
+      return -1;
+   }
+
+   gpRixPlayer->rix = new CrixPlayer(gpRixPlayer->opl);
+   if (gpRixPlayer->rix == NULL)
+   {
+      delete gpRixPlayer->opl;
+      delete gpRixPlayer;
+      return -1;
+   }
 
    //
    // Load the MKF file.
    //
-   if (!gpRixPlayer->rix.load(szFileName, CProvider_Filesystem()))
+   if (!gpRixPlayer->rix->load(szFileName, CProvider_Filesystem()))
    {
+      delete gpRixPlayer->rix;
+      delete gpRixPlayer->opl;
       delete gpRixPlayer;
       gpRixPlayer = NULL;
       return -2;
@@ -284,7 +304,10 @@ RIX_Shutdown(
 {
    if (gpRixPlayer != NULL)
    {
+      delete gpRixPlayer->rix;
+      delete gpRixPlayer->opl;
       delete gpRixPlayer;
+
       gpRixPlayer = NULL;
    }
 }

@@ -32,6 +32,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/rixplay.o \
+	${OBJECTDIR}/adplug/surroundopl.o \
 	${OBJECTDIR}/libmad/synth.o \
 	${OBJECTDIR}/libmad/timer.o \
 	${OBJECTDIR}/adplug/player.o \
@@ -107,6 +108,11 @@ ${OBJECTDIR}/rixplay.o: nbproject/Makefile-${CND_CONF}.mk rixplay.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -s -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/rixplay.o rixplay.cpp
+
+${OBJECTDIR}/adplug/surroundopl.o: nbproject/Makefile-${CND_CONF}.mk adplug/surroundopl.cpp 
+	${MKDIR} -p ${OBJECTDIR}/adplug
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -s -I/usr/include/SDL -MMD -MP -MF $@.d -o ${OBJECTDIR}/adplug/surroundopl.o adplug/surroundopl.cpp
 
 ${OBJECTDIR}/libmad/synth.o: nbproject/Makefile-${CND_CONF}.mk libmad/synth.c 
 	${MKDIR} -p ${OBJECTDIR}/libmad
