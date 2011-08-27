@@ -182,6 +182,7 @@ PAL_KeyboardEventFilter(
       case SDLK_RETURN:
       case SDLK_SPACE:
       case SDLK_KP_ENTER:
+      case SDLK_LCTRL:
          g_InputState.dwKeyPress |= kKeySearch;
          break;
 

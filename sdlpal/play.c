@@ -540,6 +540,20 @@ PAL_StartFrame(
       //
       PAL_GameUseItem();
    }
+   else if (g_InputState.dwKeyPress & kKeyThrowItem)
+   {
+      //
+      // Show the equipment menu
+      //
+      PAL_GameEquipItem();
+   }
+   else if (g_InputState.dwKeyPress & kKeyForce)
+   {
+      //
+      // Show the magic menu
+      //
+      PAL_InGameMagicMenu();
+   }
    else if (g_InputState.dwKeyPress & kKeyStatus)
    {
       //
@@ -553,6 +567,19 @@ PAL_StartFrame(
       // Process search events
       //
       PAL_Search();
+   }
+   else if (g_InputState.dwKeyPress & kKeyFlee)
+   {
+      //
+      // Quit Game
+      //
+      if (PAL_ConfirmMenu())
+      {
+         PAL_PlayMUS(0, FALSE, 2);
+         PAL_FadeOut(2);
+         PAL_Shutdown();
+         exit(0);
+      }
    }
 
    if (--gpGlobals->wChasespeedChangeCycles == 0)

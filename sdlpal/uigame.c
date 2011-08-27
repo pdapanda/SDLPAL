@@ -670,8 +670,8 @@ PAL_SystemMenu(
    return TRUE;
 }
 
-static VOID
-PAL_MagicMenu(
+VOID
+PAL_InGameMagicMenu(
    VOID
 )
 /*++
@@ -1023,7 +1023,7 @@ PAL_InGameMenu(
          //
          // Magic
          //
-         PAL_MagicMenu();
+         PAL_InGameMagicMenu();
          goto out;
 
       case 3:

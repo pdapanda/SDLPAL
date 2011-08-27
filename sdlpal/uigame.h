@@ -54,6 +54,11 @@ PAL_SwitchMenu(
 );
 
 VOID
+PAL_InGameMagicMenu(
+   VOID
+);
+
+VOID
 PAL_InGameMenu(
    VOID
 );
