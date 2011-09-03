@@ -2560,7 +2560,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
          b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
-#ifdef PAL_CLASSIC
+#if 1
          if ((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
          {
             SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
