@@ -209,7 +209,7 @@ PAL_LoadResources(
    WORD               wPlayerID, wSpriteNum;
    FILE              *fpMAP, *fpGOP;
 
-   if (gpResources == NULL)
+   if (gpResources == NULL || gpResources->bLoadFlags == 0)
    {
       return;
    }
