@@ -21,7 +21,7 @@
 */
 
 #include <string.h>
-
+#include <stdlib.h>
 #include "music_mad.h"
 
 mad_data *
