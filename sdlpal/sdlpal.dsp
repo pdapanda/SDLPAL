@@ -353,6 +353,18 @@ SOURCE=.\adplug\binio.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\adplug\demuopl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\adplug\dosbox_opl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\adplug\dosbox_opl.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\adplug\emuopl.cpp
 # End Source File
 # Begin Source File
