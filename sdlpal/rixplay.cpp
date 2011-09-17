@@ -18,18 +18,14 @@
 
 #include "rixplay.h"
 
-//#define USE_SURROUNDOPL      1
-//#define USE_DEMUOPL          1
+#define USE_SURROUNDOPL      1
+#define USE_DEMUOPL          0
 
 #include "adplug/opl.h"
 #include "adplug/emuopl.h"
 #include "adplug/demuopl.h"
 #include "adplug/surroundopl.h"
 #include "adplug/rix.h"
-
-#ifdef USE_DEMUOPL
-#define CEmuopl CDemuopl
-#endif
 
 extern "C" BOOL g_fNoMusic;
 extern "C" INT  g_iVolume;
@@ -77,7 +73,7 @@ RIX_FillBuffer(
 
 --*/
 {
-   INT       i, j, l, oldlen, volume = SDL_MIX_MAXVOLUME / 2;
+   INT       i, l, oldlen, volume = SDL_MIX_MAXVOLUME / 2;
    UINT      t = SDL_GetTicks();
 
 #ifdef __SYMBIAN32__
@@ -211,7 +207,7 @@ RIX_FillBuffer(
          SHORT s = SWAP16((int)(*(SHORT *)(gpRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME);
 
 #ifndef USE_SURROUNDOPL
-         for (j = 0; j < PAL_CHANNELS; j++)
+         for (int j = 0; j < PAL_CHANNELS; j++)
 #endif
          {
             *(SHORT *)(stream) = s;
@@ -251,9 +247,11 @@ RIX_Init(
    {
       return -1;
    }
-#if defined(USE_SURROUNDOPL) && PAL_CHANNELS == 2
+#if USE_SURROUNDOPL && (PAL_CHANNELS == 2)
    gpRixPlayer->opl = new CSurroundopl(new CEmuopl(PAL_SAMPLE_RATE, true, false),
       new CEmuopl(PAL_SAMPLE_RATE, true, false), true);
+#elif USE_DEMUOPL
+   gpRixPlayer->opl = new CDemuopl(PAL_SAMPLE_RATE, true, false);
 #else
    gpRixPlayer->opl = new CEmuopl(PAL_SAMPLE_RATE, true, false);
 #endif
