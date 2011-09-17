@@ -41,6 +41,9 @@
 		7104FDB60D772FBC00A97E53 /* rix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA70D772FBC00A97E53 /* rix.cpp */; };
 		71147E4014085E31003FB2DB /* surroundopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71147E3E14085E31003FB2DB /* surroundopl.cpp */; };
 		71147E4114085E31003FB2DB /* surroundopl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71147E3F14085E31003FB2DB /* surroundopl.h */; };
+		7138FD0E1424E4810060DE76 /* demuopl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7138FD0B1424E4810060DE76 /* demuopl.h */; };
+		7138FD0F1424E4810060DE76 /* dosbox_opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */; };
+		7138FD101424E4810060DE76 /* dosbox_opl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7138FD0D1424E4810060DE76 /* dosbox_opl.h */; };
 		716EB9BC0D77318900D5DE1F /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD3F0D772F6300A97E53 /* game.c */; };
 		716EB9C70D77340300D5DE1F /* sdlpal.icns in Resources */ = {isa = PBXBuildFile; fileRef = 716EB9C60D77340300D5DE1F /* sdlpal.icns */; };
 		716EB9CA0D77347B00D5DE1F /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD5E0D772F6300A97E53 /* ui.c */; };
@@ -108,6 +111,8 @@
 				71E23EAE13F6D1AD001287B6 /* timer.h in Copy Frameworks into .app bundle */,
 				71E23EB013F6D1AD001287B6 /* version.h in Copy Frameworks into .app bundle */,
 				71147E4114085E31003FB2DB /* surroundopl.h in Copy Frameworks into .app bundle */,
+				7138FD0E1424E4810060DE76 /* demuopl.h in Copy Frameworks into .app bundle */,
+				7138FD101424E4810060DE76 /* dosbox_opl.h in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,6 +194,9 @@
 		7104FDA80D772FBC00A97E53 /* rix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rix.h; path = adplug/rix.h; sourceTree = SOURCE_ROOT; };
 		71147E3E14085E31003FB2DB /* surroundopl.cpp */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.cpp.cpp; name = surroundopl.cpp; path = adplug/surroundopl.cpp; sourceTree = "<group>"; };
 		71147E3F14085E31003FB2DB /* surroundopl.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = surroundopl.h; path = adplug/surroundopl.h; sourceTree = "<group>"; };
+		7138FD0B1424E4810060DE76 /* demuopl.h */ = {isa = PBXFileReference; fileEncoding = "-2147483623"; lastKnownFileType = sourcecode.c.h; name = demuopl.h; path = adplug/demuopl.h; sourceTree = "<group>"; };
+		7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = "-2147483623"; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opl.cpp; path = adplug/dosbox_opl.cpp; sourceTree = "<group>"; };
+		7138FD0D1424E4810060DE76 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = "-2147483623"; lastKnownFileType = sourcecode.c.h; name = dosbox_opl.h; path = adplug/dosbox_opl.h; sourceTree = "<group>"; };
 		716EB9C60D77340300D5DE1F /* sdlpal.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sdlpal.icns; sourceTree = SOURCE_ROOT; };
 		71E23E7113F6D1AD001287B6 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; name = bit.c; path = libmad/bit.c; sourceTree = "<group>"; };
 		71E23E7213F6D1AD001287B6 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = bit.h; path = libmad/bit.h; sourceTree = "<group>"; };
@@ -383,6 +391,9 @@
 		7104FD990D772FAA00A97E53 /* adplug */ = {
 			isa = PBXGroup;
 			children = (
+				7138FD0B1424E4810060DE76 /* demuopl.h */,
+				7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */,
+				7138FD0D1424E4810060DE76 /* dosbox_opl.h */,
 				71147E3E14085E31003FB2DB /* surroundopl.cpp */,
 				71147E3F14085E31003FB2DB /* surroundopl.h */,
 				7104FD9A0D772FBC00A97E53 /* binfile.cpp */,
@@ -551,6 +562,7 @@
 				71E23EAD13F6D1AD001287B6 /* timer.c in Sources */,
 				71E23EAF13F6D1AD001287B6 /* version.c in Sources */,
 				71147E4014085E31003FB2DB /* surroundopl.cpp in Sources */,
+				7138FD0F1424E4810060DE76 /* dosbox_opl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
