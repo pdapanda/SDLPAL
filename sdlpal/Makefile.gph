@@ -1,0 +1,34 @@
+# Makefile for GPH Device
+
+BUILD_GP2XWIZ = NO
+BUILD_CAANOO = YES
+
+TARGET = sdlpal.gpe
+
+ifeq ($(BUILD_GP2XWIZ), YES)
+HOST = arm-open2x-linux-
+DEVICE = -DGP2XWIZ
+else
+ifeq ($(BUILD_CAANOO), YES)
+HOST = arm-gph-linux-gnueabi-
+DEVICE = -DCAANOO
+endif
+endif
+
+FILES = rixplay.cpp adplug/rix.cpp text.c font.c adplug/player.cpp \
+	itemmenu.c adplug/binio.cpp scene.c palcommon.c script.c \
+	adplug/emuopl.cpp util.c play.c getopt.c input.c uibattle.c \
+	game.c magicmenu.c map.c ending.c adplug/fmopl.c uigame.c \
+	rngplay.c ui.c adplug/fprovide.cpp global.c main.c fight.c \
+	adplug/binfile.cpp video.c palette.c sound.c res.c battle.c \
+	yj1.c
+
+CFLAGS = -g -Wall -O3 -Os -DGPH -DPAL_CLASSIC $(DEVICE)
+LDFLAGS = `sdl-config --libs` -lstdc++
+
+$(TARGET):
+	$(HOST)gcc $(CFLAGS) -o $(TARGET) $(FILES) $(LDFLAGS)
+	$(HOST)strip $(TARGET)
+
+clean:
+	rm -f $(TARGET)
