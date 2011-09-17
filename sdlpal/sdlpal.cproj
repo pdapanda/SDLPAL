@@ -74,6 +74,10 @@
     <None Include="video.h" />
     <None Include="adplug\binfile.h" />
     <None Include="adplug\binio.h" />
+    <None Include="adplug\demuopl.h" />
+    <None Include="adplug\dosbox_opl.h" />
+    <None Include="adplug\emuopl.h" />
+    <None Include="adplug\fmopl.h" />
     <None Include="adplug\fprovide.h" />
     <None Include="adplug\opl.h" />
     <None Include="adplug\player.h" />
@@ -98,8 +102,6 @@
     <None Include="libmad\timer.h" />
     <None Include="libmad\version.h" />
     <None Include="libmad\music_mad.h" />
-    <None Include="adplug\demuopl.h" />
-    <None Include="adplug\dosbox_opl.h" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="battle.c" />
@@ -132,6 +134,9 @@
     <Compile Include="rixplay.cpp" />
     <Compile Include="adplug\binfile.cpp" />
     <Compile Include="adplug\binio.cpp" />
+    <Compile Include="adplug\dosbox_opl.cpp" />
+    <Compile Include="adplug\emuopl.cpp" />
+    <Compile Include="adplug\fmopl.c" />
     <Compile Include="adplug\fprovide.cpp" />
     <Compile Include="adplug\player.cpp" />
     <Compile Include="adplug\rix.cpp" />
@@ -147,6 +152,5 @@
     <Compile Include="libmad\timer.c" />
     <Compile Include="libmad\version.c" />
     <Compile Include="libmad\music_mad.c" />
-    <Compile Include="adplug\dosbox_opl.cpp" />
   </ItemGroup>
 </Project>
