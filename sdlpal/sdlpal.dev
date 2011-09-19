@@ -9,7 +9,7 @@ CppCompiler=
 Includes=d:\sdl\include
 Linker=-lmingw32 -lstdc++ -lSDLmain -lSDL -lstdc++ -lwinmm -mwindows_@@_
 Libs=d:\sdl\lib
-UnitCount=116
+UnitCount=114
 Folders=adplug,"Header Files",libmad,native_midi,"Resource Files","Source Files"
 ObjFiles=
 PrivateResource=sdlpal_private.rc
@@ -1112,26 +1112,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit108]
-FileName=libmad\version.c
-CompileCpp=0
-Folder=libmad
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=$(CC) -c version.c -o version.o $(CFLAGS)
-
-[Unit109]
-FileName=libmad\version.h
-CompileCpp=1
-Folder=libmad
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit110]
 FileName=libmad\music_mad.h
 CompileCpp=1
 Folder=libmad
@@ -1141,7 +1121,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit111]
+[Unit109]
 FileName=libmad\music_mad.c
 CompileCpp=0
 Folder=libmad
@@ -1151,7 +1131,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c music_mad.c -o music_mad.o $(CFLAGS)
 
-[Unit112]
+[Unit110]
 FileName=adplug\surroundopl.cpp
 CompileCpp=0
 Folder=adplug
@@ -1161,7 +1141,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c surroundopl.cpp -o surroundopl.o $(CFLAGS)
 
-[Unit113]
+[Unit111]
 FileName=adplug\surroundopl.h
 CompileCpp=1
 Folder=adplug
@@ -1171,8 +1151,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit112]
 FileName=adplug\dosbox_opl.h
+CompileCpp=1
+Folder=adplug
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit113]
+FileName=adplug\demuopl.h
+CompileCpp=1
+Folder=adplug
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit114]
+FileName=adplug\dosbox_opl.cpp
 CompileCpp=1
 Folder=adplug
 Compile=1

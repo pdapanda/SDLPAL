@@ -10,7 +10,7 @@ ADPLUG_FILES = adplug/rix.cpp adplug/player.cpp adplug/binio.cpp \
 
 LIBMAD_FILES = libmad/bit.c libmad/decoder.c libmad/fixed.c libmad/frame.c \
 	libmad/huffman.c libmad/layer12.c libmad/layer3.c libmad/music_mad.c \
-	libmad/stream.c libmad/synth.c libmad/timer.c libmad/version.c
+	libmad/stream.c libmad/synth.c libmad/timer.c
 
 FILES = rixplay.cpp text.c font.c itemmenu.c scene.c palcommon.c script.c \
 	util.c play.c getopt.c input.c uibattle.c game.c magicmenu.c map.c \

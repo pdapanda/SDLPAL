@@ -571,14 +571,6 @@ SOURCE=.\libmad\timer.c
 
 SOURCE=.\libmad\timer.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\libmad\version.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\libmad\version.h
-# End Source File
 # End Group
 # End Target
 # End Project
