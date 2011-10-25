@@ -397,6 +397,17 @@ SOUND_OpenAudio(
    return 0;
 }
 
+#ifdef PSP
+void
+SOUND_ReloadVOC(
+	void
+)
+{
+   gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "voc.mkf"), "rb");
+   g_fUseWav = FALSE;
+}
+#endif
+
 VOID
 SOUND_CloseAudio(
    VOID

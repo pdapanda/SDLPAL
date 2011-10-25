@@ -74,7 +74,7 @@ extern "C"
 
 #elif defined (PSP)
 
-#define PAL_HAS_JOYSTICKS     1
+#define PAL_HAS_JOYSTICKS     0
 #define PAL_PREFIX            "ms0:/"
 #define PAL_SAVE_PREFIX       "ms0:/PSP/SAVEDATA/SDLPAL/"
 

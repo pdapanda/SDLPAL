@@ -29,55 +29,79 @@
 
 #define PSP_HEAP_MEMSIZE 12288
 
-PSP_MODULE_INFO("SDLPAL",0,1,1);
+PSP_MODULE_INFO("SDLPAL", 0, 1, 1);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 PSP_HEAP_SIZE_KB(PSP_HEAP_MEMSIZE);
 
-int PSP_exit_callback(int arg1, int arg2, void *common)
+//
+//Exit callback
+//
+int PSPExitCallback(int arg1, int arg2, void *common)
 {
 	exit(0);
 	return 0;
 }
 
-int PSP_exit_callback_thread(SceSize args, void *argp)
+//
+//Reopen MKF files when resume from suspend
+//
+int PSPSuspendCallback(int arg1, int arg2, void *common)
+{
+  if (pwrflags & PSP_POWER_CB_RESUME_COMPLETE)
+  {
+    gpGlobals->f.fpFBP = UTIL_OpenRequiredFile("fbp.mkf");
+    gpGlobals->f.fpDATA = UTIL_OpenRequiredFile("data.mkf");
+    gpGlobals->f.fpFIRE = UTIL_OpenRequiredFile("fire.mkf");
+    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
+    gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
+    SOUND_Reload_VOC();
+  }
+  int cbid;
+  cbid = sceKernelCreateCallback("suspend Callback", PSPSuspendCallback, NULL);
+	scePowerRegisterCallback(0, cbid);
+  return 0;
+}
+
+//
+//setup callbacks thread
+//
+int PSPRegisterCallbackThread(SceSize args, void *argp)
 {
 	int cbid;
-	cbid = sceKernelCreateCallback("Exit Callback", PSP_exit_callback, NULL);
+	cbid = sceKernelCreateCallback("Exit Callback", PSPExitCallback, NULL);
 	sceKernelRegisterExitCallback(cbid);
+	cbid = sceKernelCreateCallback("suspend Callback", PSPSuspendCallback, NULL);
+	scePowerRegisterCallback(0, cbid);
 	sceKernelSleepThreadCB();
 	return 0;
 }
 
-int PSP_exit_setup_callbacks(void)
+//
+//setup exit callback
+//
+int PSPSetupCallbacks(void)
 {
 	int thid = 0;
-	thid = sceKernelCreateThread("update_thread", PSP_exit_callback_thread, 0x11, 0xFA0, 0, 0);
+	thid = sceKernelCreateThread("update_thread", PSPRegisterCallbackThread, 0x11, 0xFA0, 0, 0);
 	if(thid >= 0)
 		sceKernelStartThread(thid, 0, 0);
 	return thid;
 }
 
+//
+//Init on PSP
+//
 void sdlpal_psp_init(void)
 {
-   //
-   // need call??
-   //
+   // Init Debug Screen
    pspDebugScreenInit();
 
-   //
-   // PSP set exit
-   //
-   PSP_exit_setup_callbacks();
+   // PSP set callbacks
+   PSPSetupCallbacks();
 
-   //
    // Register sceKernelExitGame() to be called when we exit 
-   //
    atexit(sceKernelExitGame);
 
-   //
    // set PSP CPU clock
-   //
    scePowerSetClockFrequency(333 , 333 , 166);
-   
-   //sceKernelVolatileMemLock(0, );
 }
