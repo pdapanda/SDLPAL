@@ -98,15 +98,15 @@ void CSurroundopl::write(int reg, int val)
 		unsigned char iBlock = (this->iFMReg[0xB0 + iChannel] >> 2) & 0x07;
 		unsigned short iFNum = ((this->iFMReg[0xB0 + iChannel] & 0x03) << 8) | this->iFMReg[0xA0 + iChannel];
 		//double dbOriginalFreq = 50000.0 * (double)iFNum * pow(2, iBlock - 20);
-		double dbOriginalFreq = 49716.0 * (double)iFNum * pow(2, iBlock - 20);
+		double dbOriginalFreq = 49716.0 * (double)iFNum * pow(2.0, iBlock - 20);
 
 		unsigned char iNewBlock = iBlock;
 		unsigned short iNewFNum;
 
 		// Adjust the frequency and calculate the new FNum
-		//double dbNewFNum = (dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (50000.0 * pow(2, iNewBlock - 20));
-		//#define calcFNum() ((dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (50000.0 * pow(2, iNewBlock - 20)))
-		#define calcFNum() ((dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (49716.0 * pow(2, iNewBlock - 20)))
+		//double dbNewFNum = (dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (50000.0 * pow(2.0, iNewBlock - 20));
+		//#define calcFNum() ((dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (50000.0 * pow(2.0, iNewBlock - 20)))
+		#define calcFNum() ((dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (49716.0 * pow(2.0, iNewBlock - 20)))
 		double dbNewFNum = calcFNum();
 
 		// Make sure it's in range for the OPL chip
