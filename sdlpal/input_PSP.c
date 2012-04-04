@@ -20,6 +20,9 @@
 //
 
 #include "main.h"
+
+#ifdef PSP
+
 #include <math.h>
 #include <pspkernel.h>
 #include <pspctrl.h>
@@ -387,3 +390,5 @@ PAL_ProcessEvent(
    while (SDL_PollEvent(NULL));
    PAL_JoystickEventFilter();
 }
+
+#endif

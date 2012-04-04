@@ -44,7 +44,11 @@ static WORD               g_wShakeTime       = 0;
 static WORD               g_wShakeLevel      = 0;
 
 INT
+#ifdef GEKKO // Rikku2000: Crash on compile, allready define on WIISDK
+VIDEO_Init_GEKKO(
+#else
 VIDEO_Init(
+#endif
    WORD             wScreenWidth,
    WORD             wScreenHeight,
    BOOL             fFullScreen
@@ -85,6 +89,8 @@ VIDEO_Init(
    gpScreenReal = SDL_SetVideoMode(320, 240, 8,
       SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
 #endif
+#elif defined (GEKKO)
+   gpScreenReal = SDL_SetVideoMode(640, 480, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
 #elif defined (PSP)
    gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
 #else

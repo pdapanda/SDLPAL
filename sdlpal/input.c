@@ -32,46 +32,6 @@ BOOL                     g_fUseJoystick = TRUE;
 #define MAX_DEADZONE 16384
 #endif
 
-#if defined(GPH) || defined(DINGOO)
-static VOID
-PAL_ComboEventFilter(
-   const SDL_Event       *lpEvent
-)
-/*++
-  Purpose:
-
-    Handle Combo events.
-
-  Parameters:
-
-    [IN]  lpEvent - pointer to the event.
-
-  Return value:
-
-    None.
-
---*/
-{
-#if defined(GPH)
-#if defined(GP2XWIZ)
-   if (SDL_JoystickGetButton(g_pJoy, 10) && SDL_JoystickGetButton(g_pJoy, 11) && SDL_JoystickGetButton(g_pJoy, 8) && SDL_JoystickGetButton(g_pJoy, 9)) { // L+R+START+SELECT - Quit
-      PAL_Shutdown();
-   }
-#elif defined(CAANOO)
-   if (SDL_JoystickGetButton(g_pJoy, 4) && SDL_JoystickGetButton(g_pJoy, 5) && SDL_JoystickGetButton(g_pJoy, 6)) { // L+R+HOME - Quit
-      PAL_Shutdown();
-   }
-#endif
-#elif defined(DINGOO)
-   Uint8 *keystate = SDL_GetKeyState(NULL);
-
-   if (keystate[SDLK_TAB] && keystate[SDLK_LCTRL] && keystate[SDLK_RETURN] && keystate[SDLK_ESCAPE]) { // L+R+START+SELECT - Quit
-      PAL_Shutdown();
-   }
-#endif
-}
-#endif
-
 static VOID
 PAL_KeyboardEventFilter(
    const SDL_Event       *lpEvent
@@ -502,6 +462,36 @@ PAL_JoystickEventFilter(
 #ifdef PAL_HAS_JOYSTICKS
    switch (lpEvent->type)
    {
+#if defined (GEKKO)
+   case SDL_JOYHATMOTION:
+      switch (lpEvent->jhat.value)
+      {
+      case SDL_HAT_LEFT:
+        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+        g_InputState.dir = kDirWest;
+        g_InputState.dwKeyPress = kKeyLeft;
+        break;
+
+      case SDL_HAT_RIGHT:
+        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+        g_InputState.dir = kDirEast;
+        g_InputState.dwKeyPress = kKeyRight;
+        break;
+
+      case SDL_HAT_UP:
+        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+        g_InputState.dir = kDirNorth;
+        g_InputState.dwKeyPress = kKeyUp;
+        break;
+
+      case SDL_HAT_DOWN:
+        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+        g_InputState.dir = kDirSouth;
+        g_InputState.dwKeyPress = kKeyDown;
+        break;
+      }
+      break;
+#else
    case SDL_JOYAXISMOTION:
       //
       // Moved an axis on joystick
@@ -603,6 +593,7 @@ PAL_JoystickEventFilter(
          break;
       }
       break;
+#endif
 
    case SDL_JOYBUTTONDOWN:
       //
@@ -627,6 +618,17 @@ PAL_JoystickEventFilter(
 			g_InputState.dwKeyPress = kKeySearch;
 			break;
 #else
+#if defined(GEKKO)
+      switch (lpEvent->jbutton.button)
+      {
+		case 2:
+         g_InputState.dwKeyPress |= kKeyMenu;
+         break;
+
+		case 3:
+         g_InputState.dwKeyPress |= kKeySearch;
+         break;
+#else
       switch (lpEvent->jbutton.button & 1)
       {
       case 0:
@@ -636,6 +638,7 @@ PAL_JoystickEventFilter(
       case 1:
          g_InputState.dwKeyPress |= kKeySearch;
          break;
+#endif
 #endif
       }
       break;
@@ -688,9 +691,6 @@ PAL_EventFilter(
       exit(0);
    }
 
-#if defined(GPH) || defined(DINGOO)
-   PAL_ComboEventFilter(lpEvent);
-#endif
    PAL_KeyboardEventFilter(lpEvent);
    PAL_MouseEventFilter(lpEvent);
    PAL_JoystickEventFilter(lpEvent);

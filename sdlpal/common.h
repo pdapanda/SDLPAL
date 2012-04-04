@@ -72,6 +72,13 @@ extern "C"
 #define PAL_PREFIX            "e:/data/pal/"
 #define PAL_SAVE_PREFIX       "e:/data/pal/"
 
+#elif defined (GEKKO)
+
+#define PAL_HAS_JOYSTICKS     1
+#define PAL_HAS_MOUSE         0
+#define PAL_PREFIX            "SD:/apps/sdlpal/"
+#define PAL_SAVE_PREFIX       "SD:/apps/sdlpal/"
+
 #elif defined (PSP)
 
 #define PAL_HAS_JOYSTICKS     0
@@ -86,7 +93,7 @@ extern "C"
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 #define PAL_HAS_CD            1
 #endif
-#if !defined (DINGOO) && !defined (GPH)
+#if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO)
 #define PAL_HAS_MP3           1
 #endif
 #endif

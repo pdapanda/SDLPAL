@@ -21,12 +21,12 @@
 #include "main.h"
 #include "getopt.h"
 
-#ifdef NDS
-#include "fat.h"
-#endif
-
 #ifdef PSP
 #include "main_PSP.h"
+#endif
+
+#if defined (NDS) && defined (GEKKO)
+#include <fat.h>
 #endif
 
 #define BITMAPNUM_SPLASH_UP         0x26
@@ -62,7 +62,7 @@ PAL_Init(
 {
    int           e;
 
-#ifdef NDS
+#if defined (NDS) && defined (GEKKO)
    fatInitDefault();
 #endif
 
@@ -92,7 +92,11 @@ PAL_Init(
    //
    // Initialize subsystems.
    //
+#ifdef GEKKO
+   e = VIDEO_Init_GEKKO(wScreenWidth, wScreenHeight, fFullScreen);
+#else
    e = VIDEO_Init(wScreenWidth, wScreenHeight, fFullScreen);
+#endif
    if (e != 0)
    {
       TerminateOnError("Could not initialize Video: %d.\n", e);
