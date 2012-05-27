@@ -19,7 +19,7 @@
 #include "rixplay.h"
 
 #define USE_SURROUNDOPL      0
-#define USE_DEMUOPL          1
+#define USE_DEMUOPL          0
 
 #include "adplug/opl.h"
 #include "adplug/emuopl.h"
