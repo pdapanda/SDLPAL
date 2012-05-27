@@ -24,9 +24,9 @@
 
 #ifdef _MSC_VER
 #include <windows.h>
-#define BYTE uint8_t
-#define WORD uint16_t
-#define DWORD uint32_t
+#define uint8_t BYTE
+#define uint16_t WORD
+#define uint32_t DWORD
 #else
 #include <stdint.h>
 #endif
@@ -43,7 +43,7 @@ class CrixPlayer: public CPlayer
   bool update();
   void rewind(int subsong);
   float getrefresh();
-  uint32_t getsubsongs();
+  unsigned int getsubsongs();
 
   std::string gettype()
     { return std::string("Softstar RIX OPL Music Format"); };

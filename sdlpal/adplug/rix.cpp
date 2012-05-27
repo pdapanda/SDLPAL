@@ -151,7 +151,7 @@ void CrixPlayer::rewind(int subsong)
   data_initial();
 }
 
-uint32_t CrixPlayer::getsubsongs()
+unsigned int CrixPlayer::getsubsongs()
 {
 	if(flag_mkf)
 	{
