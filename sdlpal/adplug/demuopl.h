@@ -32,17 +32,31 @@ class CDemuopl: public Copl
 {
 public:
   CDemuopl(int rate, bool bit16, bool usestereo)
+	  :use16bit(bit16), stereo(usestereo)
     {
-      // Whistler: I only need 16-bit mono for SDLPAL, so...
-      assert(bit16 && !usestereo);
-
       adlib_init(rate);
       currType = TYPE_OPL2;
     };
 
   void update(short *buf, int samples)
     {
-      adlib_getsample(buf, samples);
+      short *mixbuf0 = new short[samples*2],*mixbuf1 = new short[samples*2];
+      short *outbuf;
+      if(use16bit) outbuf = buf;
+      else outbuf = mixbuf1;
+      //if(use16bit) samples *= 2;
+      //if(stereo) samples *= 2;
+      adlib_getsample(outbuf, samples);
+      if(stereo)
+	for(int i=samples-1;i>=0;i--) {
+	  outbuf[i*2] = outbuf[i];
+	  outbuf[i*2+1] = outbuf[i];
+	}
+      //now reduce to 8bit if we need to
+      if(!use16bit)
+	for(int i=0;i<(stereo ? samples*2 : samples);i++)
+	  ((char *)buf)[i] = (outbuf[i] >> 8) ^ 0x80;
+      delete[] mixbuf0; delete[] mixbuf1;
     }
 
   // template methods
@@ -53,6 +67,9 @@ public:
     };
 
   void init() {};
+
+protected:
+  bool use16bit,stereo;
 };
 
 #endif

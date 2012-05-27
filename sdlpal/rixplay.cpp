@@ -18,8 +18,8 @@
 
 #include "rixplay.h"
 
-#define USE_SURROUNDOPL      1
-#define USE_DEMUOPL          0
+#define USE_SURROUNDOPL      0
+#define USE_DEMUOPL          1
 
 #include "adplug/opl.h"
 #include "adplug/emuopl.h"
@@ -206,7 +206,7 @@ RIX_FillBuffer(
       {
          SHORT s = SWAP16((int)(*(SHORT *)(gpRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME);
 
-#ifndef USE_SURROUNDOPL
+#if !USE_SURROUNDOPL
          for (int j = 0; j < PAL_CHANNELS; j++)
 #endif
          {
@@ -248,12 +248,19 @@ RIX_Init(
       return -1;
    }
 #if USE_SURROUNDOPL && (PAL_CHANNELS == 2)
+#	if USE_DEMUOPL
+   gpRixPlayer->opl = new CSurroundopl(new CDemuopl(PAL_SAMPLE_RATE, true, false),
+      new CDemuopl(PAL_SAMPLE_RATE, true, false), true);
+#	else
    gpRixPlayer->opl = new CSurroundopl(new CEmuopl(PAL_SAMPLE_RATE, true, false),
       new CEmuopl(PAL_SAMPLE_RATE, true, false), true);
-#elif USE_DEMUOPL
-   gpRixPlayer->opl = new CDemuopl(PAL_SAMPLE_RATE, true, false);
+#	endif
 #else
+#	if USE_DEMUOPL
+   gpRixPlayer->opl = new CDemuopl(PAL_SAMPLE_RATE, true, false);
+#	else
    gpRixPlayer->opl = new CEmuopl(PAL_SAMPLE_RATE, true, false);
+#	endif
 #endif
 
    if (gpRixPlayer->opl == NULL)

@@ -24,11 +24,11 @@
 #include "common.h"
 
 #ifndef PAL_SAMPLE_RATE
-#define PAL_SAMPLE_RATE     44100
+#define PAL_SAMPLE_RATE     49716
 #endif
 
 #ifndef PAL_CHANNELS
-#define PAL_CHANNELS        2
+#define PAL_CHANNELS        1
 #endif
 
 #ifdef __cplusplus
