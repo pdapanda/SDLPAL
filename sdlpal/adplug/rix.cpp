@@ -21,7 +21,10 @@
  */
 
 #include <cstring>
+#include <cstdlib>
 #include "rix.h"
+
+using namespace std;
 
 #if !defined(_WIN32) || defined(__SYMBIAN32__)
    #define stricmp strcasecmp
