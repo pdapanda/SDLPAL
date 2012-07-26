@@ -29,7 +29,7 @@ SDL_Surface              *gpScreenBak        = NULL;
 // The real screen surface
 static SDL_Surface       *gpScreenReal       = NULL;
 
-#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP)
+#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO)
    static BOOL bScaleScreen = FALSE;
 #else
    static BOOL bScaleScreen = TRUE;
@@ -90,7 +90,8 @@ VIDEO_Init(
       SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
 #endif
 #elif defined (GEKKO)
-   gpScreenReal = SDL_SetVideoMode(640, 480, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+   gpScreenReal = SDL_SetVideoMode(640, 480, 8,
+      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
 #elif defined (PSP)
    gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
 #else
