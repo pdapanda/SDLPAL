@@ -23,7 +23,7 @@ FILES += $(LIBMAD_FILES)
 CFLAGS = `sdl-config --cflags` -g -Wall -O2 -fno-strict-aliasing
 LDFLAGS = `sdl-config --libs` -lstdc++ -lm
 
-$(TARGET):
+$(TARGET): $(FILES)
 	$(HOST)gcc $(CFLAGS) -o $(TARGET) $(FILES) $(LDFLAGS)
 
 clean:
