@@ -330,6 +330,9 @@ class Globals {
 		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_q), "Q");
 		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_r), "R");
 		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_w), "W");
+		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_d), "D");
+		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_s), "S");
+		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_p), "P");
 	}
 	
 	public static TreeMap<Integer,Integer> SDLKeyAdditionalKeyMap = new TreeMap<Integer,Integer>(); //do not change
